@@ -1,0 +1,35 @@
+services:
+  s3-gateway:
+    build: .
+    container_name: s3-gateway
+    restart: unless-stopped
+
+    ports:
+      - "9000:9000"
+
+    environment:
+      S3_ACCESS_KEY: ${S3_ACCESS_KEY:-tpdc-access}
+      S3_SECRET_KEY: ${S3_SECRET_KEY:-change-me}
+      S3_REGION: ${S3_REGION:-us-east-1}
+      S3_HOST: "0.0.0.0"
+      S3_PORT: "9000"
+      S3_DB_PATH: "/app/data/s3_gateway.db"
+      S3_DATA_ROOT: "/data"
+      S3_BUCKET_NAME: ${S3_BUCKET_NAME:-tpdc-bucket}
+      S3_ENABLE_AUTH: ${S3_ENABLE_AUTH:-true}
+      S3_LOG_LEVEL: ${S3_LOG_LEVEL:-INFO}
+
+    volumes:
+      - ./data:/app/data
+      - /mnt/data:/data:ro 
+
+    healthcheck:
+      test:
+        - CMD
+        - curl
+        - -f
+        - http://localhost:9000/health
+      interval: 30s
+      timeout: 5s
+      start_period: 10s
+      retries: 3

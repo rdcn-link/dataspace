@@ -1,0 +1,35 @@
+services:
+  # ── FUSE virtual filesystem ──────────────────────────────────────
+  # 直接连 MongoDB（用户已给连接串），不需要 metadata-service 容器
+  dataset-vfs:
+    build: .
+    container_name: dataset-vfs-fuse
+    privileged: true                       # FUSE 必须
+    devices:
+      - "/dev/fuse:/dev/fuse"
+    volumes:
+      # 真实数据挂载 – 这些就是 MongoDB fileTree 里 realPath 指向的文件
+      - /mnt/sciencedbNew:/mnt/sciencedbNew:ro
+      # 挂载点 bind 进容器并开启 rshared 传播：
+      # 容器内 FUSE 挂到 /mnt/fairspace 时会同步回传宿主机，
+      # 否则挂载只存在于容器的 mount namespace，宿主机/DataSeek 看不到
+      - type: bind
+        source: /mnt/fairspace
+        target: /mnt/fairspace
+        bind:
+          propagation: rshared
+    environment:
+      # ── MongoDB ─────────────────────────────────────────────────
+      MONGO_URI: "REPLACE_WITH_EXTERNAL_CONFIG"
+      MONGO_DB: tds
+      MONGO_COLLECTION: scidb_dataseek_filePath
+      # ── Mount ───────────────────────────────────────────────────
+      MOUNT_POINT: /mnt/fairspace
+      VIRTUAL_ROOT: /fairspace
+      # ── Cache ──────────────────────────────────────────────────
+      CACHE_TTL_SECONDS: "60"
+      CACHE_MAX_SIZE: "10000"
+      # ── Logging ─────────────────────────────────────────────────
+      LOG_LEVEL: INFO
+    command: ["python", "-c", "from app.main import run_fuse; run_fuse()"]
+    restart: unless-stopped

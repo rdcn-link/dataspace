@@ -1,0 +1,22 @@
+[
+  {
+    "bucket_name": "tpdc-bucket",
+    "object_key": "test/test.txt",
+    "real_path": "/data/test/test.txt"
+  },
+  {
+    "bucket_name": "tpdc-bucket",
+    "object_key": "test/data.json",
+    "real_path": "/data/test/data.json"
+  },
+  {
+    "bucket_name": "tpdc-bucket",
+    "object_key": "test/sample.bin",
+    "real_path": "/data/test/sample.bin"
+  },
+  {
+    "bucket_name": "tpdc-bucket",
+    "object_key": "v2026/temp.nc",
+    "real_path": "/data/test/temp.nc"
+  }
+]

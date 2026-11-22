@@ -1,0 +1,1181 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>账号激活 - 费尔空间</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Inter', 'Microsoft YaHei', 'PingFang SC', 'Hiragino Sans GB', sans-serif;
+      background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #f5f3ff 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* ---- 装饰背景光晕 ---- */
+    .blob-1 {
+      position: fixed;
+      top: -200px;
+      right: -150px;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.10) 0%, rgba(139, 92, 246, 0.06) 50%, rgba(255,255,255,0) 100%);
+      filter: blur(60px);
+      pointer-events: none;
+      animation: floatBlob 8s ease-in-out infinite;
+    }
+
+    .blob-2 {
+      position: fixed;
+      bottom: -200px;
+      left: -150px;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(139, 92, 246, 0.10) 0%, rgba(59, 130, 246, 0.06) 50%, rgba(255,255,255,0) 100%);
+      filter: blur(60px);
+      pointer-events: none;
+      animation: floatBlob 10s ease-in-out infinite reverse;
+    }
+
+    @keyframes floatBlob {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(30px); }
+    }
+
+    /* ---- 主卡片 ---- */
+    .card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 500px;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      border-radius: 20px;
+      padding: 40px 32px;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.02);
+      animation: cardSlideIn 0.4s ease-out;
+    }
+
+    @keyframes cardSlideIn {
+      from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* ---- 品牌标识 ---- */
+    .brand {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 28px;
+    }
+
+    .brand-icon {
+      width: 38px;
+      height: 38px;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(59, 130, 246, 0.25);
+    }
+
+    .brand-icon svg {
+      width: 22px;
+      height: 22px;
+      fill: white;
+    }
+
+    .brand-name {
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: -0.3px;
+      color: #0f172a;
+    }
+
+    /* ---- 标题 ---- */
+    .title {
+      text-align: center;
+      font-size: 18px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .title-accent {
+      background: linear-gradient(135deg, #2563eb 0%, #7c3aed 50%, #db2777 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .subtitle {
+      text-align: center;
+      font-size: 14px;
+      color: #94a3b8;
+      margin-bottom: 28px;
+      line-height: 1.6;
+    }
+
+    /* ---- 状态提示 ---- */
+    .status-box {
+      text-align: center;
+      font-size: 15px;
+      color: #64748b;
+      padding: 50px 0;
+    }
+
+    .status-box.error {
+      color: #ef4444;
+    }
+
+    /* ---- 用户信息卡片 ---- */
+    .info-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 20px 24px;
+      margin-bottom: 24px;
+    }
+
+    .info-row {
+      display: flex;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .info-row:last-child {
+      border-bottom: none;
+    }
+
+    .info-label {
+      font-size: 14px;
+      color: #94a3b8;
+      width: 88px;
+      flex-shrink: 0;
+    }
+
+    .info-value {
+      font-size: 15px;
+      font-weight: 500;
+      color: #334155;
+      word-break: break-all;
+    }
+
+    /* ---- 公众号二维码 ---- */
+    .qrcode-section {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 24px 20px;
+      text-align: center;
+      margin-bottom: 24px;
+    }
+
+    .qrcode-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 6px;
+    }
+
+    .qrcode-sub {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 16px;
+    }
+
+    .qrcode-img {
+      width: 160px;
+      height: 160px;
+      border-radius: 10px;
+      border: 2px solid #e2e8f0;
+      display: block;
+      margin: 0 auto;
+    }
+
+    .qrcode-hint {
+      font-size: 13px;
+      color: #64748b;
+      margin-top: 12px;
+    }
+
+    .qrcode-hint svg {
+      display: inline;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+
+    /* ---- 提示文本 ---- */
+    .tip-text {
+      font-size: 13px;
+      color: #94a3b8;
+      text-align: center;
+      line-height: 1.7;
+      margin-bottom: 20px;
+      padding: 0 4px;
+    }
+
+    /* ---- 按钮 ---- */
+    .btn-activate {
+      display: block;
+      width: 100%;
+      height: 50px;
+      line-height: 50px;
+      text-align: center;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      color: #fff;
+      font-size: 16px;
+      font-weight: 700;
+      border: none;
+      border-radius: 14px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .btn-activate:hover {
+      opacity: 0.9;
+      transform: scale(1.02);
+      box-shadow: 0 10px 20px -5px rgba(59, 130, 246, 0.35);
+    }
+
+    .btn-activate:active {
+      transform: scale(0.98);
+    }
+
+    .btn-activate:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    /* ---- 消息弹窗 ---- */
+    .toast-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      background: rgba(0, 0, 0, 0.40);
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+    }
+
+    .toast-overlay.active {
+      display: flex;
+    }
+
+    .toast-box {
+      background: #fff;
+      border-radius: 20px;
+      padding: 36px 32px 28px;
+      max-width: 380px;
+      width: 100%;
+      text-align: center;
+      animation: modalSlideIn 0.3s ease-out;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    }
+
+    .toast-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 16px;
+    }
+
+    .toast-icon.success {
+      background: #dcfce7;
+    }
+
+    .toast-icon.error {
+      background: #fee2e2;
+    }
+
+    .toast-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 8px;
+    }
+
+    .toast-msg {
+      font-size: 14px;
+      color: #64748b;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .toast-btn {
+      display: inline-block;
+      padding: 10px 32px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .toast-btn.primary {
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      color: #fff;
+    }
+
+    .toast-btn.primary:hover {
+      opacity: 0.9;
+      box-shadow: 0 6px 14px rgba(59, 130, 246, 0.3);
+    }
+
+    .toast-btn.secondary {
+      background: #f1f5f9;
+      color: #475569;
+    }
+
+    .toast-btn.secondary:hover {
+      background: #e2e8f0;
+    }
+
+    @keyframes modalSlideIn {
+      from { opacity: 0; transform: scale(0.95) translateY(-10px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    /* ---- 身份获取诊断弹框 ---- */
+    .debug-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 2000;
+      background: rgba(15, 23, 42, 0.55);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 0.2s, visibility 0.2s;
+    }
+
+    .debug-overlay.active {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .debug-box {
+      width: 100%;
+      max-width: 360px;
+      background: #fff;
+      border-radius: 16px;
+      padding: 24px 20px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.15);
+      animation: modalSlideIn 0.25s ease-out;
+    }
+
+    .debug-title {
+      font-size: 17px;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 6px;
+      text-align: center;
+    }
+
+    .debug-subtitle {
+      font-size: 13px;
+      color: #64748b;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    .debug-summary {
+      text-align: center;
+      font-size: 14px;
+      font-weight: 600;
+      padding: 10px 12px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .debug-summary.all-ok {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .debug-summary.partial {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .debug-summary.all-fail {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .debug-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 12px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .debug-row:last-of-type {
+      border-bottom: none;
+    }
+
+    .debug-badge {
+      flex-shrink: 0;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+    }
+
+    .debug-badge.ok {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .debug-badge.fail {
+      background: #fee2e2;
+      color: #991b1b;
+    }
+
+    .debug-field {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .debug-label {
+      font-size: 12px;
+      color: #94a3b8;
+      margin-bottom: 4px;
+    }
+
+    .debug-value {
+      font-size: 13px;
+      color: #0f172a;
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    .debug-btn {
+      display: block;
+      width: 100%;
+      margin-top: 18px;
+      padding: 11px;
+      font-size: 14px;
+      font-weight: 600;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      background: linear-gradient(135deg, #3b82f6 0%, #8b5cf6 100%);
+      color: #fff;
+    }
+
+    .debug-box-wide {
+      max-width: 400px;
+    }
+
+    .debug-block {
+      margin-bottom: 14px;
+    }
+
+    .debug-block:last-of-type {
+      margin-bottom: 0;
+    }
+
+    .debug-mono {
+      font-family: ui-monospace, "Cascadia Code", Consolas, monospace;
+      font-size: 12px;
+    }
+
+    .debug-hint {
+      font-size: 11px;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin-top: 6px;
+    }
+
+    .oauth-check-link {
+      display: block;
+      width: 100%;
+      margin-top: 12px;
+      padding: 0;
+      border: none;
+      background: none;
+      font-size: 12px;
+      color: #64748b;
+      text-decoration: underline;
+      cursor: pointer;
+      text-align: center;
+    }
+
+    /* ---- 隐藏工具 ---- */
+    .hide {
+      display: none !important;
+    }
+
+    /* ---- 响应式 ---- */
+    @media (max-width: 540px) {
+      .card {
+        padding: 28px 20px;
+        border-radius: 16px;
+      }
+
+      .brand-icon {
+        width: 32px;
+        height: 32px;
+      }
+
+      .brand-name {
+        font-size: 18px;
+      }
+
+      .title {
+        font-size: 16px;
+      }
+
+      .info-label {
+        width: 72px;
+        font-size: 13px;
+      }
+
+      .info-value {
+        font-size: 14px;
+      }
+
+      .info-card {
+        padding: 14px 16px;
+      }
+
+      .qrcode-img {
+        width: 140px;
+        height: 140px;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 装饰光晕 -->
+  <div class="blob-1"></div>
+  <div class="blob-2"></div>
+
+  <!-- 主卡片 -->
+  <div class="card">
+
+    <!-- 品牌标识 -->
+    <div class="brand">
+      <div class="brand-icon">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M4 7c0-.933 0-1.4.182-1.777a1.8 1.8 0 0 1 .741-.74C5.3 4.3 5.767 4.3 6.7 4.3h10.6c.933 0 1.4 0 1.777.183.327.161.58.413.741.74C20 5.6 20 6.067 20 7v.3H4V7Z"/>
+          <path d="M4 9.3V17c0 .933 0 1.4.182 1.777.161.327.413.58.741.741C5.3 19.7 5.767 19.7 6.7 19.7h10.6c.933 0 1.4 0 1.777-.182.327-.161.58-.413.741-.741C20 18.4 20 17.933 20 17V9.3H4Zm3.5 3.9a1 1 0 0 1 1-1h7a1 1 0 1 1 0 2h-7a1 1 0 0 1-1-1Zm0 3.5a1 1 0 0 1 1-1h4a1 1 0 1 1 0 2h-4a1 1 0 0 1-1-1Z"/>
+        </svg>
+      </div>
+      <span class="brand-name">费尔空间</span>
+    </div>
+
+    <!-- 标题 -->
+    <h1 class="title">账号<span class="title-accent">激活</span>确认</h1>
+    <p class="subtitle">请确认您的账号信息并完成微信绑定</p>
+
+    <!-- 加载状态 -->
+    <div class="status-box" id="loadingBox">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style="margin:0 auto 14px;animation:spin 1s linear infinite;">
+        <circle cx="12" cy="12" r="10" stroke="#e2e8f0" stroke-width="3" fill="none"/>
+        <path d="M12 2a10 10 0 0 1 10 10" stroke="#3b82f6" stroke-width="3" stroke-linecap="round" fill="none"/>
+      </svg>
+      正在加载用户信息...
+    </div>
+
+    <!-- 主内容 -->
+    <div id="mainBox" class="hide">
+
+      <!-- 用户信息 -->
+      <div class="info-card">
+        <div class="info-row">
+          <span class="info-label">用户账号</span>
+          <span class="info-value" id="username">--</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">所属机构</span>
+          <span class="info-value" id="source">--</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">用户姓名</span>
+          <span class="info-value" id="name">--</span>
+        </div>
+        <div class="info-row">
+          <span class="info-label">联系电话</span>
+          <span class="info-value" id="phone">--</span>
+        </div>
+      </div>
+
+      <!-- 公众号二维码 -->
+      <div class="qrcode-section">
+        <div class="qrcode-title">扫码关注官方公众号</div>
+        <div class="qrcode-sub">关注后可接收数据集申请审批结果通知</div>
+        <img class="qrcode-img" src="https://omni-space.cn/images/wechat-mp-qrcode.jpg" alt="公众号二维码">
+        <div class="qrcode-hint">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="#64748b">
+            <path d="M17 2v2h3.59L12 12.59 13.41 14 22 5.41V9h2V2h-7ZM7 22v-2H3.41L12 13.41 10.59 12 2 20.59V17H0v7h7v-2Z"/>
+          </svg>
+          微信扫码并完成关注
+        </div>
+      </div>
+
+      <p class="tip-text">请确认以上信息无误，已关注公众号后点击下方按钮完成激活绑定</p>
+
+      <button class="btn-activate" id="activateBtn" disabled>正在获取微信身份...</button>
+      <button type="button" class="oauth-check-link" id="openOAuthCheckBtn">查看授权 redirect_uri 与域名配置</button>
+    </div>
+  </div>
+
+  <!-- OAuth redirect_uri 与授权域名诊断 -->
+  <div class="debug-overlay" id="oauthRedirectOverlay">
+    <div class="debug-box debug-box-wide">
+      <div class="debug-title">网页授权配置核对</div>
+      <div class="debug-subtitle">用于排查微信授权错误码 10003（微信侧配置本页无法读取）</div>
+      <div class="debug-summary partial" id="oauthDomainMatchSummary">检测中…</div>
+      <p class="debug-hint" id="oauth10003Explain" style="margin-bottom:12px;"></p>
+      <div class="debug-block">
+        <div class="debug-label">redirect_uri（将传给微信，完整地址）</div>
+        <div class="debug-value debug-mono" id="oauthRedirectUriValue">—</div>
+      </div>
+      <div class="debug-block">
+        <div class="debug-label">redirect_uri 中的主机名（微信会比对「授权域名」是否包含此主机名）</div>
+        <div class="debug-value debug-mono" id="oauthRedirectHostValue">—</div>
+      </div>
+      <div class="debug-block">
+        <div class="debug-label">页面变量 OAUTH_AUTHORIZED_DOMAIN（须手动改成公众平台里填的域名）</div>
+        <div class="debug-value debug-mono" id="oauthAuthorizedDomainValue">—</div>
+      </div>
+      <div class="debug-block">
+        <div class="debug-label">当前地址栏 hostname</div>
+        <div class="debug-value debug-mono" id="oauthPageHostValue">—</div>
+      </div>
+      <div class="debug-block">
+        <div class="debug-label">链接参数 mpDomain（把公众平台里实际填的域名贴到 URL 上，用于对照）</div>
+        <div class="debug-value debug-mono" id="oauthMpDomainValue">—</div>
+        <p class="debug-hint">示例：…&amp;mpDomain=712d3a37.r20.vip.cpolar.cn（仅主机名）</p>
+      </div>
+      <button type="button" class="debug-btn" id="oauthRedirectBtn">去微信授权</button>
+    </div>
+  </div>
+
+  <!-- 身份获取诊断弹框 -->
+  <div class="debug-overlay" id="identityDebugOverlay">
+    <div class="debug-box">
+      <div class="debug-title">身份参数获取结果</div>
+      <div class="debug-subtitle" id="identityDebugTime">--</div>
+      <div class="debug-summary partial" id="identityDebugSummary">检测中...</div>
+      <div class="debug-row">
+        <span class="debug-badge fail" id="identityDebugUidBadge">失败</span>
+        <div class="debug-field">
+          <div class="debug-label">uid</div>
+          <div class="debug-value" id="identityDebugUidValue">（未获取）</div>
+        </div>
+      </div>
+      <div class="debug-row">
+        <span class="debug-badge fail" id="identityDebugOpenIdBadge">失败</span>
+        <div class="debug-field">
+          <div class="debug-label">openId</div>
+          <div class="debug-value" id="identityDebugOpenIdValue">（未获取）</div>
+        </div>
+      </div>
+      <button type="button" class="debug-btn" id="identityDebugBtn">知道了</button>
+    </div>
+  </div>
+
+  <!-- 弹窗 -->
+  <div class="toast-overlay" id="toastOverlay">
+    <div class="toast-box" id="toastBox">
+      <div class="toast-icon" id="toastIcon">
+        <svg id="toastIconSvg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/>
+          <polyline points="22 4 12 14.01 9 11.01"/>
+        </svg>
+      </div>
+      <div class="toast-title" id="toastTitle">操作成功</div>
+      <div class="toast-msg" id="toastMsg">内容</div>
+      <button class="toast-btn primary" id="toastBtn">知道了</button>
+    </div>
+  </div>
+
+  <style>
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script>
+    // ========== 配置项 ==========
+    // 须与公众号后台「网页授权域名」一致（仅域名，勿带 https:// 与路径）
+    // 错误码 10003：当前访问域名未在该列表中 → 到公众平台配置并上传校验文件
+    var APPID = window.PUBLIC_WECHAT_APPID || "";
+    var API_HOST = "https://fairspace.cn";
+    /** 与公众号/测试号后台「网页授权域名」或「测试授权回调域名」一致（仅主机名）。须与当前访问域名一致。 */
+    var OAUTH_AUTHORIZED_DOMAIN = "712d3a37.r20.vip.cpolar.cn";
+
+    var userOpenId = "";
+    var currUid = "";
+    /** pending=换取 openId 中 | ready=可激活 | failed=换取失败 */
+    var wechatAuthStatus = "pending";
+    var pendingWechatAuth = false;
+    var pendingOAuthRedirect = false;
+    var urlParams = new URLSearchParams(window.location.search);
+
+    window.onload = function () {
+      // OAuth 回调后微信可能只带回 state，uid 在 state 里
+      currUid = urlParams.get("uid") || urlParams.get("state");
+      if (!currUid) {
+        showError("激活链接参数无效，请检查链接");
+        return;
+      }
+
+      var isWeChat = /MicroMessenger/i.test(navigator.userAgent);
+      if (!isWeChat) {
+        showError("请复制链接，在微信中打开进行账号激活");
+        return;
+      }
+
+      loadUserInfo();
+      initWechatIdentity();
+    };
+
+    function setActivateBtnState() {
+      var btn = document.getElementById("activateBtn");
+      if (!btn) return;
+      if (userOpenId) {
+        btn.disabled = false;
+        btn.innerText = "确认并激活账号";
+        return;
+      }
+      btn.disabled = true;
+      if (wechatAuthStatus === "pending") {
+        btn.innerText = "正在获取微信身份...";
+      } else {
+        btn.innerText = "微信身份获取失败，请重新打开链接";
+      }
+    }
+
+    function initWechatIdentity() {
+      wechatAuthStatus = "pending";
+      setActivateBtnState();
+
+      var code = urlParams.get("code");
+      if (code) {
+        getOpenId(code);
+        return;
+      }
+      showOAuthRedirectDialog({ oauthNext: true });
+    }
+
+    function normalizeAuthDomain(domain) {
+      if (!domain) return "";
+      return String(domain)
+        .trim()
+        .replace(/^https?:\/\//i, "")
+        .replace(/\/.*$/, "")
+        .split(":")[0];
+    }
+
+    function getRedirectUriHost() {
+      try {
+        var u = new URL(getOAuthRedirectUri());
+        return normalizeAuthDomain(u.hostname || "");
+      } catch (e) {
+        return "";
+      }
+    }
+
+    function getPageHost() {
+      return window.location.hostname || "";
+    }
+
+    function showOAuthRedirectDialog(options) {
+      options = options || {};
+      var redirectUri = getOAuthRedirectUri();
+      var redirectHost = getRedirectUriHost();
+      var refDomain = normalizeAuthDomain(OAUTH_AUTHORIZED_DOMAIN) || "（未配置）";
+      var pageHost = normalizeAuthDomain(getPageHost()) || "—";
+      var mpDomain = normalizeAuthDomain(urlParams.get("mpDomain") || "");
+
+      document.getElementById("oauthRedirectUriValue").innerText = redirectUri;
+      document.getElementById("oauthRedirectHostValue").innerText =
+        redirectHost || "—";
+      document.getElementById("oauthAuthorizedDomainValue").innerText = refDomain;
+      document.getElementById("oauthPageHostValue").innerText = pageHost;
+      document.getElementById("oauthMpDomainValue").innerText = mpDomain
+        ? mpDomain
+        : "（未传 mpDomain，无法与「您在后台手填的域名」自动逐项对账）";
+
+      var summaryEl = document.getElementById("oauthDomainMatchSummary");
+      var explainEl = document.getElementById("oauth10003Explain");
+
+      var hostEqRef = redirectHost && refDomain && redirectHost === refDomain;
+      var hostEqMp = mpDomain && redirectHost && redirectHost === mpDomain;
+
+      if (mpDomain) {
+        if (hostEqMp) {
+          summaryEl.className = "debug-summary all-ok";
+          summaryEl.innerText =
+            "redirect_uri 主机名 与 链接中的 mpDomain 一致（请确认 mpDomain 与公众平台填写完全一致）";
+        } else {
+          summaryEl.className = "debug-summary all-fail";
+          summaryEl.innerText =
+            "redirect_uri 主机名 与 mpDomain 不一致：请改 URL 参数或改公众平台「授权域名」";
+        }
+      } else {
+        summaryEl.className = hostEqRef ? "debug-summary all-ok" : "debug-summary all-fail";
+        summaryEl.innerText = hostEqRef
+          ? "redirect_uri 主机名 与 页面变量 OAUTH 一致（仅说明本页配置对齐）"
+          : "redirect_uri 主机名 与 页面变量 OAUTH 不一致：请改 OAUTH_AUTHORIZED_DOMAIN 或访问域名";
+      }
+
+      explainEl.innerText =
+        "重要：微信是否报 10003 由「该 AppID 对应公众号/测试号在公众平台里保存的授权域名」决定，H5 读不到微信后台，上面「一致」不能代替微信校验。" +
+        (mpDomain
+          ? ""
+          : " 建议在链接末尾加上 &mpDomain=您在后台实际填写的域名，再对照 redirect_uri 主机名。") +
+        " 若仍 10003：核对① AppID 与配置域名的账号是否为同一套（测试号/正式号勿混用）；② 测试号填「测试授权回调域名」、正式号填「网页授权域名」并已保存；③ 正式号需完成 MP_verify 文件校验。";
+
+      pendingOAuthRedirect = !!options.oauthNext;
+      document.getElementById("oauthRedirectBtn").innerText = pendingOAuthRedirect
+        ? "去微信授权"
+        : "知道了";
+      document.getElementById("oauthRedirectOverlay").classList.add("active");
+    }
+
+    document.getElementById("oauthRedirectBtn").addEventListener("click", function () {
+      document.getElementById("oauthRedirectOverlay").classList.remove("active");
+      if (pendingOAuthRedirect) {
+        pendingOAuthRedirect = false;
+        goWechatAuth();
+      }
+    });
+
+    document
+      .getElementById("oauthRedirectOverlay")
+      .addEventListener("click", function (e) {
+        if (e.target === this) {
+          this.classList.remove("active");
+          pendingOAuthRedirect = false;
+        }
+      });
+
+    document.getElementById("openOAuthCheckBtn").addEventListener("click", function () {
+      showOAuthRedirectDialog({ oauthNext: false });
+    });
+
+    function stripOAuthParamsFromUrl() {
+      var u = new URL(window.location.href);
+      u.searchParams.delete("code");
+      u.searchParams.delete("state");
+      window.history.replaceState({}, "", u.toString());
+    }
+
+    function showIdentityFetchDialog(openIdHint, options) {
+      options = options || {};
+      var uidOk = !!(currUid && String(currUid).trim());
+      var openIdOk = !!(userOpenId && String(userOpenId).trim());
+      var uidVal = uidOk ? String(currUid).trim() : "（未获取）";
+      var openIdVal = openIdOk
+        ? String(userOpenId).trim()
+        : openIdHint || "（未获取）";
+
+      var summaryEl = document.getElementById("identityDebugSummary");
+      var uidBadge = document.getElementById("identityDebugUidBadge");
+      var openIdBadge = document.getElementById("identityDebugOpenIdBadge");
+      var actionBtn = document.getElementById("identityDebugBtn");
+
+      document.getElementById("identityDebugTime").innerText =
+        "检测时间：" +
+        new Date().toLocaleString("zh-CN", { hour12: false });
+
+      document.getElementById("identityDebugUidValue").innerText = uidVal;
+      document.getElementById("identityDebugOpenIdValue").innerText = openIdVal;
+
+      uidBadge.className = "debug-badge " + (uidOk ? "ok" : "fail");
+      uidBadge.innerText = uidOk ? "成功" : "失败";
+      openIdBadge.className = "debug-badge " + (openIdOk ? "ok" : "fail");
+      openIdBadge.innerText = openIdOk ? "成功" : "失败";
+
+      if (uidOk && openIdOk) {
+        summaryEl.className = "debug-summary all-ok";
+        summaryEl.innerText = "uid 与 openId 均已获取成功";
+      } else if (uidOk || openIdOk) {
+        summaryEl.className = "debug-summary partial";
+        summaryEl.innerText = "部分获取成功，请查看下方明细";
+      } else {
+        summaryEl.className = "debug-summary all-fail";
+        summaryEl.innerText = "uid 与 openId 均未获取成功";
+      }
+
+      pendingWechatAuth = !!options.oauthNext;
+      actionBtn.innerText = pendingWechatAuth ? "去微信授权" : "知道了";
+      document.getElementById("identityDebugOverlay").classList.add("active");
+    }
+
+    document.getElementById("identityDebugBtn").addEventListener("click", function () {
+      document.getElementById("identityDebugOverlay").classList.remove("active");
+      if (pendingWechatAuth) {
+        pendingWechatAuth = false;
+        goWechatAuth();
+      }
+    });
+
+    document
+      .getElementById("identityDebugOverlay")
+      .addEventListener("click", function (e) {
+        if (e.target === this) {
+          this.classList.remove("active");
+        }
+      });
+
+    function showError(msg) {
+      var wrap = document.querySelector(".card");
+      wrap.innerHTML =
+        '<div class="status-box error" style="padding:40px 0;">' +
+        '<svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="1.5" style="margin:0 auto 16px;display:block;">' +
+        '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>' +
+        "</svg><p>" +
+        msg +
+        "</p></div>";
+    }
+
+    function loadUserInfo() {
+      fetch(API_HOST + "/oidc-server/user/user.findbyuid?uid=" + encodeURIComponent(currUid))
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (json) {
+          var data = json.data || json;
+          if (data) {
+            document.getElementById("username").innerText =
+              data.username || currUid;
+            document.getElementById("source").innerText = data.source || "暂无";
+            document.getElementById("name").innerText = data.name || "暂无";
+            document.getElementById("phone").innerText = data.phone || "暂无";
+
+            document.getElementById("loadingBox").classList.add("hide");
+            document.getElementById("mainBox").classList.remove("hide");
+          } else {
+            document.getElementById("loadingBox").innerHTML =
+              '<p style="color:#ef4444;">未查询到该用户信息</p>';
+          }
+        })
+        .catch(function () {
+          document.getElementById("loadingBox").innerHTML =
+            '<p style="color:#ef4444;">加载用户信息失败，请稍后重试</p>';
+        });
+    }
+
+    /** OAuth 回调地址：域名必须与公众号「网页授权域名」一致 */
+    function getOAuthRedirectUri() {
+      var path = window.location.pathname || "/account-activate.html";
+      return (
+        window.location.origin +
+        path +
+        "?uid=" +
+        encodeURIComponent(currUid)
+      );
+    }
+
+    function goWechatAuth() {
+      var redirectUri = encodeURIComponent(getOAuthRedirectUri());
+      var authUrl =
+        "https://open.weixin.qq.com/connect/oauth2/authorize?appid=" +
+        APPID +
+        "&redirect_uri=" +
+        redirectUri +
+        "&response_type=code&scope=snsapi_base&state=" +
+        encodeURIComponent(currUid) +
+        "#wechat_redirect";
+      window.location.href = authUrl;
+    }
+
+    function extractOpenId(res) {
+      if (!res) return "";
+      if (typeof res === "string") return res;
+      var direct = res.openid || res.openId;
+      if (direct) return direct;
+      var data = res.data;
+      if (typeof data === "string") return data;
+      if (data && typeof data === "object") {
+        return data.openid || data.openId || "";
+      }
+      if (res.result) {
+        var r = res.result;
+        return typeof r === "string" ? r : r.openid || r.openId || "";
+      }
+      return "";
+    }
+
+    function getOpenId(code) {
+      fetch(API_HOST + "/oidc-server/wechat/code2openidByService?code=" + encodeURIComponent(code))
+        .then(function (res) {
+          if (!res.ok) {
+            throw new Error("HTTP " + res.status);
+          }
+          return res.text();
+        })
+        .then(function (text) {
+          if (!text || !String(text).trim()) {
+            throw new Error("code2openidByService 接口返回为空，请检查后端公众号配置");
+          }
+          var res = JSON.parse(text);
+          var openid = extractOpenId(res);
+          var bizOk =
+            res.code === undefined ||
+            res.code === 0 ||
+            res.code === 200 ||
+            res.success === true;
+          if (!openid && !bizOk) {
+            throw new Error(
+              (res && (res.msg || res.message)) || "换取 openId 失败"
+            );
+          }
+          if (!openid) {
+            throw new Error(
+              (res && (res.msg || res.message)) ||
+                "响应中未包含 openId，请确认后端 code2openidByService 配置正确"
+            );
+          }
+          userOpenId = openid;
+          wechatAuthStatus = "ready";
+          stripOAuthParamsFromUrl();
+        })
+        .catch(function (err) {
+          wechatAuthStatus = "failed";
+          showToast(
+            "error",
+            "获取微信身份失败",
+            (err && err.message) || "请重新打开激活链接"
+          );
+        })
+        .finally(function () {
+          setActivateBtnState();
+          showIdentityFetchDialog();
+        });
+    }
+
+    document.getElementById("activateBtn").addEventListener("click", function () {
+      if (!userOpenId) {
+        if (wechatAuthStatus === "pending") {
+          showToast("error", "正在获取微信身份", "请等待按钮变为可点击后再试");
+        } else {
+          showToast(
+            "error",
+            "无法获取微信身份",
+            "请关闭页面后重新从激活链接进入，或联系管理员检查 /oidc-server/wechat/code2openidByService 接口"
+          );
+        }
+        return;
+      }
+      var btn = this;
+      btn.disabled = true;
+      btn.innerText = "激活中...";
+
+      fetch(API_HOST + "/oidc-server/user/user.active", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          uid: currUid,
+          openId: userOpenId
+        })
+      })
+        .then(function (res) {
+          return res.json();
+        })
+        .then(function (data) {
+          btn.disabled = false;
+          btn.innerText = "确认并激活账号";
+          if (data.success || data.code === 200) {
+            showToast(
+              "success",
+              "🎉 激活成功",
+              "账号已成功激活并绑定微信，可正常接收审批通知"
+            );
+          } else {
+            showToast(
+              "error",
+              "激活失败",
+              data.msg || data.message || "未知错误，请联系管理员"
+            );
+          }
+        })
+        .catch(function () {
+          btn.disabled = false;
+          btn.innerText = "确认并激活账号";
+          showToast("error", "请求失败", "服务器请求失败，请稍后重试");
+        });
+    });
+
+    function showToast(type, title, msg) {
+      var overlay = document.getElementById("toastOverlay");
+      var icon = document.getElementById("toastIcon");
+      var svg = document.getElementById("toastIconSvg");
+      var titleEl = document.getElementById("toastTitle");
+      var msgEl = document.getElementById("toastMsg");
+      var btn = document.getElementById("toastBtn");
+
+      if (type === "success") {
+        icon.className = "toast-icon success";
+        svg.innerHTML =
+          '<path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/>';
+        svg.style.color = "#16a34a";
+        btn.className = "toast-btn primary";
+        btn.onclick = function () {
+          overlay.classList.remove("active");
+        };
+      } else {
+        icon.className = "toast-icon error";
+        svg.innerHTML =
+          '<circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>';
+        svg.style.color = "#ef4444";
+        btn.className = "toast-btn secondary";
+        btn.onclick = function () {
+          overlay.classList.remove("active");
+        };
+      }
+
+      titleEl.innerText = title;
+      msgEl.innerText = msg || "";
+      overlay.classList.add("active");
+    }
+
+    document.getElementById("toastOverlay").addEventListener("click", function (e) {
+      if (e.target === this) {
+        this.classList.remove("active");
+      }
+    });
+  </script>
+</body>
+</html>

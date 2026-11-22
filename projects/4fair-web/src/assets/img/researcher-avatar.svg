@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256" fill="none">
+  <!-- 蓝色天空背景 -->
+  <rect width="256" height="256" rx="32" fill="#87ceeb"/>
+  
+  <!-- 浅蓝色天空渐变效果 -->
+  <rect width="256" height="140" fill="#b0e0e6"/>
+  
+  <!-- 白云 -->
+  <ellipse cx="80" cy="50" rx="35" ry="20" fill="#ffffff" opacity="0.9"/>
+  <ellipse cx="100" cy="45" rx="30" ry="18" fill="#ffffff" opacity="0.9"/>
+  <ellipse cx="50" cy="50" rx="25" ry="15" fill="#ffffff" opacity="0.85"/>
+  
+  <ellipse cx="180" cy="70" rx="40" ry="22" fill="#ffffff" opacity="0.85"/>
+  <ellipse cx="220" cy="65" rx="35" ry="20" fill="#ffffff" opacity="0.8"/>
+  <ellipse cx="150" cy="75" rx="30" ry="18" fill="#ffffff" opacity="0.8"/>
+  
+  <!-- 绿色山峦 -->
+  <path d="M 0 140 Q 64 80 128 110 T 256 140 L 256 180 Q 192 140 128 160 Q 64 140 0 180 Z" fill="#228b22"/>
+  
+  <!-- 深绿色前景山 -->
+  <path d="M 0 180 Q 50 140 100 170 T 200 160 T 256 190 L 256 256 L 0 256 Z" fill="#1a6b1a"/>
+  
+  <!-- 草地 -->
+  <rect y="200" width="256" height="56" fill="#2d8659"/>
+  
+  <!-- 平原高度差 -->
+  <path d="M 0 200 L 40 195 L 80 198 L 120 190 L 160 195 L 200 188 L 256 195 L 256 200 L 0 200 Z" fill="#1f5c3a" opacity="0.5"/>
+  
+  <!-- 树木 - 左边 -->
+  <ellipse cx="40" cy="165" rx="18" ry="38" fill="#1a6b1a"/>
+  <rect x="36" y="200" width="8" height="25" fill="#8b6914"/>
+  
+  <!-- 树木 - 中间 -->
+  <ellipse cx="220" cy="170" rx="20" ry="40" fill="#1a6b1a"/>
+  <rect x="215" y="205" width="10" height="30" fill="#8b6914"/>
+  
+  <!-- 太阳 -->
+  <circle cx="220" cy="60" r="30" fill="#ffd700" opacity="0.9"/>
+  <circle cx="220" cy="60" r="28" fill="#ffed4e" opacity="0.7"/>
+  
+  <!-- 小鸟 -->
+  <g opacity="0.7">
+    <path d="M 140 90 L 145 85 L 150 90" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+    <path d="M 155 85 L 160 80 L 165 85" stroke="#333" stroke-width="2" fill="none" stroke-linecap="round"/>
+  </g>
+</svg>

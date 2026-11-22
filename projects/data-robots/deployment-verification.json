@@ -1,0 +1,151 @@
+{
+  "checkedAt": "2026-11-16T11:15:42.032Z",
+  "synthetic": true,
+  "allRobots": 12,
+  "results": [
+    {
+      "robot": "quality",
+      "id": "8c8def08-5360-4b54-85d0-9a2a338effdd",
+      "status": "reviewed",
+      "artifacts": [
+        "sample-quality.json",
+        "remediation-plan.json",
+        "report.md"
+      ],
+      "quality": {
+        "header": [
+          "station",
+          "value",
+          "quality"
+        ],
+        "rows": 3,
+        "cells": 9,
+        "empty": 1,
+        "missingRatio": 0.1111111111111111,
+        "duplicateRows": 1,
+        "inconsistentRows": 0,
+        "duplicateHeaders": 0
+      }
+    },
+    {
+      "robot": "fair",
+      "id": "e429aac3-ba55-4a27-9be0-11ec9214d44b",
+      "status": "awaiting_review",
+      "artifacts": [
+        "fair-evidence.json",
+        "report.md"
+      ],
+      "quality": null
+    },
+    {
+      "robot": "metadata",
+      "id": "9b576404-1611-449c-9d33-1ea59334242e",
+      "status": "awaiting_review",
+      "artifacts": [
+        "metadata-draft.json",
+        "report.md"
+      ],
+      "quality": null
+    },
+    {
+      "robot": "classification",
+      "id": "e23e6e6e-122f-4baa-a36b-f25dee1c8665",
+      "status": "awaiting_review",
+      "artifacts": [
+        "access-control-review.json",
+        "report.md"
+      ],
+      "quality": null
+    },
+    {
+      "robot": "rights",
+      "id": "5dff0198-5d42-44c2-a6c3-9b5577fb3908",
+      "status": "awaiting_review",
+      "artifacts": [
+        "authorization-draft.json",
+        "report.md"
+      ],
+      "quality": null
+    },
+    {
+      "robot": "onboarding",
+      "id": "775dd0fd-bcf2-4144-9ab9-22a9aab8c44c",
+      "status": "awaiting_review",
+      "artifacts": [
+        "dacp-config-draft.json",
+        "report.md"
+      ],
+      "quality": null
+    },
+    {
+      "robot": "service",
+      "id": "6241b06f-30c6-4145-bf26-1ed992d0593b",
+      "status": "awaiting_review",
+      "artifacts": [
+        "service-contract.json",
+        "job-design.json",
+        "report.md"
+      ],
+      "quality": null
+    },
+    {
+      "robot": "product",
+      "id": "75e79fc4-082d-4fe4-9478-5d642bec8939",
+      "status": "awaiting_review",
+      "artifacts": [
+        "product-specification.json",
+        "report.md"
+      ],
+      "quality": null
+    },
+    {
+      "robot": "matching",
+      "id": "dd36c5a2-95bd-47ac-a8ba-930c1877a6eb",
+      "status": "awaiting_review",
+      "artifacts": [
+        "resource-requirements.json",
+        "report.md"
+      ],
+      "quality": null
+    },
+    {
+      "robot": "processing",
+      "id": "7bb79431-00fe-4be8-b9fa-fc1b93e7f61d",
+      "status": "awaiting_review",
+      "artifacts": [
+        "processing-plan.json",
+        "report.md"
+      ],
+      "quality": null
+    },
+    {
+      "robot": "provenance",
+      "id": "ed91816b-dc80-47b9-95a6-381ed845e990",
+      "status": "awaiting_review",
+      "artifacts": [
+        "provenance-draft.json",
+        "report.md"
+      ],
+      "quality": null
+    },
+    {
+      "robot": "operations",
+      "id": "df69a61e-fdee-4591-9730-7edac3b11e09",
+      "status": "awaiting_review",
+      "artifacts": [
+        "node-inspection.json",
+        "report.md"
+      ],
+      "quality": null,
+      "operations": {
+        "endpoint": "http://10.0.90.48:19881/",
+        "httpStatus": 200,
+        "responseMs": 38,
+        "observedAt": "2026-11-16T11:15:41.954Z",
+        "healthy": true
+      }
+    }
+  ],
+  "restartPersistenceVerified": true,
+  "browserVisualCheck": "unavailable_tool_timeout"
+}

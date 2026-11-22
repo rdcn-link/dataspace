@@ -1,0 +1,24 @@
+host: 127.0.0.1
+public_host: localhost
+port: 18862
+datasets:
+  climate:
+    provider: mixed
+    description: '{"synthetic":true,"reference_period":"synthetic_1991_2020_reference","title":"climate","description":"Synthetic
+      station locations and October climate references"}'
+    items:
+      /station_baselines:
+        file: ../examples/union/data/station_baselines.csv
+tls_cert: ../examples/certs/node-b.crt
+tls_key: ../examples/certs/node-b.key
+tls_ca: ../examples/certs/ca.crt
+local_operator_library: ../examples/union/operators
+max_concurrent_tasks: 4
+union:
+  state_directory: ../.union-demo/b
+  execution_timeout_seconds: 120
+execution_store:
+  provider: file
+  settings:
+    directory: ../.union-demo/b-executions
+credential_directory: ../.union-demo/b-credentials

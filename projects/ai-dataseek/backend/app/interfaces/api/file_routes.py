@@ -1,0 +1,798 @@
+from fastapi import APIRouter, Depends, UploadFile, File, Form, Request, HTTPException
+from fastapi.responses import StreamingResponse
+from starlette.background import BackgroundTask
+from starlette.concurrency import run_in_threadpool
+import json
+import logging
+import io
+import shutil
+import subprocess
+import tempfile
+import zipfile
+from pathlib import Path, PurePosixPath
+from pydantic import BaseModel, Field
+
+from app.application.services.alignment_preview import (
+    AlignmentPreviewError,
+    AlignmentRegionOptions,
+    alignment_preview_cache,
+    extract_region,
+    inspect_alignment,
+)
+from app.application.services.astronomy_preview import (
+    AstronomyPreviewError,
+    astronomy_preview_cache,
+    detect_sources as detect_astronomy_sources,
+    inspect_pixel as inspect_astronomy_pixel,
+    inspect_preview as inspect_astronomy_preview,
+    inspect_region as inspect_astronomy_region,
+    render_plane as render_astronomy_plane,
+)
+from app.application.services.file_service import FileService
+from app.application.services.matrix_preview import MatrixPreviewError, matrix_preview_cache, describe as describe_matrix, render as render_matrix, result_curves
+from app.application.errors.exceptions import NotFoundError
+from app.interfaces.dependencies import get_file_service, get_current_user, get_optional_current_user, verify_signature
+from app.domain.models.user import User
+from app.interfaces.schemas.base import APIResponse
+from app.interfaces.schemas.file import (
+    FileInfoResponse,
+    LargeUploadCompleteRequest,
+    LargeUploadInitRequest,
+    LargeUploadInitResponse,
+    LargeUploadPartUploadResponse,
+    LargeUploadStatusResponse,
+    public_filename,
+)
+from app.interfaces.schemas.resource import AccessTokenRequest, SignedUrlResponse
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/files", tags=["files"])
+
+
+class ShapefilePreviewRequest(BaseModel):
+    file_id: str
+
+
+class ShapefilePreviewLayer(BaseModel):
+    name: str
+    relative_path: str
+    complete: bool
+    components: list[FileInfoResponse]
+    missing_components: list[str]
+
+
+class ShapefilePreviewResponse(BaseModel):
+    source_name: str
+    layers: list[ShapefilePreviewLayer]
+
+
+class MolecularPreviewRequest(BaseModel):
+    file_id: str
+
+
+class MolecularPreviewResponse(BaseModel):
+    source_name: str
+    source_format: str
+    content_type: str | None = None
+    size_bytes: int | None = None
+    periodic: bool
+    supports_unit_cell: bool
+
+
+class AlignmentPreviewRequest(BaseModel):
+    file_id: str
+
+
+class AlignmentRegionPreviewRequest(BaseModel):
+    file_id: str
+    preview_id: str = Field(min_length=16, max_length=128)
+    reference: str = Field(min_length=1, max_length=512)
+    start: int = Field(ge=0)
+    end: int = Field(gt=0)
+    max_reads: int = Field(default=500, ge=1, le=2000)
+    bin_count: int = Field(default=500, ge=20, le=1000)
+
+
+class AlignmentPreviewReleaseRequest(BaseModel):
+    file_id: str
+    preview_id: str = Field(min_length=16, max_length=128)
+
+
+class AstronomyPreviewRequest(BaseModel):
+    file_id: str
+
+
+class MatrixRenderRequest(AlignmentPreviewReleaseRequest):
+    variable: str = Field(min_length=1, max_length=1024)
+    axes: list[int] = Field(default_factory=lambda: [0, 1], max_length=2)
+    indices: list[int] = Field(default_factory=list, max_length=16)
+    component: str = Field(default='real', pattern='^(real|imaginary|magnitude|phase)$')
+    row_range: list[int] | None = Field(default=None, min_length=2, max_length=2)
+    column_range: list[int] | None = Field(default=None, min_length=2, max_length=2)
+    max_points: int = Field(default=256, ge=16, le=512)
+    structure: bool = False
+
+
+@router.post('/matrix-preview/prepare')
+async def prepare_matrix_preview(
+    request: AstronomyPreviewRequest,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user),
+):
+    stream, file_info = await file_service.download_file(request.file_id, current_user.id)
+    entry = None
+    try:
+        entry = await run_in_threadpool(matrix_preview_cache.create, current_user.id, request.file_id,
+                                       public_filename(file_info.filename), stream, declared_size=file_info.size)
+        payload = await run_in_threadpool(describe_matrix, entry)
+        payload['curves'] = await run_in_threadpool(result_curves, entry)
+        return APIResponse.success(payload)
+    except Exception as exc:
+        if entry:
+            matrix_preview_cache.delete(entry.preview_id, current_user.id, request.file_id)
+        logger.warning('Matrix preview preparation failed: %s', type(exc).__name__)
+        message = str(exc) if isinstance(exc, (MatrixPreviewError, AstronomyPreviewError)) else '矩阵文件解析失败，请检查格式和文件完整性'
+        raise HTTPException(status_code=422, detail=message) from exc
+    finally:
+        _close_file_stream(stream)
+
+
+@router.post('/matrix-preview/render')
+async def render_matrix_preview(request: MatrixRenderRequest, current_user: User = Depends(get_current_user)):
+    try:
+        entry = matrix_preview_cache.get(request.preview_id, current_user.id, request.file_id)
+        return APIResponse.success(await run_in_threadpool(render_matrix, entry, request.variable,
+                                                           request.axes, request.indices, request.component,
+                                                           request.row_range, request.column_range,
+                                                           request.max_points, request.structure))
+    except Exception as exc:
+        logger.warning('Matrix preview rendering failed: %s', type(exc).__name__)
+        message = str(exc) if isinstance(exc, (MatrixPreviewError, AstronomyPreviewError)) else '矩阵切片读取失败'
+        raise HTTPException(status_code=422, detail=message) from exc
+
+
+@router.post('/matrix-preview/release')
+async def release_matrix_preview(request: AlignmentPreviewReleaseRequest, current_user: User = Depends(get_current_user)):
+    matrix_preview_cache.delete(request.preview_id, current_user.id, request.file_id)
+    return APIResponse.success(None)
+
+
+class AstronomyPreviewSelectionRequest(BaseModel):
+    file_id: str
+    preview_id: str = Field(min_length=16, max_length=128)
+    dataset_index: int = Field(default=0, ge=0, le=10000)
+    slice_indices: list[int] = Field(default_factory=list, max_length=16)
+    band: int = Field(default=1, ge=0, le=1024)
+
+
+class AstronomyRenderRequest(AstronomyPreviewSelectionRequest):
+    stretch: str = Field(default="linear", pattern="^(linear|log|sqrt|asinh)$")
+    interval: str = Field(default="zscale", pattern="^(zscale|percentile|manual)$")
+    low: float | None = None
+    high: float | None = None
+    colour_map: str = Field(default="gray", pattern="^(gray|viridis|heat|cool)$")
+    invert: bool = False
+
+
+class AstronomyPixelRequest(AstronomyPreviewSelectionRequest):
+    x: int = Field(ge=0)
+    y: int = Field(ge=0)
+
+
+class AstronomyRegionRequest(AstronomyPreviewSelectionRequest):
+    x0: int = Field(ge=0)
+    y0: int = Field(ge=0)
+    x1: int = Field(ge=0)
+    y1: int = Field(ge=0)
+
+
+class AstronomySourceRequest(AstronomyPreviewSelectionRequest):
+    threshold_sigma: float = Field(default=5, ge=1, le=100)
+
+
+_SHAPEFILE_COMPONENTS = {".shp", ".shx", ".dbf", ".prj", ".cpg"}
+_MAX_ARCHIVE_BYTES = 512 * 1024 * 1024
+_MAX_EXPANDED_BYTES = 2 * 1024 * 1024 * 1024
+_MAX_ARCHIVE_FILES = 10000
+_MAX_MOLECULAR_PREVIEW_BYTES = 50 * 1024 * 1024
+_MAX_ALIGNMENT_PREVIEW_BYTES = 1024 * 1024 * 1024
+_MOLECULAR_FORMATS = {
+    ".cif": "cif",
+    ".mmcif": "cif",
+    ".pdb": "pdb",
+    ".ent": "pdb",
+    ".mol": "sdf",
+    ".sdf": "sdf",
+    ".xyz": "xyz",
+    ".mol2": "mol2",
+    ".vasp": "vasp",
+}
+
+
+def _safe_archive_member(name: str) -> PurePosixPath:
+    normalized = name.replace("\\", "/")
+    path = PurePosixPath(normalized)
+    if not normalized or path.is_absolute() or ".." in path.parts or "\x00" in normalized:
+        raise ValueError("Archive contains an unsafe member path")
+    return path
+
+
+def _extract_preview_archive(source: Path, destination: Path) -> None:
+    if source.suffix.lower() == ".zip":
+        with zipfile.ZipFile(source) as archive:
+            members = [item for item in archive.infolist() if not item.is_dir()]
+            if len(members) > _MAX_ARCHIVE_FILES or sum(item.file_size for item in members) > _MAX_EXPANDED_BYTES:
+                raise ValueError("Archive exceeds Shapefile preview limits")
+            for item in members:
+                relative = _safe_archive_member(item.filename)
+                if item.file_size > _MAX_ARCHIVE_BYTES:
+                    raise ValueError("Archive member exceeds Shapefile preview limits")
+                target = destination.joinpath(*relative.parts)
+                target.parent.mkdir(parents=True, exist_ok=True)
+                with archive.open(item) as src, target.open("wb") as dst:
+                    shutil.copyfileobj(src, dst, length=1024 * 1024)
+        return
+    listing = subprocess.run(["7z", "l", "-slt", str(source)], capture_output=True, text=True, timeout=60, check=True)
+    names = []
+    for line in listing.stdout.splitlines():
+        if line.startswith("Path = "):
+            candidate = line[7:].strip()
+            if candidate and candidate != str(source): names.append(candidate)
+    if len(names) > _MAX_ARCHIVE_FILES:
+        raise ValueError("Archive contains too many files")
+    for name in names: _safe_archive_member(name)
+    subprocess.run(["7z", "x", "-y", f"-o{destination}", str(source)], capture_output=True, text=True, timeout=180, check=True)
+    total = sum(path.stat().st_size for path in destination.rglob("*") if path.is_file())
+    if total > _MAX_EXPANDED_BYTES:
+        raise ValueError("Expanded archive exceeds Shapefile preview limits")
+
+
+def _close_file_stream(stream) -> None:
+    try:
+        if hasattr(stream, "close"):
+            stream.close()
+    finally:
+        if hasattr(stream, "release_conn"):
+            stream.release_conn()
+
+
+def _molecular_source_format(source_name: str) -> str | None:
+    if Path(source_name).name.casefold() in {"poscar", "contcar"}:
+        return "vasp"
+    return _MOLECULAR_FORMATS.get(Path(source_name).suffix.casefold())
+
+
+async def _prepare_alignment_preview_file(
+    file_id: str,
+    file_service: FileService,
+    user_id: str,
+) -> tuple[Path, str, str]:
+    stream, file_info = await file_service.download_file(file_id, user_id)
+    source_name = public_filename(file_info.filename)
+    suffix = Path(source_name).suffix.casefold()
+    try:
+        if suffix not in {".sam", ".bam", ".cram"}:
+            raise HTTPException(status_code=415, detail="Only SAM, BAM and CRAM previews are supported")
+        if file_info.size is not None and file_info.size > _MAX_ALIGNMENT_PREVIEW_BYTES:
+            raise HTTPException(status_code=413, detail="Alignment file exceeds the 1 GB preview limit")
+        try:
+            preview = alignment_preview_cache.create(
+                user_id, file_id, suffix, stream, max_bytes=_MAX_ALIGNMENT_PREVIEW_BYTES
+            )
+        except AlignmentPreviewError as exc:
+            raise HTTPException(status_code=413, detail=str(exc)) from exc
+        return preview.path, source_name, preview.preview_id
+    finally:
+        _close_file_stream(stream)
+
+@router.post("", response_model=APIResponse[FileInfoResponse])
+async def upload_file(
+    file: UploadFile = File(...),
+    metadata: str | None = Form(default=None),
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user)
+) -> APIResponse[FileInfoResponse]:
+    """Upload file"""
+    parsed_metadata = {}
+    if metadata:
+        try:
+            parsed = json.loads(metadata)
+            if isinstance(parsed, dict):
+                parsed_metadata = parsed
+        except json.JSONDecodeError:
+            logger.warning("Ignoring invalid upload metadata JSON")
+    # Upload file
+    result = await file_service.upload_file(
+        file_data=file.file,
+        filename=file.filename,
+        user_id=current_user.id,
+        content_type=file.content_type,
+        metadata=parsed_metadata,
+    )
+    
+    return APIResponse.success(await FileInfoResponse.from_file_info(result))
+
+
+@router.post(
+    "/shapefile-preview/prepare",
+    response_model=APIResponse[ShapefilePreviewResponse],
+)
+async def prepare_shapefile_preview(
+    request: ShapefilePreviewRequest,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user),
+) -> APIResponse[ShapefilePreviewResponse]:
+    stream, file_info = await file_service.download_file(request.file_id, current_user.id)
+    source_name = public_filename(file_info.filename)
+    suffix = Path(source_name).suffix.lower()
+    if suffix not in {".zip", ".rar"}:
+        _close_file_stream(stream)
+        raise ValueError("Shapefile preview preparation supports ZIP or RAR archives")
+    with tempfile.TemporaryDirectory(prefix="dataseek-shapefile-preview-") as temporary:
+        root = Path(temporary)
+        archive_path = root / ("source" + suffix)
+        with archive_path.open("wb") as target:
+            shutil.copyfileobj(stream, target, length=1024 * 1024)
+        _close_file_stream(stream)
+        if archive_path.stat().st_size > _MAX_ARCHIVE_BYTES:
+            raise ValueError("Archive exceeds Shapefile preview limits")
+        extracted = root / "extracted"
+        extracted.mkdir()
+        _extract_preview_archive(archive_path, extracted)
+
+        groups: dict[str, list[Path]] = {}
+        for path in extracted.rglob("*"):
+            if not path.is_file() or path.suffix.lower() not in _SHAPEFILE_COMPONENTS:
+                continue
+            key = path.relative_to(extracted).with_suffix("").as_posix().casefold()
+            groups.setdefault(key, []).append(path)
+        layers: list[ShapefilePreviewLayer] = []
+        for key, paths in sorted(groups.items()):
+            extensions = {path.suffix.lower() for path in paths}
+            if ".shp" not in extensions:
+                continue
+            required = {".shp", ".shx", ".dbf"}
+            missing = sorted(required - extensions)
+            component_responses = []
+            for path in sorted(paths):
+                relative = path.relative_to(extracted).as_posix()
+                with path.open("rb") as component_stream:
+                    uploaded = await file_service.upload_file(
+                        component_stream,
+                        path.name,
+                        current_user.id,
+                        "application/octet-stream",
+                        {
+                            "shapefile_preview": True,
+                            "source_archive": source_name,
+                            "logical_path": relative,
+                            "layer_key": key,
+                        },
+                    )
+                response = await FileInfoResponse.from_file_info(uploaded)
+                response.relative_path = relative
+                component_responses.append(response)
+            layers.append(ShapefilePreviewLayer(
+                name=PurePosixPath(key).name,
+                relative_path=key,
+                complete=not missing,
+                components=component_responses,
+                missing_components=missing,
+            ))
+    if not layers:
+        raise ValueError("Archive contains no Shapefile layers")
+    return APIResponse.success(ShapefilePreviewResponse(source_name=source_name, layers=layers))
+
+
+@router.post(
+    "/molecular-preview/prepare",
+    response_model=APIResponse[MolecularPreviewResponse],
+)
+async def prepare_molecular_preview(
+    request: MolecularPreviewRequest,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user),
+) -> APIResponse[MolecularPreviewResponse]:
+    """Authorize a browser-side structure preview without exposing storage paths."""
+    stream, file_info = await file_service.download_file(request.file_id, current_user.id)
+    try:
+        source_name = public_filename(file_info.filename)
+        source_format = _molecular_source_format(source_name)
+        if source_format is None:
+            raise HTTPException(status_code=415, detail="Unsupported molecular structure format")
+        if file_info.size is not None and file_info.size > _MAX_MOLECULAR_PREVIEW_BYTES:
+            raise HTTPException(status_code=413, detail="Molecular structure exceeds the 50 MB preview limit")
+        periodic = source_format in {"cif", "vasp"}
+        return APIResponse.success(MolecularPreviewResponse(
+            source_name=source_name,
+            source_format=source_format,
+            content_type=file_info.content_type,
+            size_bytes=file_info.size,
+            periodic=periodic,
+            supports_unit_cell=periodic,
+        ))
+    finally:
+        _close_file_stream(stream)
+
+
+@router.post("/alignment-preview/prepare")
+async def prepare_alignment_preview(
+    request: AlignmentPreviewRequest,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user),
+):
+    """Return path-free SAM/BAM/CRAM header metadata for the interactive viewer."""
+    path, source_name, preview_id = await _prepare_alignment_preview_file(
+        request.file_id, file_service, current_user.id
+    )
+    try:
+        result = await run_in_threadpool(inspect_alignment, path)
+    except AlignmentPreviewError as exc:
+        alignment_preview_cache.delete(preview_id, current_user.id, request.file_id)
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return APIResponse.success({"source_name": source_name, "preview_id": preview_id, **result})
+
+
+@router.post("/alignment-preview/region")
+async def preview_alignment_region(
+    request: AlignmentRegionPreviewRequest,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user),
+):
+    """Extract a bounded alignment region without exposing storage paths."""
+    try:
+        preview = alignment_preview_cache.get(request.preview_id, current_user.id, request.file_id)
+        options = AlignmentRegionOptions(
+            reference=request.reference, start=request.start, end=request.end,
+            max_reads=request.max_reads, bin_count=request.bin_count,
+        )
+        result = await run_in_threadpool(extract_region, preview.path, options)
+    except AlignmentPreviewError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return APIResponse.success(result)
+
+
+@router.post("/alignment-preview/release")
+async def release_alignment_preview(
+    request: AlignmentPreviewReleaseRequest,
+    current_user: User = Depends(get_current_user),
+):
+    alignment_preview_cache.delete(request.preview_id, current_user.id, request.file_id)
+    return APIResponse.success(None)
+
+
+@router.post("/astronomy-preview/prepare")
+async def prepare_astronomy_preview(
+    request: AstronomyPreviewRequest,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user),
+):
+    """Prepare a private FITS/TIFF source for bounded interactive rendering."""
+    stream, file_info = await file_service.download_file(request.file_id, current_user.id)
+    try:
+        entry = astronomy_preview_cache.create(
+            current_user.id,
+            request.file_id,
+            public_filename(file_info.filename),
+            stream,
+            declared_size=file_info.size,
+        )
+        result = await run_in_threadpool(inspect_astronomy_preview, entry)
+    except AstronomyPreviewError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    finally:
+        _close_file_stream(stream)
+    return APIResponse.success(result)
+
+
+def _astronomy_entry(request, current_user: User):
+    return astronomy_preview_cache.get(request.preview_id, current_user.id, request.file_id)
+
+
+@router.post("/astronomy-preview/render")
+async def render_astronomy_preview(
+    request: AstronomyRenderRequest,
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        entry = _astronomy_entry(request, current_user)
+        result = await run_in_threadpool(
+            render_astronomy_plane,
+            entry,
+            dataset_index=request.dataset_index,
+            slice_indices=request.slice_indices,
+            band=request.band,
+            stretch=request.stretch,
+            interval=request.interval,
+            low=request.low,
+            high=request.high,
+            colour_map=request.colour_map,
+            invert=request.invert,
+        )
+    except AstronomyPreviewError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return APIResponse.success(result)
+
+
+@router.post("/astronomy-preview/pixel")
+async def astronomy_preview_pixel(
+    request: AstronomyPixelRequest,
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        result = await run_in_threadpool(
+            inspect_astronomy_pixel,
+            _astronomy_entry(request, current_user),
+            dataset_index=request.dataset_index,
+            slice_indices=request.slice_indices,
+            band=request.band,
+            x=request.x,
+            y=request.y,
+        )
+    except AstronomyPreviewError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return APIResponse.success(result)
+
+
+@router.post("/astronomy-preview/region")
+async def astronomy_preview_region(
+    request: AstronomyRegionRequest,
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        result = await run_in_threadpool(
+            inspect_astronomy_region,
+            _astronomy_entry(request, current_user),
+            dataset_index=request.dataset_index,
+            slice_indices=request.slice_indices,
+            band=request.band,
+            x0=request.x0,
+            y0=request.y0,
+            x1=request.x1,
+            y1=request.y1,
+        )
+    except AstronomyPreviewError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return APIResponse.success(result)
+
+
+@router.post("/astronomy-preview/sources")
+async def astronomy_preview_sources(
+    request: AstronomySourceRequest,
+    current_user: User = Depends(get_current_user),
+):
+    try:
+        result = await run_in_threadpool(
+            detect_astronomy_sources,
+            _astronomy_entry(request, current_user),
+            dataset_index=request.dataset_index,
+            slice_indices=request.slice_indices,
+            band=request.band,
+            threshold_sigma=request.threshold_sigma,
+        )
+    except AstronomyPreviewError as exc:
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
+    return APIResponse.success(result)
+
+
+@router.post("/astronomy-preview/release")
+async def release_astronomy_preview(
+    request: AstronomyPreviewSelectionRequest,
+    current_user: User = Depends(get_current_user),
+):
+    astronomy_preview_cache.delete(request.preview_id, current_user.id, request.file_id)
+    return APIResponse.success(None)
+
+
+def _large_upload_status_response(session) -> LargeUploadStatusResponse:
+    return LargeUploadStatusResponse(
+        upload_id=session.upload_id,
+        file_id=session.file_id,
+        filename=session.filename,
+        size=session.size,
+        part_size=session.part_size,
+        status=session.status,
+        parts=session.parts,
+        error=session.error,
+        expires_at=session.expires_at,
+    )
+
+
+@router.post("/large-uploads/init", response_model=APIResponse[LargeUploadInitResponse])
+async def init_large_upload(
+    request: LargeUploadInitRequest,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user),
+) -> APIResponse[LargeUploadInitResponse]:
+    session = await file_service.init_large_upload(
+        filename=request.filename,
+        size=request.size,
+        user_id=current_user.id,
+        content_type=request.content_type,
+        metadata=request.metadata,
+    )
+    return APIResponse.success(
+        LargeUploadInitResponse(
+            upload_id=session.upload_id,
+            file_id=session.file_id,
+            filename=session.filename,
+            size=session.size,
+            part_size=session.part_size,
+            status=session.status,
+            expires_at=session.expires_at,
+        )
+    )
+
+
+@router.get("/large-uploads/{upload_id}", response_model=APIResponse[LargeUploadStatusResponse])
+async def get_large_upload_status(
+    upload_id: str,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user),
+) -> APIResponse[LargeUploadStatusResponse]:
+    session = await file_service.get_large_upload(upload_id, current_user.id)
+    return APIResponse.success(_large_upload_status_response(session))
+
+
+@router.put("/large-uploads/{upload_id}/parts/{part_number}", response_model=APIResponse[LargeUploadPartUploadResponse])
+async def upload_large_upload_part(
+    upload_id: str,
+    part_number: int,
+    request: Request,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user),
+) -> APIResponse[LargeUploadPartUploadResponse]:
+    data = await request.body()
+    etag = await file_service.upload_large_upload_part(upload_id, part_number, current_user.id, data)
+    return APIResponse.success(
+        LargeUploadPartUploadResponse(
+            upload_id=upload_id,
+            part_number=part_number,
+            etag=etag,
+            size=len(data),
+        )
+    )
+
+
+@router.post("/large-uploads/{upload_id}/complete", response_model=APIResponse[FileInfoResponse])
+async def complete_large_upload(
+    upload_id: str,
+    request: LargeUploadCompleteRequest,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user),
+) -> APIResponse[FileInfoResponse]:
+    file_info = await file_service.complete_large_upload(
+        upload_id,
+        [part.model_dump() for part in request.parts],
+        current_user.id,
+    )
+    return APIResponse.success(await FileInfoResponse.from_file_info(file_info))
+
+
+@router.post("/large-uploads/{upload_id}/abort", response_model=APIResponse[None])
+async def abort_large_upload(
+    upload_id: str,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user),
+) -> APIResponse[None]:
+    await file_service.abort_large_upload(upload_id, current_user.id)
+    return APIResponse.success()
+
+@router.get("/{file_id}")
+async def download_file_with_signature(
+    file_id: str,
+    file_service: FileService = Depends(get_file_service),
+    signature: str = Depends(verify_signature),
+):
+    """Download file with optional access token"""
+    
+    # Download file (authentication is handled by middleware for non-token requests)
+    try:
+        file_data, file_info = await file_service.download_file(file_id)
+    except FileNotFoundError:
+        raise NotFoundError("File not found")
+    except PermissionError:
+        raise NotFoundError("File not found")  # Don't reveal if file exists but user has no access
+    
+    # Encode filename properly for Content-Disposition header
+    # Use URL encoding for non-ASCII characters to ensure latin-1 compatibility
+    import urllib.parse
+    encoded_filename = urllib.parse.quote(public_filename(file_info.filename), safe='')
+    
+    headers = {
+        'Content-Disposition': f'attachment; filename*=UTF-8\'\'{encoded_filename}'
+    }
+    
+    return StreamingResponse(
+        file_data,
+        media_type=file_info.content_type or 'application/octet-stream',
+        headers=headers,
+        background=BackgroundTask(_close_file_stream, file_data),
+    )
+
+@router.get("/{file_id}/download")
+async def download_file(
+    file_id: str,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_optional_current_user)
+):
+    """Download file with optional access token"""
+    
+    # Download file (authentication is handled by middleware for non-token requests)
+    try:
+        file_data, file_info = await file_service.download_file(file_id, current_user.id if current_user else None)
+    except FileNotFoundError:
+        raise NotFoundError("File not found")
+    except PermissionError:
+        raise NotFoundError("File not found")  # Don't reveal if file exists but user has no access
+    
+    # Encode filename properly for Content-Disposition header
+    # Use URL encoding for non-ASCII characters to ensure latin-1 compatibility
+    import urllib.parse
+    encoded_filename = urllib.parse.quote(public_filename(file_info.filename), safe='')
+    
+    headers = {
+        'Content-Disposition': f'attachment; filename*=UTF-8\'\'{encoded_filename}'
+    }
+    
+    return StreamingResponse(
+        file_data,
+        media_type=file_info.content_type or 'application/octet-stream',
+        headers=headers,
+        background=BackgroundTask(_close_file_stream, file_data),
+    )
+
+@router.delete("/{file_id}", response_model=APIResponse[None])
+async def delete_file(
+    file_id: str,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user)
+) -> APIResponse[None]:
+    """Delete file"""
+    success = await file_service.delete_file(file_id, current_user.id)
+    if not success:
+        raise NotFoundError("File not found")
+    return APIResponse.success()
+
+@router.get("/{file_id}/info", response_model=APIResponse[FileInfoResponse])
+async def get_file_info(
+    file_id: str,
+    file_service: FileService = Depends(get_file_service),
+    current_user: User = Depends(get_current_user)
+) -> APIResponse[FileInfoResponse]:
+    """Get file information"""
+    file_info = await file_service.get_file_info(file_id, current_user.id)
+    if not file_info:
+        raise NotFoundError("File not found")
+    
+    return APIResponse.success(await FileInfoResponse.from_file_info(file_info))
+
+
+@router.post("/{file_id}/signed-url", response_model=APIResponse[SignedUrlResponse])
+async def create_file_signed_url(
+    file_id: str,
+    request_data: AccessTokenRequest,
+    current_user: User = Depends(get_current_user),
+    file_service: FileService = Depends(get_file_service)
+) -> APIResponse[SignedUrlResponse]:
+    """Generate signed URL for file download
+    
+    This endpoint creates a signed URL that allows temporary access to download
+    a specific file without requiring authentication headers.
+    """
+    
+    try:
+        # Create signed URL using file service
+        signed_url = await file_service.create_signed_url(
+            file_id=file_id,
+            user_id=current_user.id,
+            expire_minutes=request_data.expire_minutes
+        )
+        
+        return APIResponse.success(SignedUrlResponse(
+            signed_url=signed_url,
+            expires_in=request_data.expire_minutes * 60,
+        ))
+    except FileNotFoundError:
+        raise NotFoundError("File not found")

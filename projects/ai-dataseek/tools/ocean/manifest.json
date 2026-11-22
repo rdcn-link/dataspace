@@ -1,0 +1,1577 @@
+{
+  "plugin": "ocean",
+  "version": "1.1.0",
+  "handler": "handler.py",
+  "tools": [
+    {
+      "name": "ocean_inspect",
+      "description": "探查海洋 NetCDF 的维度、深度语义、单位与 CF 质量标记。先确认变量与坐标，不将模型层号视为深度。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "preflight",
+      "terminal_on_success": false,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "input_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_qc_mask",
+      "description": "按显式接受值或拒绝位掩码过滤海洋质量标记，导出 NetCDF 与预览。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "qc_variable"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_profile",
+      "description": "提取指定时间、最近经纬度格点的物理垂直剖面，输出 NetCDF 和剖面图。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "latitude": {
+            "type": "number"
+          },
+          "time_index": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "longitude",
+          "latitude"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_depth_slice",
+      "description": "提取指定时间和深度/压力层的二维分布，输出 NetCDF 和地图预览。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "depth_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "depth_value": {
+            "type": "number",
+            "description": "向下为正的米，或海水压力 dbar；取范围内最近层"
+          },
+          "time_index": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_time_depth",
+      "description": "提取固定站点的时间—深度矩阵及图；复用站点时间序列分析能力。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "longitude": {
+            "type": "number"
+          },
+          "latitude": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "longitude",
+          "latitude"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_region_timeseries",
+      "description": "计算等间距经纬网框选区域的 cos(纬度)有效格点加权时间序列；可选单水层，输出 NetCDF 和曲线/时间深度图。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "bbox": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 4,
+            "maxItems": 4,
+            "description": "west,south,east,north；支持跨日期变更线"
+          },
+          "depth_index": {
+            "type": "integer",
+            "minimum": 0
+          },
+          "depth_value": {
+            "type": "number",
+            "description": "向下为正的米，或海水压力 dbar；取范围内最近层"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "bbox"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_transect",
+      "description": "在指定时间沿两个端点间经纬度线性路径、最短经度弧做最近格点断面采样，保留距离和实际采样位置，不跨缺测插值。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "line": {
+            "type": "array",
+            "minItems": 2,
+            "maxItems": 2,
+            "items": {
+              "type": "array",
+              "minItems": 2,
+              "maxItems": 2,
+              "items": {
+                "type": "number"
+              }
+            }
+          },
+          "samples": {
+            "type": "integer",
+            "minimum": 2,
+            "maximum": 256,
+            "default": 100
+          },
+          "time_index": {
+            "type": "integer",
+            "minimum": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "line"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_current_speed",
+      "description": "以明确的地理东向(variable)/北向分量计算流速和顺时针相对真北的流向，输出 NetCDF 和预览。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "northward_variable": {
+            "type": "string"
+          },
+          "northward_qc_variable": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "northward_variable"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_temperature_salinity",
+      "description": "同格点温盐有效配对，生成温盐散点图和 NetCDF；不自动判断水团或转换盐度定义。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "salinity_variable": {
+            "type": "string"
+          },
+          "salinity_qc_variable": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "salinity_variable"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_thermodynamics",
+      "description": "使用 TEOS-10 GSW，将摄氏现场温度、实用盐度和深度/海水压力转换为绝对盐度、保守温度、密度及 sigma0，输出 NetCDF 和预览。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "salinity_variable": {
+            "type": "string"
+          },
+          "salinity_qc_variable": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "salinity_variable"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_interactive_view",
+      "description": "生成离线二维海洋联动 HTML，复用文件预览：选点剖面、时间/深度切换、区域平均曲线、拖动断面、温盐图及可选海流箭头。总计最多 200 万数值，超限先 netcdf_subset，不静默抽样。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "salinity_variable": {
+            "type": "string"
+          },
+          "salinity_qc_variable": {
+            "type": "string"
+          },
+          "eastward_variable": {
+            "type": "string"
+          },
+          "eastward_qc_variable": {
+            "type": "string"
+          },
+          "northward_variable": {
+            "type": "string"
+          },
+          "northward_qc_variable": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_mixed_layer_depth",
+      "description": "混合层深度：相对参考深度的绝对温差或 sigma0 增量首次越阈值，线性定位；未越阈值/缺测/参考无效分别标记。默认参考10m，温差0.2°C或密度差0.03kg/m³；密度法必须提供盐度。输出NetCDF和分布图。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "criterion": {
+            "type": "string",
+            "enum": [
+              "temperature",
+              "density"
+            ],
+            "default": "temperature"
+          },
+          "reference_depth": {
+            "type": "number",
+            "default": 10,
+            "minimum": 0
+          },
+          "threshold": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "salinity_variable": {
+            "type": "string"
+          },
+          "salinity_qc_variable": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_thermocline",
+      "description": "定位指定深度范围内降温梯度最强的相邻有效层，输出中点温跃层深度及温度梯度、各自分布图；不将温度倒置视为降温温跃层。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "min_depth": {
+            "type": "number"
+          },
+          "max_depth": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_isotherm_depth",
+      "description": "定位从最浅观测层起的第一个等温面穿越深度，使用相邻有效层线性插值；缺测阻断则不猜测。输出NetCDF和等温面深度图。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "temperature_value": {
+            "type": "number",
+            "description": "目标摄氏温度"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "temperature_value"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_buoyancy_frequency",
+      "description": "使用TEOS-10 GSW的Nsquared计算层间浮力频率平方N²和中点海水压力，负值保留为静力不稳定；输出NetCDF、层结及压力图。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "salinity_variable": {
+            "type": "string"
+          },
+          "salinity_qc_variable": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "salinity_variable"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_heat_content",
+      "description": "对明确上下界间的摄氏温度异常进行梯形积分，采用显式常密度和比热近似，输出单位面积热含量J/m²及图件；有缺测则该柱结果缺测。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "top_depth": {
+            "type": "number"
+          },
+          "bottom_depth": {
+            "type": "number"
+          },
+          "reference_temperature": {
+            "type": "number",
+            "default": 0
+          },
+          "density": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 1025
+          },
+          "heat_capacity": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 3990
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "top_depth",
+          "bottom_depth"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_freshwater_content",
+      "description": "以明确参考实用盐度计算∫(Sref-S)/Sref dz的等效淡水厚度，可为负值；严格完整水柱积分并输出NetCDF和分布图。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "top_depth": {
+            "type": "number"
+          },
+          "bottom_depth": {
+            "type": "number"
+          },
+          "reference_salinity": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 35
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "top_depth",
+          "bottom_depth"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_vertical_interpolate",
+      "description": "将物理深度变量插值到1–256个递增目标深度（米），只使用相邻有效层，不外推或跨越缺测；输出NetCDF和预览。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "depth_levels": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "minItems": 1,
+            "maxItems": 256
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "depth_levels"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_current_diagnostics",
+      "description": "在地理东向(variable)/北向流速的规则经纬网计算球面相对涡度及水平散度；边界和缺测位置不外推，输出NetCDF与两张分布图。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "northward_variable": {
+            "type": "string"
+          },
+          "northward_qc_variable": {
+            "type": "string"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "northward_variable"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_eddy_kinetic_energy",
+      "description": "以显式基准时段的配对有效流速样本均值计算0.5*(u异常²+v异常²)，输出逐时间涡动动能和基准期均值及图件；采用等样本权重，不自动去季节或去趋势。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "northward_variable": {
+            "type": "string"
+          },
+          "northward_qc_variable": {
+            "type": "string"
+          },
+          "baseline_start": {
+            "type": "string",
+            "description": "基准期开始日期，必须对应已解码 CF 时间"
+          },
+          "baseline_end": {
+            "type": "string",
+            "description": "基准期结束日期（包含该日）"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "northward_variable",
+          "baseline_start",
+          "baseline_end"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "ocean_temporal_anomaly",
+      "description": "对海洋变量计算相对显式基准时段的绝对异常，输出异常、基准均值、有效样本数和图件；基准至少两个有效样本，等样本权重，不等同季节气候态异常。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "timeout_seconds": 180,
+      "role": "operation",
+      "terminal_on_success": true,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "variable": {
+            "type": "string"
+          },
+          "longitude_coordinate": {
+            "type": "string"
+          },
+          "latitude_coordinate": {
+            "type": "string"
+          },
+          "vertical_coordinate": {
+            "type": "string"
+          },
+          "time_coordinate": {
+            "type": "string"
+          },
+          "qc_variable": {
+            "type": "string"
+          },
+          "accepted_flags": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": [
+                "string",
+                "number"
+              ]
+            }
+          },
+          "reject_bits": {
+            "type": "integer",
+            "minimum": 0,
+            "maximum": 2147483647
+          },
+          "output_path": {
+            "type": "string",
+            "description": "分析结果 .nc，联动浏览 .html；必须位于 /home/ubuntu/output 下"
+          },
+          "visualize": {
+            "type": "boolean",
+            "default": true,
+            "description": "分析结果同时输出 PNG 预览"
+          },
+          "baseline_start": {
+            "type": "string",
+            "description": "基准期开始日期，必须对应已解码 CF 时间"
+          },
+          "baseline_end": {
+            "type": "string",
+            "description": "基准期结束日期（包含该日）"
+          }
+        },
+        "required": [
+          "input_path",
+          "variable",
+          "output_path",
+          "baseline_start",
+          "baseline_end"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

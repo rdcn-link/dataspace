@@ -1,0 +1,3 @@
+import test from 'node:test';import assert from 'node:assert/strict';import {validateParameters} from './npp-spec.mjs';
+const base={sourceKey:'a:entity',sourceContractHash:'b'.repeat(64),yearStart:2020,yearEnd:2022,methods:['annual-statistics','linear-trend']};
+test('case reuse is a fresh task configuration requiring new inspection and mapping confirmation',()=>{const id='01234567-0123-0123-0123-0123456789ab';const p=validateParameters({...base,fromCaseId:id});assert.equal(p.fromCaseId,id);assert.equal(p.mappingConfirmed,false);assert.equal(p.inspectionId,undefined);assert.throws(()=>validateParameters({...base,fromCaseId:'../../case'}));assert.throws(()=>validateParameters({...base,sourcePath:'/data/case.tif'}))});

@@ -1,0 +1,14 @@
+<!doctype html>
+<html lang="en-US">
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" type="image/png" href="/assets/dacp-favicon.png"><title>DACP Union · Union dashboard</title><link rel="stylesheet" href="/style.css"><script src="/duration.js" defer></script><script src="/vendor/g6-5.1.1.min.js" defer></script><script src="/dag.js" defer></script><script src="/attempts.js" defer></script><script src="/job-script.js" defer></script><script src="/app.js" defer></script></head>
+<body>
+<header><a class="brand" href="/"><img class="brand-logo" src="/assets/dacp-mark.svg" alt="DACP"><span>UNION</span></a><nav class="site-nav" aria-label="Main navigation"><a href="/" aria-current="page">Dashboard</a><a href="/nodes">Nodes</a><a href="/datasets">Data catalog</a></nav><span class="subtitle">Cross-center collaboration · dashboard</span><div class="refresh"><span id="connection">Connecting</span><button id="refresh">Refresh now</button></div></header>
+<main>
+<div id="error" class="notice" role="alert" hidden></div>
+<section class="intro"><div><p class="eyebrow">UNION OVERVIEW</p><h1>Collaboration overview</h1><p id="union-info" class="muted">Loading member and job status…</p></div><div class="live">● Auto refresh <span id="updated">—</span></div></section>
+<section id="summary" class="stats" aria-label="Execution statistics"></section>
+
+<section class="panel"><div class="section-head"><div><h2>Collaborative jobs</h2><p id="retention" class="muted">Select a job to inspect dependencies and port traffic</p></div><div class="filters"><label class="sr-only" for="job-view">Job scope</label><select id="job-view"><option value="live">Current sessions</option><option value="history">Execution history</option></select><button id="previous" hidden>Previous</button><button id="next" hidden>Next</button><label class="sr-only" for="search">Search jobs or operators</label><input id="search" type="search" placeholder="Search job ID, node or operator"><label class="sr-only" for="state-filter">Status</label><select id="state-filter"><option value="">All states</option><option value="active">Running</option><option value="succeeded">Succeeded</option><option value="failed">Failed</option><option value="cancelled">Cancelled</option><option value="expired">Timed out</option></select></div></div><div class="table-scroll"><table><thead><tr><th>Name</th><th>Job ID</th><th>Source</th><th>Type</th><th>Status</th><th>Started at</th><th>Duration</th></tr></thead><tbody id="jobs"></tbody></table></div></section>
+
+<footer>Read-only operations view · data and step execution use DACP · results are consumed by the submitting client</footer>
+</main></body></html>

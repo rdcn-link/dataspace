@@ -1,0 +1,16 @@
+# Example public ingress: all requests pass through the session gateway.
+# Never bypass the gateway for /api/metadata, /api/auth or robot routes.
+server {
+    listen 80;
+    server_name conet.example.org;
+    location / {
+        proxy_pass http://127.0.0.1:9588;
+        proxy_set_header Host $http_host;
+        proxy_set_header X-Forwarded-Proto $scheme;
+        proxy_request_buffering off;
+        proxy_buffering off;
+        proxy_read_timeout 360s;
+    }
+}
+# Set identity publicOrigin to the external HTTPS origin and terminate TLS at
+# the trusted ingress before public deployment. Keep 8870/8871/9590/10013 private.

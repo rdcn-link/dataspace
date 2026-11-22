@@ -1,0 +1,31 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+*.dist-info/
+
+# 本地虚拟环境 & 缓存
+venv/
+.venv/
+.env
+.cache/
+
+# 本地 vendor（不要带进镜像）
+vendor/
+
+# 本地数据
+data/
+*.log
+
+# Git
+.git/
+.gitignore
+
+# IDE
+.vscode/
+.idea/
+
+# 系统文件
+.DS_Store
+Thumbs.db

@@ -1,0 +1,1 @@
+{"name":"conet-data-robots","private":true,"type":"module","scripts":{"start":"node server.mjs","test":"node --test test.mjs"},"engines":{"node":">=20"}}

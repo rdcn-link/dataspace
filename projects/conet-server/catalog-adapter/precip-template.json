@@ -1,0 +1,6 @@
+{
+ "id":"dekadal-precipitation","version":"1.1","operator":"conet_precip_dekadal@1.1",
+ "methods":[{"id":"monthly","label":"月累计（每月3旬）"},{"id":"seasonal","label":"季度累计（自然季度，每季9旬）"},{"id":"annual","label":"年累计（每年36旬）"}],
+ "requirements":"ZIP内为YYYY_MM_DD_Pcp.tif；EPSG:4326、单波段、prec、mm、旬累计深度；标签必须匹配；缺旬拒绝，不补零。",
+ "outputs":["periods.csv","periods.png","map.png","report.json","verification.json","task.json","job.json","status.json","result.zip"]
+}

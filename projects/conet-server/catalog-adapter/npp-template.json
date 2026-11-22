@@ -1,0 +1,61 @@
+{
+  "id": "npp-spatiotemporal",
+  "version": "2.0",
+  "title": "植被净初级生产力（NPP）时空变化分析",
+  "input": {
+    "format": "GeoTIFF",
+    "variable": "NPP",
+    "bands": 1,
+    "crs": "EPSG:4326",
+    "unit": "gC/m2/year",
+    "timeScale": "annual",
+    "scale": 1,
+    "offset": 0,
+    "nodataRule": "gdal-mask+finite+nonnegative",
+    "maxYears": 24,
+    "minYears": 2,
+    "maxInputBytes": 134217728,
+    "maxPixels": 50000000
+  },
+  "regionModes": [
+    "full",
+    "bbox"
+  ],
+  "methods": [
+    {
+      "id": "annual-statistics",
+      "label": "年度面积加权统计",
+      "required": true,
+      "minYears": 2
+    },
+    {
+      "id": "interannual-change",
+      "label": "年际变化",
+      "minYears": 2
+    },
+    {
+      "id": "linear-trend",
+      "label": "描述性线性趋势（OLS）",
+      "minYears": 3
+    }
+  ],
+  "operators": {
+    "inspect": "conet_npp_generic_inspect_{N}@1.2",
+    "prepare": "conet_npp_generic_prepare_{N}@1.2",
+    "finalize": "conet_npp_generic_finalize_{N}@1.2"
+  },
+  "outputs": [
+    "report.json",
+    "verification.json",
+    "annual.csv",
+    "annual.png",
+    "map.png",
+    "map.json",
+    "result.zip"
+  ],
+  "limitations": [
+    "仅单波段、北向上、统一网格的年度GeoTIFF",
+    "不支持投影重采样、比例因子转换、多数据源融合或显著性检验",
+    "矩形区域按像元中心纳入，不是行政边界裁切"
+  ]
+}

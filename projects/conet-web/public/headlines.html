@@ -1,0 +1,19 @@
+<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>数据资讯 · 科诺空间</title><link rel="icon" href="/assets/conet-mark.svg"><link rel="stylesheet" href="/navigation.css"><link rel="stylesheet" href="/metadata-catalog.css"><style>.news-summary{color:#718893;margin:0 0 24px}.news-summary strong{font-size:24px;color:#237e87;margin-right:6px}.news-load-status{text-align:center;color:#718893;padding:28px 12px;min-height:24px}.pagination[hidden]{display:none}.results-heading label[hidden]{display:none}.metadata-filters .keyword{flex:1}.metadata-filters label[hidden]{display:none}</style><link rel="stylesheet" href="/website-style.css"><script src="/website-style.js"></script></head>
+<body><header class="conet-navigation"><a class="conet-brand" href="/"><img src="/assets/conet-mark.svg" alt=""><strong>科诺空间</strong></a><nav aria-label="主导航"><a href="/catalog/"><i aria-hidden="true">▤</i>数据目录</a><a href="/headlines/" aria-current="page"><i aria-hidden="true">▧</i>数据资讯</a><a href="/products/"><i aria-hidden="true">◈</i>数据产品</a><a href="/services/"><i aria-hidden="true">▦</i>应用服务</a><a href="/nodes/"><i aria-hidden="true">▱</i>节点列表</a><a href="/appbuilder/"><i aria-hidden="true">◇</i>App Builder</a><a href="/workspace/"><i aria-hidden="true">▦</i>工作空间</a><a href="/screen"><i aria-hidden="true">◎</i>协作大屏</a></nav></header>
+<main class="metadata-portal">
+ <section class="portal-heading"><div><small>科学动态 · 数据洞察</small><h1 id="page-title">数据资讯</h1><p id="page-description">关注科学研究、数据发布与数据服务的最新动态。</p></div></section>
+ 
+ 
+ 
+ 
+ <p id="notice" class="portal-status" role="status" aria-live="polite"></p>
+ <section id="browse-panel">
+  <form id="search-form" class="metadata-filters"><label class="keyword">关键词<input id="search" type="search" maxlength="150" placeholder="搜索标题、CSTR 或 DOI…"></label><label>数据来源<select id="source-filter"><option value="">全部来源</option></select></label><label class="dataset-only">数据中心<select id="center-filter"><option value="">全部数据中心</option></select></label><label class="dataset-only">共享方式<select id="share-filter"><option value="">全部共享方式</option></select></label><label class="dataset-only">学科<input id="subject-filter" maxlength="150" placeholder="学科名称或代码"></label><label class="dataset-only">排序<select id="sort" title="优先展示推荐的数据集，再按所选字段排序"><option value="createAt">推荐排序</option><option value="updateAt">最近更新</option><option value="publishAt">最近发布</option><option value="viewCount">浏览量</option><option value="downloadCount">下载量</option></select></label><button type="submit" class="primary">查询</button><button type="button" id="clear-filters">重置</button></form>
+  <div class="results-heading"><h2 id="results-title">原始数据集</h2><span id="result-total"></span><label hidden>每页<select id="page-size" aria-label="每页条数"><option value="12">12 条</option><option value="24">24 条</option><option value="48">48 条</option></select></label></div>
+  <div id="records" class="record-grid" aria-label="查询结果"></div>
+  <nav hidden class="pagination" aria-label="结果分页"><button id="previous-page" type="button">上一页</button><span id="page-info"></span><button id="next-page" type="button">下一页</button><label>跳至<input id="jump-page" type="number" min="1" aria-label="跳转页码"></label><button id="jump" type="button">确定</button></nav>
+ </section>
+ <div id="news-load-status" class="news-load-status" role="status" aria-live="polite"></div><button id="news-retry" type="button" hidden>重新加载</button>
+ <article id="metadata-detail" class="metadata-detail" hidden></article>
+</main><script type="module" src="/metadata-catalog.js"></script></body></html>

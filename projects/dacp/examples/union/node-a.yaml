@@ -1,0 +1,27 @@
+host: 127.0.0.1
+public_host: localhost
+port: 18861
+datasets:
+  climate:
+    provider: mixed
+    description: '{"synthetic":true,"units":{"air_temperature":"degree_Celsius"},"netcdf_dimensions":["time","latitude","longitude"],"title":"climate","description":"Synthetic
+      eastern hourly meteorological observations"}'
+    items:
+      /observations:
+        file: ../examples/union/data/east_observations.csv
+      /temperature_grid:
+        file: ../examples/union/data/east_air_temperature.nc
+        format: bin
+tls_cert: ../examples/certs/node-a.crt
+tls_key: ../examples/certs/node-a.key
+tls_ca: ../examples/certs/ca.crt
+local_operator_library: ../examples/union/operators
+max_concurrent_tasks: 4
+union:
+  state_directory: ../.union-demo/a
+  execution_timeout_seconds: 120
+execution_store:
+  provider: file
+  settings:
+    directory: ../.union-demo/a-executions
+credential_directory: ../.union-demo/a-credentials

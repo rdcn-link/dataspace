@@ -1,0 +1,1039 @@
+{
+  "plugin": "materials",
+  "version": "1.0.0",
+  "handler": "handler.py",
+  "tools": [
+    {
+      "name": "materials_elastic_modulus",
+      "description": "在显式弹性区间拟合工程应力应变，计算杨氏模量及残差。 CSV/TSV必需列（名称表示单位）：strain,stress_MPa。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "fit_min": {
+            "type": "number"
+          },
+          "fit_max": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "fit_min",
+          "fit_max"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_offset_yield",
+      "description": "用显式弹性区间与可配置偏移应变求实测曲线的证明强度，不外推交点。 CSV/TSV必需列（名称表示单位）：strain,stress_MPa。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "fit_min": {
+            "type": "number"
+          },
+          "fit_max": {
+            "type": "number"
+          },
+          "offset_strain": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 0.002
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "fit_min",
+          "fit_max"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_true_stress_strain",
+      "description": "在用户声明的均匀拉伸范围转换真实应力应变；不用于颈缩后。 CSV/TSV必需列（名称表示单位）：strain,stress_MPa。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "uniform_strain_max": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "uniform_strain_max"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_strain_energy",
+      "description": "积分单调拉伸实测区间，计算累积加载功密度和实测最大应力，不将其误称断裂韧性。 CSV/TSV必需列（名称表示单位）：strain,stress_MPa。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_creep_rate",
+      "description": "对用户指定稳态阶段拟合应变时间曲线，返回蠕变速率。 CSV/TSV必需列（名称表示单位）：time_s,strain。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "fit_min": {
+            "type": "number"
+          },
+          "fit_max": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "fit_min",
+          "fit_max"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_fatigue_basquin",
+      "description": "拟合失败试样的sigma_a=A*N^b疲劳关系；拒绝包含runout删失记录的数据。 CSV/TSV必需列（名称表示单位）：cycles_to_failure,stress_amplitude_MPa,failed。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_vickers_hardness",
+      "description": "根据载荷及两条压痕对角线计算Vickers硬度HV和压痕压力MPa。 CSV/TSV必需列（名称表示单位）：force_N,diagonal1_mm,diagonal2_mm。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_elastic_tensor_vrh",
+      "description": "由对称正定6×6刚度张量计算Voigt/Reuss/Hill体积、剪切、杨氏模量和各向异性。JSON字段stiffness_GPa，Voigt次序xx,yy,zz,yz,xz,xy，工程剪切应变约定。 输入JSON。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_thermal_expansion",
+      "description": "按指定温区和参考长度拟合区间平均线膨胀系数。 CSV/TSV必需列（名称表示单位）：temperature_K,length_m。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "fit_min": {
+            "type": "number"
+          },
+          "fit_max": {
+            "type": "number"
+          },
+          "reference_length_m": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "fit_min",
+          "fit_max",
+          "reference_length_m"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_flash_diffusivity",
+      "description": "按Parker绝热薄片模型从半升温时间计算热扩散率，要求显式脉冲、基线、平台和厚度。 CSV/TSV必需列（名称表示单位）：time_s,temperature_K。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "pulse_time_s": {
+            "type": "number"
+          },
+          "baseline_temperature_K": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "plateau_temperature_K": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "thickness_m": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "pulse_time_s",
+          "baseline_temperature_K",
+          "plateau_temperature_K",
+          "thickness_m"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_dsc_enthalpy",
+      "description": "在指定时间范围对固定基线校正热流积分，返回沿用输入符号的比焓。 CSV/TSV必需列（名称表示单位）：time_s,heat_flow_W。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "start_time_s": {
+            "type": "number"
+          },
+          "end_time_s": {
+            "type": "number"
+          },
+          "baseline_W": {
+            "type": "number"
+          },
+          "mass_g": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "start_time_s",
+          "end_time_s",
+          "baseline_W",
+          "mass_g"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_tga_analysis",
+      "description": "计算热重质量损失、导数峰候选及指定失重阈值温度，不自动推断分解机制。 CSV/TSV必需列（名称表示单位）：temperature_K,mass_mg。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "loss_threshold_percent": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "exclusiveMaximum": 100,
+            "default": 5
+          },
+          "peak_prominence_pct_K": {
+            "type": "number",
+            "minimum": 0,
+            "default": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_arrhenius_fit",
+      "description": "按ln(rate)对1/T拟合表观活化能和前因子，同一单位与反应区间由用户保证。 CSV/TSV必需列（名称表示单位）：temperature_K,rate。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_kissinger_fit",
+      "description": "拟合ln(beta/Tp²)对1/Tp，计算同一转变峰的表观活化能。 CSV/TSV必需列（名称表示单位）：heating_rate_K_s,peak_temperature_K。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_band_edges",
+      "description": "按显式满占据数识别给定k点上的价带顶、导带底、采样直接/间接带隙及部分占据，不执行DFT。 CSV/TSV必需列（名称表示单位）：k_index,band_index,energy_eV,occupation。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "full_occupation": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "occupation_tolerance": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 1e-06
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "full_occupation"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_dos_integral",
+      "description": "积分明确能量范围的态密度，输出每晶胞态数，不自动添加自旋倍数或费米权重。 CSV/TSV必需列（名称表示单位）：energy_eV,dos_states_eV_cell。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "energy_min_eV": {
+            "type": "number"
+          },
+          "energy_max_eV": {
+            "type": "number"
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "energy_min_eV",
+          "energy_max_eV"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_tauc_gap",
+      "description": "在用户指定线性区和跃迁幂次下计算Tauc带隙；输入必须是吸收系数而非吸光度。 CSV/TSV必需列（名称表示单位）：photon_energy_eV,absorption_cm_1。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "fit_min": {
+            "type": "number"
+          },
+          "fit_max": {
+            "type": "number"
+          },
+          "tauc_power": {
+            "type": "number",
+            "enum": [
+              0.5,
+              2
+            ]
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "fit_min",
+          "fit_max",
+          "tauc_power"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_four_probe_resistivity",
+      "description": "从I-V线性拟合计算共线等间距薄片四探针方阻和电阻率，保留电压偏移。 CSV/TSV必需列（名称表示单位）：current_A,voltage_V。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "geometry_correction": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 1
+          },
+          "thickness_m": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "thickness_m"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_specific_capacity",
+      "description": "对单个充电或放电段积分容量和质量比容量，拒绝跨电流极性积分。 CSV/TSV必需列（名称表示单位）：time_s,current_A。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "active_mass_g": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "active_mass_g"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_impedance_rc_fit",
+      "description": "拟合固定电路Rs+(Rct||C)的复阻抗，返回电阻、电容、时间常数和Nyquist图；imag_ohm为带符号Im(Z)。 CSV/TSV必需列（名称表示单位）：frequency_Hz,real_ohm,imag_ohm。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_williamson_hall",
+      "description": "对已拟合同相衍射峰做高斯仪器展宽校正和真实W-H线性拟合，分离相干域尺寸与微应变。 CSV/TSV必需列（名称表示单位）：two_theta_deg,fwhm_deg,instrument_fwhm_deg。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "wavelength_angstrom": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "shape_factor": {
+            "type": "number",
+            "exclusiveMinimum": 0,
+            "default": 0.9
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "wavelength_angstrom"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_cubic_lattice_fit",
+      "description": "由已索引立方单相峰的sin²(theta)对h²+k²+l²过原点拟合晶格常数；不自动检索物相。 CSV/TSV必需列（名称表示单位）：two_theta_deg,h,k,l。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "wavelength_angstrom": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "zero_shift_deg": {
+            "type": "number",
+            "default": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "wavelength_angstrom"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_lattice_strain",
+      "description": "计算对应晶胞基矢的Green-Lagrange有限应变、主应变与体积变化。JSON字段reference_cell_angstrom和current_cell_angstrom，均为行基矢3×3右手矩阵。 输入JSON。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_micrograph_particles",
+      "description": "按显式8位灰度阈值分割标定显微图，统计连通域面积与等效直径，输出轮廓和粒径分布；不自动分离接触颗粒。 输入单个8位图像。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "threshold_8bit": {
+            "type": "number",
+            "minimum": 0,
+            "maximum": 255
+          },
+          "pixel_size_um": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          },
+          "foreground": {
+            "type": "string",
+            "enum": [
+              "dark",
+              "light"
+            ],
+            "default": "dark"
+          },
+          "min_area_pixels": {
+            "type": "integer",
+            "minimum": 1,
+            "default": 5
+          },
+          "exclude_boundary": {
+            "type": "boolean",
+            "default": true
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "threshold_8bit",
+          "pixel_size_um"
+        ],
+        "additionalProperties": false
+      }
+    },
+    {
+      "name": "materials_bet_surface_area",
+      "description": "对显式吸附支路压力区间做BET拟合，以分子截面积计算比表面积并报告基本一致性检查。吸附量单位mol/kg。 CSV/TSV必需列（名称表示单位）：relative_pressure,adsorbed_mol_kg。 输出JSON计算依据、CSV数值和PNG图件。",
+      "scopes": [
+        "dataset_fast_path"
+      ],
+      "role": "operation",
+      "terminal_on_success": true,
+      "timeout_seconds": 180,
+      "parameters": {
+        "type": "object",
+        "properties": {
+          "input_path": {
+            "type": "string"
+          },
+          "output_path": {
+            "type": "string",
+            "description": "结果目录下.json路径，同时生成同名CSV和PNG"
+          },
+          "columns": {
+            "type": "object",
+            "additionalProperties": {
+              "type": "string"
+            },
+            "description": "逻辑列名→实际表头；不做隐含单位换算"
+          },
+          "fit_min": {
+            "type": "number"
+          },
+          "fit_max": {
+            "type": "number"
+          },
+          "molecular_cross_section_nm2": {
+            "type": "number",
+            "exclusiveMinimum": 0
+          }
+        },
+        "required": [
+          "input_path",
+          "output_path",
+          "fit_min",
+          "fit_max",
+          "molecular_cross_section_nm2"
+        ],
+        "additionalProperties": false
+      }
+    }
+  ]
+}

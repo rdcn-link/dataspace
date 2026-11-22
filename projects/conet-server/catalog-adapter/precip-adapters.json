@@ -1,0 +1,42 @@
+{
+  "adapters": [
+    {
+      "id": "yellow-river-dekads-v2",
+      "title": "黄河三角洲2010—2024年旬降水",
+      "nodeId": "a",
+      "datasetId": "56f9bf67f5644b33bdc1cbe268ba9957",
+      "archive": "Prec_xun_2010_2024.zip",
+      "version": "V2",
+      "yearStart": 2010,
+      "yearEnd": 2024,
+      "synthetic": false,
+      "variable": "prec",
+      "unit": "mm",
+      "timeScale": "dekadal accumulated depth",
+      "format": "ZIP/GeoTIFF",
+      "crs": "EPSG:4326",
+      "scale": 1,
+      "offset": 0,
+      "nodata": -99
+    },
+    {
+      "id": "synthetic-dekads-v1",
+      "title": "旬降水已知值合成验证（非真实观测）",
+      "nodeId": "b",
+      "datasetId": "synthetic-dekad-precip-v1",
+      "archive": "synthetic-dekads.zip",
+      "version": "V1",
+      "yearStart": 2020,
+      "yearEnd": 2021,
+      "synthetic": true,
+      "variable": "prec",
+      "unit": "mm",
+      "timeScale": "dekadal accumulated depth",
+      "format": "ZIP/GeoTIFF",
+      "crs": "EPSG:4326",
+      "scale": 1,
+      "offset": 0,
+      "nodata": -99
+    }
+  ]
+}

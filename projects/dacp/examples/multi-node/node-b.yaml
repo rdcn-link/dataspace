@@ -1,0 +1,23 @@
+# Run from dacp-server. Both nodes use the demo CA; results are streams.
+host: 0.0.0.0
+public_host: localhost
+port: 8816
+datasets:
+  csv_data:
+    provider: mixed
+    items:
+      /orders: {file: ../examples/data/nested/orders.csv}
+# Whole-node prefixes permit this demonstration pipeline.
+task_peers:
+  - dacp://localhost:8815
+task_input_prefixes:
+  - dacp://localhost:8815/
+  - dacp://localhost:8816/
+max_concurrent_tasks: 2
+tls_cert: ../examples/certs/node-b.crt
+tls_key: ../examples/certs/node-b.key
+tls_ca: ../examples/certs/ca.crt
+batch_size: 1024
+byte_chunk: 65536
+infer_sample: 4
+local_operator_library: ../operators

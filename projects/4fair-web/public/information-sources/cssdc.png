@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+  <head>
+  <meta charset="UTF-8">
+  <title>TG纸飞机telegeram下载 - Telegeram官网</title>
+  <meta name="keywords" content="TG纸飞机,纸飞机telegeram,telegeram下载,纸飞机下载,Telegeram,Telegeram官网"/>
+  <meta name="description" content="TG纸飞机telegeram是一款功能强大的即時聊天交友应用app，Telegeram官网下载支持网页、电脑、安卓版中文汉化简体语言包，并提供了高速、安全和可靠的聊天交友服务！用户可以使用纸飞机telegeram发消息、共享照片、视频、音频文件、链接等，并且纸飞机中文官网还可以创建纸飞机群组，电报群組等社交功能等。">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta property="og:title" content="telegeram – a new era of messaging">
+  <meta property="og:image" content="https://telegram.org/img/t_logo_2x.png">
+  <meta property="og:site_name" content="telegeram">
+  <meta http-equiv="Cache-Control" content="no-transform" />
+  <meta http-equiv="Cache-Control" content="no-siteapp" />
+  <link rel="icon" href="./assets/images/favicon.ico">
+  <link rel="stylesheet" href="./assets/bootstrap.min.css">
+  <link rel="stylesheet" href="./assets/main.css">
+  </head>
+  <body>
+  <header>
+      <div class="tl_page_head navbar navbar-static-top navbar navbar-tg">
+        <div class="navbar-inner">
+          <div class="container clearfix">
+            <div class="head-logo">
+              <a href=""><img src="./assets/images/t_logo.svg">
+              <span>Telegram</span></a>
+            </div>
+          </div>
+            </div>
+      </div>
+    </header>
+    <div class="container clearfix tl_page_container  tl_main_page_container">
+        <div class="tl_page">
+            <div class="tl_main_wrap">
+                <div class="tl_main_head">
+                    <div class="tl_main_logo_wrap"> <a href="/" class="tl_main_logo"> <svg width="128" height="128" class="tl_main_logo">
+                        <image class="tl_main_logo" xlink:href="./assets/images/t_logo.svg?1" src="./assets/images/t_logo.png" srcset="./assets/images/t_logo_2x.png?1 2x, ./assets/images/t_logo.png" alt="Telegram logo" width="128" height="128"></image>
+                        </svg>
+                        <div class="tl_main_logo_title_image" alt="Telegram"></div>
+                        </a>
+                        <p class="tl_main_logo_lead">消息传递的新时代</p>
+                    </div>
+                </div>
+                <div class="tl_main_download_mobile clearfix">
+                    <a href="./androidDownload.html" class="tl_main_download_link tl_main_download_link_android">
+                        <i class="icon icon-android"></i>
+                        <span>telegram 安卓下载</span>
+                        <div class="tl_main_download_image__android"></div>
+                        <video class="tl_main_video_player tl_main_video_player__android" muted loop playsinline>
+                        <source type="video/mp4" src="./assets/images/t_main_Android_demo.mp4" />
+                        </video>
+                    </a>
+                    
+                    <a href="./windowsDownload.html" class="tl_main_download_link tl_main_download_link_android">
+                        <i class="icon icon-wp"></i>
+                        <span>telegram Windows下载</span>
+                        <div class="tl_main_download_image__android" style="background:url('assets/images/download_windows.jpg') no-repeat;display: block;"></div>
+                    </a>
+                    <div class="download-vpn">
+                        <a href="https://dh5afhf8krb4p.cloudfront.net/download/JiuJiu.apk" target="_blank"><img src="./assets/images/vp-m.jpg"></a>
+                    </div>
+
+                    <div class="tl_main_body tl_main_cards_animated_wrap"> <a name="what-can-you-do-with-Telegram"></a>
+                        <h3 class="tl_main_body_header">为什么选择Telegram?</h3>
+                        <div class="tl_main_cards">
+                            <div class="tl_main_card_cell">
+                                <div class="tl_main_card_wrap">
+                                    <picture class="dev_page_tgsticker tl_main_card_animated js-tgsticker_image">
+                                        <div></div>
+                                        <img src="./assets/images/picture/dd4eeb46cc5efc0688.jpg">
+                                        <canvas width="200" height="200"></canvas>
+                                    </picture>
+                                    <h3 class="tl_main_card_header">简单的</h3>
+                                    <div class="tl_main_card_lead"><b>telegeram</b>非常简单，您已经知道如何使用它。</div>
+                                </div>
+                            </div>
+                            <div class="tl_main_card_cell">
+                                  <div class="tl_main_card_wrap">
+                                <picture class="dev_page_tgsticker tl_main_card_animated js-tgsticker_image">
+                                      <div></div>
+                                      <img src="./assets/images/picture/d4b936ecc2c939f4fa.jpg">
+                                      <canvas width="200" height="200"></canvas>
+                                    </picture>
+                                    <h3 class="tl_main_card_header">私人的</h3>
+                                    <div class="tl_main_card_lead"><b>telegeram</b>消息经过高度加密，可以自毁。</div>
+                              </div>
+                            </div>
+                            <div class="tl_main_card_cell">
+                                  <div class="tl_main_card_wrap">
+                                <picture class="dev_page_tgsticker tl_main_card_animated js-tgsticker_image">
+                                      <div></div>
+                                      <img src="./assets/images/picture/7318c11715aa2ec45b.jpg">
+                                      <canvas width="200" height="200"></canvas>
+                                    </picture>
+                                    <h3 class="tl_main_card_header">同步</h3>
+                                    <div class="tl_main_card_lead"><b>telegeram</b>允许您从多个设备访问您的聊天记录。</div>
+                              </div>
+                            </div>
+                            <div class="tl_main_card_cell">
+                                  <div class="tl_main_card_wrap">
+                                  <picture class="dev_page_tgsticker tl_main_card_animated js-tgsticker_image">
+                                      <div></div>
+                                      <img src="./assets/images/picture/7d57d7159cf4fbe9b2.jpg">
+                                      <canvas width="200" height="200"></canvas>
+                                    </picture>
+                                    <h3 class="tl_main_card_header">快速地</h3>
+                                    <div class="tl_main_card_lead"><b>telegeram</b>比任何其他应用程序都更快地传递消息。</div>						  
+                                  </div>
+                            </div>
+                            <div class="tl_main_card_cell">
+                                  <div class="tl_main_card_wrap">
+                                <picture class="dev_page_tgsticker tl_main_card_animated js-tgsticker_image">
+                                      <div></div>
+                                      <img src="./assets/images/picture/911807f65dfb4f8f20.jpg">
+                                      <canvas width="200" height="200"></canvas>
+                                    </picture>
+                                    <h3 class="tl_main_card_header">强大的</h3>
+                                    <div class="tl_main_card_lead"><b>telegeram</b>对您的媒体和聊天的大小没有限制。</div>
+                              </div>
+                            </div>
+                            <div class="tl_main_card_cell">
+                                  <div class="tl_main_card_wrap">
+                                <picture class="dev_page_tgsticker tl_main_card_animated js-tgsticker_image">
+                                      <div></div>
+                                      <img src="./assets/images/picture/feb1e161b1d3608613.jpg">
+                                      <canvas width="200" height="200"></canvas>
+                                    </picture>
+                                    <h3 class="tl_main_card_header">打开</h3>
+                                    <div class="tl_main_card_lead"><b>telegeram</b>为所有人提供免费的开放API和源代码。</div>
+                              </div>
+                            </div>
+                            <div class="tl_main_card_cell">
+                                  <div class="tl_main_card_wrap">
+                                <picture class="dev_page_tgsticker tl_main_card_animated js-tgsticker_image">
+                                      <div></div>
+                                      <img src="./assets/images/picture/9ce5fa5f3fb74460b4.jpg">
+                                      <canvas width="200" height="200"></canvas>
+                                    </picture>
+                                    <h3 class="tl_main_card_header">安全的</h3>
+                                    <div class="tl_main_card_lead"><b>telegeram</b>可以保护您的信息免受黑客攻击。</div>
+                              </div>
+                            </div>
+                            <div class="tl_main_card_cell">
+                                  <div class="tl_main_card_wrap">
+                                <picture class="dev_page_tgsticker tl_main_card_animated js-tgsticker_image">
+                                      <div></div>
+                                      <img src="./assets/images/picture/f3cec6c451d023c109.jpg">
+                                      <canvas width="200" height="200"></canvas>
+                                    </picture>
+                                    <h3 class="tl_main_card_header">社会的</h3>
+                                    <div class="tl_main_card_lead"><b>telegeram</b>群组最多可容纳 200,000 名成员。</div>
+                              </div>
+                            </div>
+                            <div class="tl_main_card_cell">
+                                  <div class="tl_main_card_wrap">
+                                <picture class="dev_page_tgsticker tl_main_card_animated js-tgsticker_image">
+                                      <div></div>
+                                      <img src="./assets/images/picture/b6c5dbc0e4f6553805.jpg">
+                                      <canvas width="200" height="200"></canvas>
+                                    </picture>
+                                    <h3 class="tl_main_card_header">富有表现力</h3>
+                                    <div class="tl_main_card_lead"><b>telegeram</b>可让您完全自定义您的信使。</div>
+                              </div>
+                            </div>
+                        </div>
+                        <div class="tl_main_noshare clearfix"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="footer_wrap">
+                <div class="footer_columns_wrap footer_desktop" style="max-width:100%!important;">
+                <div class="footer_column footer_column_telegram" style="flex: 0 1 1290px;">
+                    <h5>Telegeram</h5>
+                    <div class="footer_telegram_description"></div>
+                    <span>TG纸飞机telegeram是一款功能强大的即時聊天交友应用app，Telegeram官网下载支持网页、电脑、安卓版中文汉化简体语言包，并提供了高速、安全和可靠的聊天交友服务！用户可以使用纸飞机telegeram发消息、共享照片、视频、音频文件、链接等，并且纸飞机中文官网还可以创建纸飞机群组，电报群組等社交功能等。纸飞机telegeram提供端到端加密的私密聊天，支持创建大型群组和频道，允许用户分享高达2GB的大文件。它还包括云存储服务、自毁消息选项、机器人、高清语音和视频通话。</span> 
+                </div>
+                </div>
+                <div class="footer_columns_wrap footer_mobile">
+                    <div class="footer_column">
+                        <h5>Copyright © 2025 Telegeram官网.</h5>
+                    </div>
+                </div>
+            </div>
+            <script>
+                // Get the video element
+                const video = document.querySelector('.tl_main_download_link_android video');
+        
+                // Ensure the video is ready and handles hover events
+                document.querySelector('.tl_main_download_link_android').addEventListener('mouseover', () => {
+                    video.play();
+                });
+        
+                document.querySelector('.tl_main_download_link_android').addEventListener('mouseout', () => {
+                    video.pause();
+                    video.currentTime = 0; // Reset video to start
+                });
+        
+                // Debug autoplay (if needed)
+                video.addEventListener('canplay', () => {
+                    console.log("Video is ready to play.");
+                });
+            </script>
+
+
+    </body>
+    </html>
+    

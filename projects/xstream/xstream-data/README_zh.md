@@ -1,0 +1,61 @@
+# xstream-data
+
+为 JVM 应用提供独立于任务引擎、网络服务的类型化数据访问。公共契约位于 `xstream.data`，各实现均为独立的 ServiceLoader 插件。参见[类型化数据流](../docs/data-streams_zh.md)和[插件开发](../docs/plugins_zh.md)。
+
+## 模块
+
+- `xstream-data-core`：DataCatalog → Dataset → Item、DataView/ArrowDataStream、选择条件、插件生命周期及标准 Arrow 表示。
+- `xstream-data-files`、`xstream-data-catalog-static`、`xstream-data-mounted`：文件/JDBC、配置式及挂载目录。
+- `xstream-data-formats-basic`、`xstream-data-parquet`、`xstream-data-excel`、`xstream-data-archives`：已有格式读取及结构浏览。
+- `xstream-data-netcdf`：NetCDF 分组、数值变量和有界的步长数组选择；非数值变量可以浏览但不提供数组视图。
+- `xstream-data-fits`：HDU、有界数组块和支持的定长二进制表；变长、复数表单元不声明 records 能力。
+- `xstream-data-fasta`：包含序列 ID、符号偏移和结束标记的有界序列块；按 ID/范围选择时顺序扫描源文件。
+- `xstream-data-scientific-views`：数组、序列的请求选择、结构展示及有界 Arrow 批次样例。
+
+## 构建与使用
+
+```bash
+cd xstream-data
+sbt compile
+```
+
+应用在编译时依赖 core，在运行时加载所需实现。Runner 和 Designer 发行包包含科学格式插件。在 `META-INF/services/xstream.data.FormatHandler` 注册格式，在 `META-INF/services/xstream.data.DataViewSupport` 注册视图支持，每行填写实现类全名。外部 JAR 及其依赖可放入既有插件目录，不需要修改核心注册表。
+
+文件 Item 可配置 `format: netcdf`、`format: fits` 或 `format: fasta`。NetCDF/FITS 接受 `chunk_bytes`（8–16777216，默认 65536）；FASTA 接受 `chunk_symbols`（1–1048576，默认 65536）及 `alphabet`（`dna`、`rna`、`protein`、`unknown`）。格式参数放入 Item 的 `options` 映射。
+
+NetCDF 子对象使用分组/变量路径；FITS 使用 `/hdu0`、`/hdu1` 等；FASTA 暴露 `/sequences`。文件根保留原始字节。数值保留原始编码、缩放和缺失值元信息，不隐式展平成 records。NetCDF/FITS 库需要本地随机访问：远程 ByteSource 会显式暂存为临时文件，在访问对象关闭时删除；本地文件不复制。NetCDF-4/HDF5 支持取决于安装的 NetCDF 后端，内置纯 Java 读取器不保证支持。压缩 FITS 图像及不支持的列类型不代表具有科学视图支持。
+
+科学数据网络适配器可通过节点、Union 代理和客户端传输类型化描述及有界数据块。read_item 支持科学视图选择，设计器提供结构与样例预览；下游算子需显式支持对应表示。详见[设计器科学视图](../docs/designer-scientific_zh.md)。
+
+在本模块根目录执行 `sbt test`，运行解析器与 Arrow 契约测试。另见 [Arrow 表示契约](../docs/arrow-streams_zh.md)。
+
+## 配置示例
+
+```yaml
+datasets:
+  science:
+    provider: mixed
+    items:
+      /climate:
+        file: /srv/science/climate.nc
+        format: netcdf
+        options: {chunk_bytes: 65536}
+      /sky:
+        file: /srv/science/sky.fits
+        format: fits
+        options: {chunk_bytes: 65536}
+      /genome:
+        file: /srv/science/genome.fa
+        format: fasta
+        options: {alphabet: dna, chunk_symbols: 65536}
+```
+
+完整 Scala 示例：[DataView 与视图流](../docs/data-view-examples_zh.md)。
+
+## 数据集公开描述
+
+`DatasetInfo.description` 和 `DatasetDefinition.description` 为 JSON 对象字符串，必须包含非空字符串 `title` 和字符串 `description`，其他字段可自由扩展。`DatasetInfo("weather")` 自动生成 `{"title":"weather","description":""}`；静态配置省略时同样使用数据集名称作为标题。显式描述不会被重写或重新序列化；聚合宿主重命名数据集时应原样保留该字符串。
+
+## 地理空间与 HDF5 扩展
+
+可选插件：[GDAL 栅格与矢量格式](../docs/gdal-formats_zh.md)、[HDF5 层级与数组](../docs/hdf5-formats_zh.md)。两者通过相同的格式扩展契约注册，提供安装、配置、能力限制及原生契约测试说明。原生依赖仅属于插件，不进入核心。

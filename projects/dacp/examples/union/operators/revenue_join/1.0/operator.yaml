@@ -1,0 +1,24 @@
+name: revenue_join
+version: "1.0"
+description: Union collaboration analysis example.
+image: xstream/operator-python:1.0
+executor: python
+entrypoint: revenue_join
+artifact: revenue_join.py
+inputs:
+  quantities:
+    representations: [bytes]
+    formats: []
+  prices:
+    representations: [bytes]
+    formats: []
+
+parameters:
+  type: object
+  properties: {}
+  required: []
+  additionalProperties: false
+
+icon:
+  path: "M3 5h18v14H3zM3 10h18M9 5v14"
+  color: "#14866b"

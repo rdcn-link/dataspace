@@ -1,0 +1,4 @@
+import json,subprocess,sys
+from pathlib import Path
+b=Path('/mnt/data/conet');c=json.loads((b/'conet-server/.state/network/connection.json').read_text());out=Path(sys.argv[1]).resolve();allowed=(b/'catalog-integration/scientific-runs').resolve();assert allowed in out.parents and out.name=='outputs'
+args=['docker','run','--rm','--network','host','-e','PYTHONPATH=/client:/client-deps:/opt/dataseek-deps:/opt/xstream-sdk','-v',str(b/'dacp-codex/dacp-client')+':/client:ro','-v',str(b/'seed-weight/client-deps')+':/client-deps:ro','-v',str(c['token_file'])+':/token:ro','-v',str(c['ca'])+':/ca:ro','-v',str(b/'conet-server/.state/network/connection.json')+':/connection.json:ro','-v',str(b/'downloaded-validation/run.py')+':/run_science.py:ro','-v',str(out)+':/output','--entrypoint','/usr/local/bin/python','conet/dataseek-scientific:1.0','/run_science.py'];subprocess.check_call(args)

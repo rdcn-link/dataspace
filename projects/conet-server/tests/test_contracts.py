@@ -1,0 +1,125 @@
+import importlib.util
+import io
+import json
+import math
+from pathlib import Path
+import subprocess
+import sys
+import unittest
+import yaml
+import numpy as np
+
+ROOT=Path(__file__).resolve().parents[1]
+def load(name,path):
+    spec=importlib.util.spec_from_file_location(name,path);module=importlib.util.module_from_spec(spec);spec.loader.exec_module(module);return module
+sys.path.insert(0,str(ROOT/'cases/check-dams/operator'))
+dam=load('dam_analysis',ROOT/'cases/check-dams/operator/analysis.py')
+astro=load('astro_analysis',ROOT/'cases/observatory/operator/analysis.py')
+
+class StreamContracts(unittest.TestCase):
+    def test_fragmented_chunks_and_empty_chunks(self):
+        for cls in [dam.ChunkReader,astro.ChunkReader]:
+            with io.BufferedReader(cls([b'',b'ab',b'',b'c',b'de'])) as stream:self.assertEqual(stream.read(),b'abcde')
+    def test_job_ports_only_reference_existing_steps(self):
+        for case in ['check-dams','observatory','emergency']:
+            job=yaml.safe_load((ROOT/'cases'/case/'job.yaml').read_text());seen=set()
+            for step in job['steps']:
+                for source in step.get('inputs',{}).values():self.assertIn(source.split(':')[0],seen)
+                seen.add(step['id'])
+            for source in job['outputs'].values():self.assertIn(source.split(':')[0],seen)
+    def test_dataset_case_routing(self):
+        config=yaml.safe_load((ROOT/'conet.yaml').read_text());self.assertEqual(len(config['centers']),7)
+        for center in config['centers']:
+            self.assertTrue(center['datasets'])
+            self.assertTrue({d['case'] for d in center['datasets']}.issubset({c['id'] for c in config['cases']}))
+            for d in center['datasets']:self.assertTrue(d['title'] and d['description'])
+
+class TerrainContracts(unittest.TestCase):
+    def test_constant_entropy(self):self.assertEqual(dam.geo_entropy(np.ones((3,3)),np.ones((3,3)),1),0)
+    def test_missing_basin(self):self.assertIsNone(dam.geo_entropy(np.ones((2,2)),np.zeros((2,2)),1))
+    def test_slope_uses_distance(self):
+        class DEM:
+            nodata=-9999
+            def sample(self,coords,masked):return [[120],[100]]
+        feature={'geometry':{'type':'LineString','coordinates':[[0,0],[100,0]]}}
+        self.assertAlmostEqual(dam.gully_slop(DEM(),feature),.2)
+    def test_topology_cycle_rejected(self):
+        features=[{'properties':{'HydroID':i,'NextDownID':3-i,'slope_ratio':.1,'entropy':.1}} for i in [1,2]]
+        with self.assertRaisesRegex(ValueError,'cycle'):dam.susceptibility({'features':features},{'max_downstream_hops':32})
+
+class AstronomyContracts(unittest.TestCase):
+    def row(self,identifier,ra=150,dec=2,mag=18,error=.1):return dict(source_id=identifier,ra=ra,dec=dec,mag=mag,mag_error=error)
+    def band(self,band,rows):return dict(band=band,cone=[150,2,.15],rows=rows,scanned_rows=len(rows),quality_rejections=0)
+    def test_ids_are_not_matching_keys_and_errors_propagate(self):
+        result=astro.crossmatch(self.band('g',[self.row(1,mag=20)]),self.band('r',[self.row(22,mag=18)]),self.band('i',[self.row(333,mag=17)]),{'cone':[150,2,.15]})
+        self.assertEqual(len(result['rows']),1);row=result['rows'][0];self.assertEqual(row['g_r'],2);self.assertEqual(row['r_i'],1);self.assertAlmostEqual(row['g_r_error'],math.sqrt(.02));self.assertEqual(row['class'],'red_candidate')
+    def test_ambiguous_match_rejected(self):
+        matches,ambiguous=astro.pair([self.row(1)],[self.row(2),self.row(3)],.8);self.assertFalse(matches);self.assertEqual(ambiguous,{0})
+    def test_ra_wrap(self):
+        matches,_=astro.pair([self.row(1,359.99999,0)],[self.row(2,.00001,0)],.8);self.assertIn(0,matches)
+    def test_missing_band(self):
+        result=astro.crossmatch(self.band('g',[self.row(1)]),self.band('r',[]),self.band('i',[self.row(3)]),{'cone':[150,2,.15]})
+        self.assertFalse(result['rows']);self.assertEqual(result['unmatched']['missing_r'],1)
+    def test_pairwise_separation_guard(self):
+        result=astro.crossmatch(self.band('g',[self.row(1,150)]),self.band('r',[self.row(2,150+.7/3600)]),self.band('i',[self.row(3,150-.7/3600)]),{'cone':[150,2,.15],'match_radius_arcsec':.8})
+        self.assertFalse(result['rows'])
+
+
+class MapPreviewContracts(unittest.TestCase):
+    def test_georeferenced_preview_and_reuse(self):
+        import tempfile,tarfile
+        from rasterio.io import MemoryFile
+        from rasterio.transform import from_bounds
+        from PIL import Image
+        visuals=load('dam_visuals',ROOT/'cases/check-dams/visuals.py')
+        with tempfile.TemporaryDirectory() as tmp:
+            state=Path(tmp);data=state/'data';(data/'a').mkdir(parents=True);(data/'b').mkdir()
+            (data/'manifest.json').write_text(json.dumps({'bbox_wgs84':[10,20,11,21]}))
+            for center,name,member,values in [('a','terrain.bundle','dem.tif',np.full((1,8,8),1000,dtype='float32')),('b','imagery.bundle','imagery.tif',np.broadcast_to(np.array([.25,.5,.75],dtype='float32')[:,None,None],(3,8,8)).copy())]:
+                with MemoryFile() as mem:
+                    with mem.open(driver='GTiff',height=8,width=8,count=len(values),dtype='float32',crs='EPSG:4326',transform=from_bounds(10,20,11,21,8,8)) as raster:raster.write(values)
+                    content=mem.read()
+                with tarfile.open(data/center/name,'w') as archive:
+                    info=tarfile.TarInfo('t00/'+member);info.size=len(content);archive.addfile(info,io.BytesIO(content))
+            visuals.prepare(state)
+            preview=state/'visuals/imagery.png'
+            with Image.open(preview) as image:self.assertEqual(image.getpixel((1024,1024)),(63,127,191))
+            before=preview.stat().st_mtime_ns;visuals.prepare(state);self.assertEqual(preview.stat().st_mtime_ns,before)
+
+class PolygonSelectionContracts(unittest.TestCase):
+    def setUp(self):
+        from polygon_region import selection,rectangle
+        self.selection=selection;self.rectangle=rectangle
+        self.triangle={'type':'Polygon','coordinates':[[[109,35],[110,35],[109,36],[109,35]]]}
+    def test_triangle_excludes_envelope_false_positive_and_keeps_boundary(self):
+        from shapely.geometry import Point
+        geometry=self.selection(self.triangle)
+        self.assertTrue(geometry.envelope.covers(Point(109.9,35.9)))
+        self.assertFalse(geometry.covers(Point(109.9,35.9)))
+        self.assertTrue(geometry.covers(Point(109.2,35.2)))
+        self.assertTrue(geometry.covers(Point(109,35)))
+    def test_invalid_polygons_rejected(self):
+        for value in [None,{'type':'MultiPolygon','coordinates':[]},
+            {'type':'Polygon','coordinates':[[[0,0],[1,1],[1,0],[0,1],[0,0]]]},
+            {'type':'Polygon','coordinates':[[[0,0],[1,0],[0,1]]]},
+            {'type':'Polygon','coordinates':[[[0,0],[1,0],[float('nan'),1],[0,0]]]}]:
+            with self.subTest(value=value),self.assertRaises(ValueError):self.selection(value)
+    def test_projection_preserves_hole(self):
+        from common import project_region
+        polygon=self.rectangle([109,35,110,36]);polygon['coordinates'].append([[109.2,35.2],[109.8,35.2],[109.8,35.8],[109.2,35.8],[109.2,35.2]])
+        projected=project_region({'region':polygon,'region_bbox':[109,35,110,36]},'EPSG:32649')
+        self.assertEqual(len(projected.interiors),1)
+        from pyproj import Transformer
+        from shapely.geometry import Point
+        self.assertFalse(projected.covers(Point(*Transformer.from_crs(4326,32649,always_xy=True).transform(109.5,35.5))))
+    def test_overlap_rechecks_polygon_before_channel_matching(self):
+        params={'region':self.triangle,'region_bbox':[109,35,110,36]}
+        hazards={**params,'HydroIDs':[],'features':[],'channel_rejections':[],'crs':'EPSG:32649'}
+        detected={**params,'points':[{'tile':'t00','point_id':'outside','longitude':109.9,'latitude':35.9}],'rejections':[],'model':'test','windows_inferred':0}
+        import tarfile
+        archive=io.BytesIO()
+        with tarfile.open(fileobj=archive,mode='w'):pass
+        result=dam.overlap(hazards,detected,[archive.getvalue()],params)
+        self.assertFalse(result['features']);self.assertEqual(result['rejections'],[{'point_id':'outside','reason':'outside_region'}])
+
+if __name__=='__main__':unittest.main()

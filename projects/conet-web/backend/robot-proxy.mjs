@@ -1,0 +1,10 @@
+import http from 'node:http';
+import {pipeline} from 'node:stream';
+const prefix='/user-center/robots';
+export function rewriteRobotText(value,type){if(type.includes('html'))return value.replace(/(src|href)="\/(?!\/)/g,'$1="'+prefix+'/').replaceAll('http://10.0.90.48:9588/','/user-center/').replaceAll('数据协作网络','科诺空间').replaceAll('>CONET<','>科诺空间<').replaceAll('>CONOX<','>科诺空间<').replaceAll('>conox<','>科诺空间<').replaceAll('返回可信数据空间','返回用户中心');if(type.includes('javascript'))return value.replace(/(["'`])\/api\//g,'$1'+prefix+'/api/');return value}
+export async function proxyRobot(req,res,ctx,{port=9590}={}){
+ if(!ctx.user?.uid||!ctx.isPlatformAdmin)throw Object.assign(Error('仅管理员可管理数据智能机器人'),{status:403});
+ const url=new URL(req.url,'http://localhost');if(url.pathname!==prefix&&!url.pathname.startsWith(prefix+'/'))throw Object.assign(Error('页面不存在'),{status:404});
+ const headers={...req.headers,'accept-encoding':'identity','x-conet-actor':ctx.user.uid,'x-conet-display-name':encodeURIComponent(ctx.user.name||'管理员')};for(const key of ['cookie','authorization','x-conet-role','x-conet-platform-admin','x-conet-principal','x-conet-user'])delete headers[key];
+ await new Promise((resolve,reject)=>{const proxy=http.request({hostname:'127.0.0.1',port,path:(url.pathname.slice(prefix.length)||'/')+url.search,method:req.method,headers},reply=>{const h={...reply.headers,'cache-control':'no-store'},type=String(h['content-type']||'');delete h['set-cookie'];if(type.includes('html')||type.includes('javascript')){let chunks=[],size=0;reply.on('data',c=>{size+=c.length;if(size>2*1024*1024)reply.destroy(Error('工作台页面过大'));else chunks.push(c)});reply.on('error',reject);reply.on('end',()=>{delete h['content-length'];delete h['transfer-encoding'];res.writeHead(reply.statusCode,h);res.end(rewriteRobotText(Buffer.concat(chunks).toString('utf8'),type));resolve()})}else{res.writeHead(reply.statusCode,h);pipeline(reply,res,e=>e?reject(e):resolve())}});proxy.on('error',reject);req.on('aborted',()=>proxy.destroy());pipeline(req,proxy,e=>{if(e)reject(e)})});
+}

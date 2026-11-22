@@ -1,0 +1,14 @@
+name: Parameterized CSV stream export
+steps:
+- id: read
+  operator: read_item@1.0
+  inputs: {}
+  params:
+    uri: $INPUT_URI
+    view: records
+- id: convert
+  operator: piflow_csv_save@2.0
+  inputs:
+    source: read
+outputs:
+  result: convert

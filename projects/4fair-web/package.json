@@ -1,0 +1,37 @@
+{
+  "name": "tds-agent-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc && vite build",
+    "preview": "vite preview",
+    "article-proxy": "node scripts/article-html-proxy.mjs",
+    "tpdc-config-api": "node scripts/tpdc-data-config-api.mjs",
+    "tpdc-config-api:start": "bash scripts/start-tpdc-config-api.sh"
+  },
+  "dependencies": {
+    "axios": "^1.6.8",
+    "iconify-icon": "^2.0.0",
+    "marked": "^18.0.2",
+    "pinia": "^2.1.7",
+    "qrcode": "^1.5.4",
+    "vue": "^3.4.21",
+    "vue-router": "^4.3.0"
+  },
+  "devDependencies": {
+    "@types/qrcode": "^1.5.6",
+    "@vitejs/plugin-vue": "^5.0.4",
+    "autoprefixer": "^10.4.19",
+    "playwright": "^1.49.0",
+    "postcss": "^8.4.38",
+    "tailwindcss": "^3.4.3",
+    "typescript": "^5.4.3",
+    "vite": "^5.2.0",
+    "vue-tsc": "^2.0.6"
+  },
+  "optionalDependencies": {
+    "@rollup/rollup-win32-x64-msvc": "^4.60.2"
+  }
+}

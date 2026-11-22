@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="description" content="费尔空间 - 科研数据协作平台" />
+  <title>费尔空间 · 微信小程序</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://code.iconify.design/iconify-icon/2.1.0/iconify-icon.min.js"></script>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', 'Microsoft YaHei', -apple-system, sans-serif;
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f8fafc 0%, #eff6ff 50%, #f5f3ff 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      position: relative;
+      overflow-x: hidden;
+    }
+
+    /* 背景光晕 */
+    .bg-blob {
+      position: fixed;
+      width: 500px;
+      height: 500px;
+      border-radius: 50%;
+      z-index: 0;
+      filter: blur(60px);
+      pointer-events: none;
+    }
+    .blob-1 {
+      top: -120px;
+      right: -100px;
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.08) 0%, rgba(139, 92, 246, 0.05) 50%, transparent 100%);
+      animation: float 20s infinite alternate;
+    }
+    .blob-2 {
+      bottom: -120px;
+      left: -100px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.08) 0%, rgba(59, 130, 246, 0.05) 50%, transparent 100%);
+      animation: float 25s infinite alternate-reverse;
+    }
+
+    @keyframes float {
+      0% { transform: translate(0, 0); }
+      100% { transform: translate(50px, 100px); }
+    }
+
+    /* 主卡片 */
+    .main-card {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 420px;
+      background: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      border-radius: 24px;
+      border: 1px solid rgba(226, 232, 240, 0.5);
+      box-shadow: 0 20px 60px rgba(59, 130, 246, 0.10), 0 4px 16px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      animation: cardIn 0.5s ease-out;
+    }
+
+    @keyframes cardIn {
+      from { opacity: 0; transform: translateY(20px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+
+    /* 顶部品牌区 */
+    .brand-header {
+      background: linear-gradient(135deg, #2563eb 0%, #4f46e5 100%);
+      padding: 32px 32px 28px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .brand-header::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 30% 20%, rgba(255,255,255,0.10) 0%, transparent 60%);
+    }
+    .brand-logo {
+      width: 56px;
+      height: 56px;
+      background: rgba(255, 255, 255, 0.20);
+      backdrop-filter: blur(8px);
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+    }
+    .brand-title {
+      font-size: 22px;
+      font-weight: 700;
+      color: #fff;
+      letter-spacing: 0.5px;
+      position: relative;
+    }
+    .brand-sub {
+      font-size: 13px;
+      color: rgba(255, 255, 255, 0.75);
+      margin-top: 4px;
+      position: relative;
+    }
+
+    /* 二维码区域 */
+    .qr-section {
+      padding: 32px 32px 24px;
+      text-align: center;
+    }
+    .qr-title {
+      font-size: 17px;
+      font-weight: 600;
+      color: #1e293b;
+      margin-bottom: 4px;
+    }
+    .qr-desc {
+      font-size: 13px;
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+
+    .qr-wrapper {
+      width: 220px;
+      height: 220px;
+      margin: 0 auto;
+      background: #ffffff;
+      border: 2px solid #e2e8f0;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(59, 130, 246, 0.08);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      transition: border-color 0.3s;
+      position: relative;
+    }
+    .qr-wrapper:hover {
+      border-color: #60a5fa;
+    }
+    .qr-wrapper img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+    /* 二维码占位提示（图片加载前或加载失败时显示） */
+    .qr-placeholder {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      color: #94a3b8;
+    }
+    .qr-placeholder iconify-icon {
+      font-size: 48px;
+      opacity: 0.4;
+    }
+    .qr-placeholder span {
+      font-size: 12px;
+    }
+
+    /* 提示操作区 */
+    .action-section {
+      padding: 0 32px 32px;
+    }
+    .scan-tip {
+      background: linear-gradient(135deg, #eff6ff 0%, #f0fdf4 100%);
+      border: 1px solid #dbeafe;
+      border-radius: 14px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .scan-tip iconify-icon {
+      font-size: 22px;
+      color: #2563eb;
+      flex-shrink: 0;
+    }
+    .scan-tip .tip-text {
+      font-size: 13px;
+      color: #334155;
+      line-height: 1.5;
+    }
+    .scan-tip .tip-text strong {
+      color: #2563eb;
+    }
+
+    /* 步骤说明 */
+    .steps {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+    .step-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 10px 14px;
+      background: rgba(248, 250, 252, 0.6);
+      border-radius: 12px;
+      border: 1px solid rgba(226, 232, 240, 0.4);
+    }
+    .step-num {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #2563eb, #4f46e5);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+    .step-content {
+      font-size: 13px;
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    /* 底部 */
+    .footer {
+      padding: 16px 32px 20px;
+      border-top: 1px solid rgba(226, 232, 240, 0.5);
+      text-align: center;
+    }
+    .footer p {
+      font-size: 12px;
+      color: #94a3b8;
+    }
+
+    /* 加载动画 */
+    .animate-pulse-slow {
+      animation: pulse 2.5s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+    @keyframes pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.5; }
+    }
+
+    /* 响应式微调 */
+    @media (max-width: 480px) {
+      body { padding: 12px; }
+      .brand-header { padding: 24px 24px 20px; }
+      .brand-logo { width: 48px; height: 48px; }
+      .brand-title { font-size: 20px; }
+      .qr-section { padding: 24px 24px 20px; }
+      .qr-wrapper { width: 180px; height: 180px; }
+      .action-section { padding: 0 24px 24px; }
+      .footer { padding: 14px 24px 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="bg-blob blob-1"></div>
+  <div class="bg-blob blob-2"></div>
+
+  <div class="main-card">
+    <!-- 品牌区 -->
+    <div class="brand-header">
+      <div class="brand-logo">
+        <iconify-icon icon="mdi:database-search" style="font-size: 28px; color: #fff;"></iconify-icon>
+      </div>
+      <div class="brand-title">费尔空间</div>
+      <div class="brand-sub">科研数据协作平台</div>
+    </div>
+
+    <!-- 二维码 -->
+    <div class="qr-section">
+      <div class="qr-title">打开微信小程序</div>
+      <div class="qr-desc">使用微信扫描下方二维码进入</div>
+
+      <div class="qr-wrapper" id="qrWrapper">
+        <img
+          id="qrCodeImg"
+          src="./images/miniprogram-qr.png"
+          alt="费尔空间微信小程序二维码"
+          style="display: none;"
+          onload="this.style.display='block'; document.getElementById('qrPlaceholder').style.display='none';"
+          onerror="document.getElementById('qrPlaceholder').style.display='flex'; this.style.display='none';"
+        />
+        <div class="qr-placeholder" id="qrPlaceholder">
+          <iconify-icon icon="mdi:qrcode-scan"></iconify-icon>
+          <span>等待加载二维码...</span>
+        </div>
+      </div>
+
+      <div style="margin-top: 10px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+        <iconify-icon icon="mdi:wechat" style="font-size: 16px; color: #22c55e;"></iconify-icon>
+        <span style="font-size: 12px; color: #94a3b8;">微信扫码 · 即刻体验</span>
+      </div>
+    </div>
+
+    <!-- 操作提示 -->
+    <div class="action-section">
+      <div class="scan-tip">
+        <iconify-icon icon="mdi:cellphone"></iconify-icon>
+        <div class="tip-text">
+          请使用 <strong>微信扫一扫</strong> 扫描上方二维码，即可进入「费尔空间」微信小程序
+        </div>
+      </div>
+
+      <div class="steps">
+        <div class="step-item">
+          <div class="step-num">1</div>
+          <div class="step-content">截屏保存二维码，或使用另一部手机扫描</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">2</div>
+          <div class="step-content">打开微信「扫一扫」，选择相册中的二维码图片</div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">3</div>
+          <div class="step-content">进入小程序，开始使用科研数据协作服务</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 底部 -->
+    <div class="footer">
+      <p>&copy; 2026 费尔空间 · 科研数据协作平台</p>
+    </div>
+  </div>
+
+  <script>
+    // 页面加载后检测二维码图片是否存在，不存在则显示占位
+    document.addEventListener('DOMContentLoaded', function() {
+      var img = document.getElementById('qrCodeImg');
+      var placeholder = document.getElementById('qrPlaceholder');
+
+      // 尝试加载图片
+      var testImg = new Image();
+      testImg.onload = function() {
+        img.style.display = 'block';
+        placeholder.style.display = 'none';
+      };
+      testImg.onerror = function() {
+        placeholder.style.display = 'flex';
+        img.style.display = 'none';
+        // 更新占位文字
+        placeholder.innerHTML = '<iconify-icon icon="mdi:image-off-outline" style="font-size: 48px; opacity: 0.4;"></iconify-icon><span>请上传小程序二维码图片</span>';
+      };
+      testImg.src = img.src;
+    });
+  </script>
+</body>
+</html>

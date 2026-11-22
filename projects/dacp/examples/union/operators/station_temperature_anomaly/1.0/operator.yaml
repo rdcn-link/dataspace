@@ -1,0 +1,24 @@
+name: station_temperature_anomaly
+version: "1.0"
+description: Join station-day statistics with local climate references and stream temperature anomalies.
+image: xstream/operator-python:1.0
+executor: python
+entrypoint: station_temperature_anomaly
+artifact: station_temperature_anomaly.py
+inputs:
+  baselines:
+    representations: [records]
+    formats: []
+  statistics:
+    representations: [bytes]
+    formats: [ndjson]
+
+parameters:
+  type: object
+  properties: {}
+  required: []
+  additionalProperties: false
+
+icon:
+  path: "M3 5h18v14H3zM3 10h18M9 5v14"
+  color: "#14866b"

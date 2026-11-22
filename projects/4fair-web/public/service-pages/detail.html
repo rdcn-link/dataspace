@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>费尔空间-服务详情</title>
+    <script src="js/tailwindcss.3.4.3.js"></script>
+    <script src="js/iconify-icon.min.1.0.7.js"></script>
+    <script src="js/echarts.min.5.4.3.js"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        * { font-family: 'Inter', system-ui, -apple-system, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #f0f7ff 0%, #e8f4fd 50%, #f5f3ff 100%);
+            min-height: 100vh;
+        }
+        .glass-effect {
+            background: rgba(255, 255, 255, 0.8);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+        }
+        .card-hover:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 40px rgba(0, 0, 0, 0.12);
+        }
+        .like-btn.liked {
+            color: #ef4444;
+        }
+        .like-btn.liked .heart-icon {
+            fill: #ef4444;
+        }
+        .evaluation-item:hover {
+            background: rgba(59, 130, 246, 0.05);
+        }
+        .scrollbar-thin::-webkit-scrollbar { width: 6px; }
+        .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+        .scrollbar-thin::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+        .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-6xl mx-auto">
+        <header class="glass-effect rounded-2xl p-4 mb-6 flex items-center justify-between shadow-lg">
+            <div class="flex items-center space-x-4">
+                <a href="/service/list" class="p-2 hover:bg-slate-100 rounded-xl transition-colors">
+                    <iconify-icon class="text-2xl text-slate-600" icon="solar:arrow-left-linear"></iconify-icon>
+                </a>
+                <div>
+                    <h1 class="text-xl font-bold text-slate-800">服务详情</h1>
+                </div>
+            </div>
+            <button id="likeBtn" class="like-btn liked flex items-center space-x-2 px-4 py-2 rounded-xl hover:bg-slate-100 transition-all">
+                <iconify-icon class="heart-icon text-2xl text-red-500" icon="solar:heart-bold-duotone"></iconify-icon>
+                <span id="likeCount" class="text-lg font-bold text-slate-700">0</span>
+            </button>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+                <section class="glass-effect rounded-2xl p-6 shadow-lg">
+                    <div id="serviceCard" class="bg-white/80 rounded-xl border border-slate-100">
+                        <div class="p-5 border-b border-slate-100">
+                            <div class="flex items-start justify-between mb-3">
+                                <div id="serviceIcon" class="w-12 h-12 bg-indigo-50 rounded-lg flex items-center justify-center text-indigo-600">
+                                    <iconify-icon class="text-3xl" icon="mdi:molecule"></iconify-icon>
+                                </div>
+                                <span id="serviceTag" class="px-3 py-1 bg-slate-100 text-xs font-bold text-slate-400 rounded-full">化学</span>
+                            </div>
+                            <h2 id="serviceTitle" class="text-xl font-bold mb-2 text-slate-800">化学物质智能检索</h2>
+                            <p id="serviceDesc" class="text-sm text-slate-500 leading-relaxed">基于分子式快速识别化学物质信息与结构数据</p>
+                        </div>
+                        <div class="p-5 border-b border-slate-100">
+                            <div class="flex flex-wrap items-center gap-4">
+                                <span class="flex items-center gap-1 text-xs text-slate-500">
+                                    <iconify-icon class="text-red-400" icon="solar:heart-bold-duotone"></iconify-icon>
+                                    <span id="likeNum">12.4k</span> 点赞
+                                </span>
+                                <span class="flex items-center gap-1 text-xs text-slate-500">
+                                    <iconify-icon class="text-blue-400" icon="solar:chat-round-dots-bold-duotone"></iconify-icon>
+                                    <span id="useNum">852</span> 使用
+                                </span>
+                                <span class="flex items-center gap-1 text-sm text-slate-600 ml-auto">
+                                    <iconify-icon class="text-emerald-400" icon="solar:server-bold-duotone"></iconify-icon>
+                                    <span id="serviceSource">化学物质基础数据库</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="p-5">
+                            <h3 class="text-sm font-bold text-slate-700 mb-2 flex items-center">
+                                <iconify-icon class="text-blue-500 mr-2" icon="solar:info-circle-bold-duotone"></iconify-icon>
+                                服务介绍
+                            </h3>
+                            <div id="serviceIntro" class="text-sm text-slate-600 leading-relaxed">
+                                <p>该服务基于化学物质基础数据库，提供快速的化学分子式检索和分析功能。在服务窗口输入化学分子式，平台将自动识别并返回详细的化学物质信息，科学赋能化学研究、药物开发、材料科学等领域的相关科研。</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section class="glass-effect rounded-2xl p-6 shadow-lg">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <iconify-icon class="text-orange-500 mr-2" icon="solar:document-bold-duotone"></iconify-icon>
+                        使用明细
+                    </h3>
+                    <div class="mb-4">
+                        <input type="text" id="usageSearchInput" oninput="filterUsageLogs()" class="w-full px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400" placeholder="搜索prompt...">
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-sm">
+                            <thead>
+                                <tr class="text-left text-slate-500 border-b border-slate-200">
+                                    <th class="pb-2 pr-3 font-medium">序号</th>
+                                    <th class="pb-2 pr-3 font-medium">prompt</th>
+                                    <th class="pb-2 pr-3 font-medium">时间</th>
+                                    <th class="pb-2 font-medium">状态</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usageLog" class="divide-y divide-slate-100">
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+            </div>
+
+            <div class="space-y-6">
+                <section class="glass-effect rounded-2xl p-6 shadow-lg flex flex-col">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <iconify-icon class="text-purple-500 mr-2" icon="solar:chart-bold-duotone"></iconify-icon>
+                        浏览与使用统计
+                    </h3>
+                    <div class="flex-1 min-h-0">
+                        <div id="statsChart" style="width: 100%; height: 280px;"></div>
+                    </div>
+                </section>
+
+                <section class="glass-effect rounded-2xl p-6 shadow-lg">
+                    <h3 class="text-lg font-bold text-slate-800 mb-4 flex items-center">
+                        <iconify-icon class="text-blue-500 mr-2" icon="solar:chat-round-dots-bold-duotone"></iconify-icon>
+                        服务评价
+                    </h3>
+                    <div class="mb-4">
+                        <div class="flex gap-2">
+                            <input type="text" id="newEvalInput" class="flex-1 px-3 py-2 border border-slate-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-200 focus:border-blue-400" placeholder="添加新评价...">
+                            <button onclick="addEvaluation()" class="px-4 py-2 bg-blue-600 text-white rounded-xl text-sm font-medium hover:bg-blue-700 transition-colors">
+                                添加
+                            </button>
+                        </div>
+                    </div>
+                    <div id="evalList" class="space-y-2 max-h-96 overflow-y-auto scrollbar-thin">
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const serviceData = {
+            '化学物质智能检索': {
+                icon: 'mdi:molecule',
+                tag: '化学',
+                bgColor: 'bg-indigo-50',
+                textColor: 'text-indigo-600',
+                hoverBg: 'group-hover:bg-indigo-600',
+                hoverText: 'group-hover:text-white',
+                title: '化学物质智能检索',
+                desc: '基于分子式快速识别化学物质信息与结构数据',
+                intro: `<p>该服务基于化学物质基础数据库，提供快速的化学分子式检索和分析功能。在服务窗口输入化学分子式，平台将自动识别并返回详细的化学物质信息，科学赋能化学研究、药物开发、材料科学等领域的相关科研。</p>`,
+                source: '化学物质基础数据库',
+                likes: 12400,
+                uses: 852,
+                usageLogs: [
+                    { prompt: '分析C6H6的化学结构', time: '10分钟前', status: '成功' },
+                    { prompt: '检索乙醇的分子式', time: '25分钟前', status: '成功' },
+                    { prompt: '查找苯甲醛相关信息', time: '1小时前', status: '成功' },
+                    { prompt: '分析C60富勒烯结构', time: '2小时前', status: '成功' },
+                    { prompt: '检索维生素C分子式', time: '3小时前', status: '成功' }
+                ],
+                evaluations: [
+                    { user: '王**', content: '非常好用，检索速度快！', time: '2小时前' },
+                    { user: '李**', content: '数据很全面，推荐使用', time: '5小时前' },
+                    { user: '张**', content: '偶尔会有检索不到的情况', time: '昨天' }
+                ],
+                stats: {
+                    labels: ['2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10'],
+                    views: [120, 150, 180, 140, 200, 80, 100],
+                    uses: [45, 52, 68, 55, 78, 32, 41]
+                }
+            },
+            '海洋生物智能识别': {
+                icon: 'mdi:fish',
+                tag: '海洋',
+                bgColor: 'bg-blue-50',
+                textColor: 'text-blue-600',
+                hoverBg: 'group-hover:bg-blue-600',
+                hoverText: 'group-hover:text-white',
+                title: '海洋生物智能识别',
+                desc: '基于图像识别技术自动识别海洋生物种类',
+                intro: `<p>该服务由中国科学院南海海洋研究所科学数据中心提供，利用深度学习图像识别技术，能够自动识别海洋生物的种类。</p>`,
+                source: '中国科学院南海海洋研究所科学数据中心',
+                likes: 8200,
+                uses: 421,
+                usageLogs: [
+                    { prompt: '识别这张鱼的品种', time: '15分钟前', status: '成功' },
+                    { prompt: '分析海洋生物图片', time: '30分钟前', status: '成功' },
+                    { prompt: '鉴定珊瑚种类', time: '1小时前', status: '成功' },
+                    { prompt: '识别海藻类型', time: '2小时前', status: '成功' },
+                    { prompt: '分析海洋生物群落', time: '4小时前', status: '成功' }
+                ],
+                evaluations: [
+                    { user: '陈**', content: '识别很准确，科研好帮手', time: '1小时前' },
+                    { user: '刘**', content: '方便快捷，节省时间', time: '3小时前' },
+                    { user: '赵**', content: '物种信息很详细', time: '昨天' }
+                ],
+                stats: {
+                    labels: ['2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10'],
+                    views: [80, 95, 110, 100, 130, 60, 75],
+                    uses: [28, 35, 42, 38, 52, 24, 30]
+                }
+            },
+            '单细胞数据集检索': {
+                icon: 'mdi:database-search',
+                tag: '单细胞',
+                bgColor: 'bg-green-50',
+                textColor: 'text-green-600',
+                hoverBg: 'group-hover:bg-green-600',
+                hoverText: 'group-hover:text-white',
+                title: '单细胞数据集检索',
+                desc: '多条件筛选获取高质量单细胞预训练数据集',
+                intro: `<p>该服务基于bdbe.cn Kun单细胞可视化平台，提供强大的单细胞数据集检索功能。</p>
+                        <p class="mt-2">支持多条件筛选，帮助研究人员快速找到所需的高质量单细胞数据集。</p>`,
+                source: 'bdbe.cn kun 单细胞可视化平台',
+                likes: 15100,
+                uses: 1200,
+                usageLogs: [
+                    { prompt: '检索肝脏单细胞数据集', time: '20分钟前', status: '成功' },
+                    { prompt: '筛选肿瘤微环境数据', time: '40分钟前', status: '成功' },
+                    { prompt: '查找免疫细胞数据集', time: '1小时前', status: '成功' },
+                    { prompt: '分析脑组织单细胞数据', time: '2小时前', status: '成功' },
+                    { prompt: '获取心肌细胞数据', time: '3小时前', status: '成功' }
+                ],
+                evaluations: [
+                    { user: '周**', content: '数据集非常全面', time: '30分钟前' },
+                    { user: '吴**', content: '筛选功能很实用', time: '2小时前' },
+                    { user: '郑**', content: '数据质量很高', time: '昨天' }
+                ],
+                stats: {
+                    labels: ['2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10'],
+                    views: [200, 250, 300, 280, 350, 150, 180],
+                    uses: [85, 102, 128, 115, 145, 62, 78]
+                }
+            },
+            '单细胞数据标准化': {
+                icon: 'mdi:chart-bell-curve',
+                tag: '数据',
+                bgColor: 'bg-orange-50',
+                textColor: 'text-orange-600',
+                hoverBg: 'group-hover:bg-orange-600',
+                hoverText: 'group-hover:text-white',
+                title: '单细胞数据标准化',
+                desc: '消除测序偏差，实现高质量数据预处理',
+                intro: `<p>该服务提供专业的单细胞数据标准化处理功能，有效消除测序偏差。</p>
+                        <p class="mt-2">确保数据质量和可比性，为后续分析奠定坚实基础。</p>`,
+                source: 'bdbe.cn kun 单细胞可视化平台',
+                likes: 5700,
+                uses: 318,
+                usageLogs: [
+                    { prompt: '标准化这批单细胞数据', time: '35分钟前', status: '成功' },
+                    { prompt: '处理测序批次效应', time: '1小时前', status: '成功' },
+                    { prompt: '数据质控与标准化', time: '2小时前', status: '成功' }
+                ],
+                evaluations: [
+                    { user: '孙**', content: '标准化效果很好', time: '1小时前' },
+                    { user: '钱**', content: '操作简单方便', time: '4小时前' }
+                ],
+                stats: {
+                    labels: ['2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10'],
+                    views: [60, 75, 90, 85, 110, 45, 55],
+                    uses: [22, 28, 35, 32, 45, 18, 24]
+                }
+            },
+            '单细胞智能注释分析': {
+                icon: 'mdi:brain',
+                tag: '分析',
+                bgColor: 'bg-purple-50',
+                textColor: 'text-purple-600',
+                hoverBg: 'group-hover:bg-purple-600',
+                hoverText: 'group-hover:text-white',
+                title: '单细胞智能注释分析',
+                desc: '自动完成细胞类型识别与生物学功能注释',
+                intro: `<p>利用先进的机器学习算法，自动完成单细胞测序数据的细胞类型识别和功能注释。</p>
+                        <p class="mt-2">大大节省人工注释的时间，提高研究效率。</p>`,
+                source: 'bdbe.cn kun 单细胞可视化平台',
+                likes: 9300,
+                uses: 562,
+                usageLogs: [
+                    { prompt: '注释T细胞亚群', time: '10分钟前', status: '成功' },
+                    { prompt: '分析B细胞类型', time: '45分钟前', status: '成功' },
+                    { prompt: '细胞功能注释', time: '1小时前', status: '成功' },
+                    { prompt: '肿瘤微环境注释', time: '2小时前', status: '成功' }
+                ],
+                evaluations: [
+                    { user: '冯**', content: '注释非常准确', time: '20分钟前' },
+                    { user: '曹**', content: '节省大量时间', time: '3小时前' },
+                    { user: '蒋**', content: '功能强大', time: '昨天' }
+                ],
+                stats: {
+                    labels: ['2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10'],
+                    views: [110, 140, 170, 155, 200, 90, 105],
+                    uses: [48, 58, 72, 65, 88, 38, 45]
+                }
+            },
+            '样本性别智能判定': {
+                icon: 'mdi:gender-male-female',
+                tag: '性别',
+                bgColor: 'bg-cyan-50',
+                textColor: 'text-cyan-600',
+                hoverBg: 'group-hover:bg-cyan-600',
+                hoverText: 'group-hover:text-white',
+                title: '样本性别智能判定',
+                desc: '自动识别或纠正单细胞样本的性别信息',
+                intro: `<p>基于基因表达特征，智能判定单细胞样本的性别，快速准确。</p>
+                        <p class="mt-2">可自动纠正样本信息中的错误性别标注。</p>`,
+                source: 'bdbe.cn kun 单细胞可视化平台',
+                likes: 6800,
+                uses: 297,
+                usageLogs: [
+                    { prompt: '判定样本性别', time: '50分钟前', status: '成功' },
+                    { prompt: '纠正性别标注', time: '1小时前', status: '成功' },
+                    { prompt: '验证样本性别', time: '3小时前', status: '成功' }
+                ],
+                evaluations: [
+                    { user: '沈**', content: '判定很准确', time: '2小时前' },
+                    { user: '韩**', content: '帮了大忙', time: '昨天' }
+                ],
+                stats: {
+                    labels: ['2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10'],
+                    views: [45, 55, 70, 65, 85, 35, 42],
+                    uses: [18, 22, 28, 25, 35, 14, 18]
+                }
+            },
+            'OSGs数据可视化分析': {
+                icon: 'mdi:chart-line',
+                tag: '可视化',
+                bgColor: 'bg-red-50',
+                textColor: 'text-red-600',
+                hoverBg: 'group-hover:bg-red-600',
+                hoverText: 'group-hover:text-white',
+                title: 'OSGs数据可视化分析',
+                desc: '提供OSGs整合数据的多维可视化展示',
+                intro: `<p>提供OSGs（有机半导体）数据的多维可视化分析功能。</p>
+                        <p class="mt-2">支持多种图表类型，帮助研究人员直观理解数据特征。</p>`,
+                source: 'bdbe.cn kun 单细胞可视化平台',
+                likes: 4500,
+                uses: 198,
+                usageLogs: [
+                    { prompt: '可视化OSGs数据', time: '1小时前', status: '成功' },
+                    { prompt: '生成数据图表', time: '2小时前', status: '成功' },
+                    { prompt: '多维可视化分析', time: '4小时前', status: '成功' }
+                ],
+                evaluations: [
+                    { user: '唐**', content: '图表很漂亮', time: '3小时前' },
+                    { user: '许**', content: '可视化效果很好', time: '昨天' }
+                ],
+                stats: {
+                    labels: ['2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10'],
+                    views: [35, 45, 55, 50, 65, 28, 35],
+                    uses: [12, 18, 22, 20, 28, 10, 14]
+                }
+            },
+            '芯片数据分析': {
+                icon: 'mdi:chip',
+                tag: '芯片',
+                bgColor: 'bg-teal-50',
+                textColor: 'text-teal-600',
+                hoverBg: 'group-hover:bg-teal-600',
+                hoverText: 'group-hover:text-white',
+                title: '芯片数据分析',
+                desc: '集成电路设计与分析数据处理工具',
+                intro: `<p>专业的芯片数据分析工具，支持各类集成电路设计数据的处理和分析。</p>
+                        <p class="mt-2">提供高效的数据处理和可视化功能。</p>`,
+                source: '芯片设计分析平台',
+                likes: 3200,
+                uses: 156,
+                usageLogs: [
+                    { prompt: '分析芯片数据', time: '2小时前', status: '成功' },
+                    { prompt: '处理设计文件', time: '3小时前', status: '成功' }
+                ],
+                evaluations: [
+                    { user: '姜**', content: '分析很专业', time: '4小时前' },
+                    { user: '汪**', content: '符合需求', time: '昨天' }
+                ],
+                stats: {
+                    labels: ['2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10'],
+                    views: [25, 32, 40, 38, 48, 20, 25],
+                    uses: [8, 12, 15, 14, 18, 7, 10]
+                }
+            },
+            '稳定表达基因分析': {
+                icon: 'mdi:chart-pie',
+                tag: '基因',
+                bgColor: 'bg-teal-50',
+                textColor: 'text-teal-600',
+                hoverBg: 'group-hover:bg-teal-600',
+                hoverText: 'group-hover:text-white',
+                title: '稳定表达基因分析',
+                desc: '支持SEGs功能研究与对比分析可视化',
+                intro: `<p>该服务提供稳定表达基因（SEGs）的功能研究与对比分析可视化功能。</p>
+                        <p class="mt-2">帮助研究人员识别和分析在特定条件下稳定表达的基因。</p>
+                        <ul class="list-disc list-inside mt-2 space-y-1">
+                            <li>SEGs识别与注释</li>
+                            <li>多条件对比分析</li>
+                            <li>可视化图表生成</li>
+                        </ul>`,
+                source: 'bdbe.cn kun 单细胞可视化平台',
+                likes: 11200,
+                uses: 743,
+                usageLogs: [
+                    { prompt: '分析SEGs功能', time: '5分钟前', status: '成功' },
+                    { prompt: '对比基因表达', time: '30分钟前', status: '成功' },
+                    { prompt: '生成可视化图表', time: '1小时前', status: '成功' },
+                    { prompt: '筛选稳定表达基因', time: '2小时前', status: '成功' },
+                    { prompt: '分析基因功能', time: '3小时前', status: '成功' }
+                ],
+                evaluations: [
+                    { user: '何**', content: '分析功能很强大', time: '1小时前' },
+                    { user: '郭**', content: '图表很漂亮', time: '2小时前' },
+                    { user: '林**', content: '数据准确', time: '昨天' }
+                ],
+                stats: {
+                    labels: ['2026-04-04', '2026-04-05', '2026-04-06', '2026-04-07', '2026-04-08', '2026-04-09', '2026-04-10'],
+                    views: [180, 220, 280, 250, 320, 140, 170],
+                    uses: [75, 92, 118, 105, 135, 58, 72]
+                }
+            }
+        };
+
+        let currentService = null;
+        let isLiked = false;
+        let chart = null;
+
+        function getServiceFromURL() {
+            const params = new URLSearchParams(window.location.search);
+            return params.get('service') || '化学物质智能检索';
+        }
+
+        function formatNumber(num) {
+            if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'k';
+            }
+            return num.toString();
+        }
+
+        function renderServiceDetail(serviceName) {
+            const data = serviceData[serviceName];
+            if (!data) return;
+
+            currentService = serviceName;
+
+            document.getElementById('serviceIcon').className = `w-12 h-12 ${data.bgColor} rounded-lg flex items-center justify-center ${data.textColor}`;
+            document.getElementById('serviceIcon').innerHTML = `<iconify-icon class="text-3xl" icon="${data.icon}"></iconify-icon>`;
+            document.getElementById('serviceTag').textContent = data.tag;
+            document.getElementById('serviceTitle').textContent = data.title;
+            document.getElementById('serviceDesc').textContent = data.desc;
+            document.getElementById('serviceIntro').innerHTML = data.intro;
+            document.getElementById('serviceSource').textContent = data.source;
+            document.getElementById('likeNum').textContent = formatNumber(data.likes);
+            document.getElementById('useNum').textContent = formatNumber(data.uses);
+            document.getElementById('likeCount').textContent = data.likes;
+
+            renderUsageLogs(data.usageLogs);
+            renderEvaluations(data.evaluations);
+            renderChart(data.stats);
+        }
+
+        function renderUsageLogs(logs) {
+            const container = document.getElementById('usageLog');
+            container.innerHTML = logs.map((log, index) => `
+                <tr class="hover:bg-slate-50">
+                    <td class="py-2 pr-3 text-slate-400">${index + 1}</td>
+                    <td class="py-2 pr-3 text-slate-600">${log.prompt}</td>
+                    <td class="py-2 pr-3 text-slate-400">${log.time}</td>
+                    <td class="py-2">
+                        <span class="px-2 py-0.5 text-xs font-medium ${log.status === '成功' ? 'bg-green-100 text-green-600' : 'bg-red-100 text-red-600'} rounded-full">${log.status}</span>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function filterUsageLogs() {
+            const query = document.getElementById('usageSearchInput').value.toLowerCase();
+            const currentLogs = serviceData[currentService]?.usageLogs || [];
+            const filtered = currentLogs.filter(log => log.prompt.toLowerCase().includes(query));
+            renderUsageLogs(filtered);
+        }
+
+        function renderEvaluations(evals) {
+            const container = document.getElementById('evalList');
+            container.innerHTML = evals.map((eval, index) => `
+                <div class="evaluation-item rounded-xl p-3 transition-colors group">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="text-sm font-medium text-slate-700">${eval.user}</span>
+                        <div class="flex items-center gap-2">
+                            <span class="text-xs text-slate-400">${eval.time}</span>
+                            <button onclick="deleteEvaluation(${index})" class="opacity-0 group-hover:opacity-100 p-1 hover:bg-red-100 rounded-lg transition-all">
+                                <iconify-icon class="text-red-400 text-sm" icon="solar:trash-bin-trash-bold-duotone"></iconify-icon>
+                            </button>
+                        </div>
+                    </div>
+                    <p class="text-sm text-slate-600">${eval.content}</p>
+                </div>
+            `).join('');
+        }
+
+        function addEvaluation() {
+            const input = document.getElementById('newEvalInput');
+            const content = input.value.trim();
+            if (!content || !currentService) return;
+
+            const newEval = {
+                user: '我',
+                content: content,
+                time: '刚刚'
+            };
+
+            serviceData[currentService].evaluations.unshift(newEval);
+            input.value = '';
+            renderEvaluations(serviceData[currentService].evaluations);
+        }
+
+        function deleteEvaluation(index) {
+            if (!currentService) return;
+            serviceData[currentService].evaluations.splice(index, 1);
+            renderEvaluations(serviceData[currentService].evaluations);
+        }
+
+        function renderChart(stats) {
+            const container = document.getElementById('statsChart');
+            
+            if (chart) {
+                chart.dispose();
+            }
+
+            chart = echarts.init(container);
+            
+            const option = {
+                tooltip: {
+                    trigger: 'axis'
+                },
+                legend: {
+                    data: ['浏览次数', '使用次数'],
+                    top: 0
+                },
+                grid: {
+                    left: '3%',
+                    right: '4%',
+                    bottom: '3%',
+                    top: '40px',
+                    containLabel: true
+                },
+                xAxis: {
+                    type: 'category',
+                    boundaryGap: false,
+                    data: stats.labels,
+                    axisLine: {
+                        lineStyle: {
+                            color: '#e0e0e0'
+                        }
+                    },
+                    axisLabel: {
+                        color: '#666',
+                        rotate: 30
+                    }
+                },
+                yAxis: {
+                    type: 'value',
+                    axisLine: {
+                        show: false
+                    },
+                    axisTick: {
+                        show: false
+                    },
+                    axisLabel: {
+                        color: '#666'
+                    },
+                    splitLine: {
+                        lineStyle: {
+                            color: 'rgba(0, 0, 0, 0.05)'
+                        }
+                    }
+                },
+                series: [
+                    {
+                        name: '浏览次数',
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 6,
+                        itemStyle: {
+                            color: 'rgb(59, 130, 246)'
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(59, 130, 246, 0.3)' },
+                                { offset: 1, color: 'rgba(59, 130, 246, 0.05)' }
+                            ])
+                        },
+                        data: stats.views
+                    },
+                    {
+                        name: '使用次数',
+                        type: 'line',
+                        smooth: true,
+                        symbol: 'circle',
+                        symbolSize: 6,
+                        itemStyle: {
+                            color: 'rgb(16, 185, 129)'
+                        },
+                        areaStyle: {
+                            color: new echarts.graphic.LinearGradient(0, 0, 0, 1, [
+                                { offset: 0, color: 'rgba(16, 185, 129, 0.3)' },
+                                { offset: 1, color: 'rgba(16, 185, 129, 0.05)' }
+                            ])
+                        },
+                        data: stats.uses
+                    }
+                ]
+            };
+
+            chart.setOption(option);
+        }
+
+        document.getElementById('likeBtn').addEventListener('click', function() {
+            if (!currentService) return;
+
+            const data = serviceData[currentService];
+            data.likes += 1;
+
+            document.getElementById('likeCount').textContent = formatNumber(data.likes);
+            document.getElementById('likeNum').textContent = formatNumber(data.likes);
+        });
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const serviceName = getServiceFromURL();
+            renderServiceDetail(serviceName);
+        });
+    </script>
+</body>
+</html>

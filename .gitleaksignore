@@ -1,0 +1,17 @@
+# Reviewed false positives only: synthetic redaction test, PEM marker parser, vendored parser symbols,
+# upstream file hash, and non-secret dataset-binding identifiers. No credentials are allowlisted.
+projects/ai-dataseek/frontend/tests/toolDisplay.test.mjs:curl-auth-header:77
+projects/xstream/connectors/xstream-dacp-protocol/src/main/scala/xstream/connector/dacp/wire/Tls.scala:private-key:19
+projects/ai-dataseek/frontend/public/vendor/o3dv.min.js:generic-api-key:3907
+projects/xstream/examples/operators/galaxy/upstream-manifest.json:generic-api-key:33
+services/scientific-analysis/applications.json:generic-api-key:301
+services/scientific-analysis/applications.json:generic-api-key:350
+services/scientific-analysis/applications.json:generic-api-key:392
+services/scientific-analysis/applications.json:generic-api-key:430
+services/scientific-analysis/applications.json:generic-api-key:704
+services/scientific-analysis/applications.json:generic-api-key:758
+services/scientific-analysis/applications.json:generic-api-key:1601
+services/scientific-analysis/applications.json:generic-api-key:1922
+services/scientific-analysis/applications.json:generic-api-key:2339
+services/scientific-analysis/applications.json:generic-api-key:2708
+services/scientific-analysis/applications.json:generic-api-key:3003

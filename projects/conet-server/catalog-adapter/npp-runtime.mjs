@@ -1,0 +1,3 @@
+import {execFile} from 'node:child_process';import {promisify} from 'node:util';import {fileURLToPath} from 'node:url';
+const execute=promisify(execFile);
+export async function runGeneric(out,mode,id){const args=['run','--rm','--name','npp-'+mode+'-'+id,'--network','host','-e','PYTHONPATH=/mnt/data/conet/seed-weight/client-deps:/opt/dataseek-deps:/opt/xstream-sdk','-e','NPP_OUTPUT=/output','-e','NPP_MODE='+mode,'-e','NPP_ADAPTER_REGISTRY='+fileURLToPath(new URL('./npp-adapters.json',import.meta.url)),'-v','/mnt/data/conet:/mnt/data/conet:ro','-v',out+':/output','--entrypoint','/usr/local/bin/python','conet/dataseek-scientific:1.0','/mnt/data/conet/npp-annual/run_generic.py'];return execute('docker',args,{timeout:1800000,maxBuffer:8*1024*1024})}

@@ -1,0 +1,27 @@
+name: eastern-station-temperature-anomalies
+steps:
+- id: read_daily_source
+  operator: read_item@1.0
+  inputs: {}
+  params:
+    uri: $OBSERVATIONS_URI
+    view: records
+- id: daily
+  title: 质控过滤并计算站点每日气温统计
+  operator: daily_temperature_stats@1.0
+  inputs:
+    source: read_daily_source
+- id: read_anomalies_baselines
+  operator: read_item@1.0
+  inputs: {}
+  params:
+    uri: $BASELINES_URI
+    view: records
+- id: anomalies
+  title: 融合站点气候基准并计算气温距平
+  operator: station_temperature_anomaly@1.0
+  inputs:
+    baselines: read_anomalies_baselines
+    statistics: daily
+outputs:
+  temperature_anomalies: anomalies

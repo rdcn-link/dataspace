@@ -1,0 +1,3407 @@
+[
+  {
+    "serviceId": "svc-026",
+    "title": "恢复阶段土壤元素计量对比",
+    "mode": "stoichiometry",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "groupValue",
+        "label": "恢复阶段代码（空值表示全部）",
+        "type": "string",
+        "default": ""
+      }
+    ],
+    "sources": [
+      {
+        "id": "13a7d7123303f19122be",
+        "key": "13a7d7123303f19122be",
+        "title": "Plant–Soil–Microbial Stoichiometric Data Along a Semi-Arid Sandy Land Restoration Chronosequence · Plant_soil_microbial_stoichiometric_data.csv",
+        "datasetId": "3026dc97edf54b3d98093b2734c61852",
+        "metadataId": "6ae3082348567f8b3fe3ad4f",
+        "nodeId": "scidb-test",
+        "filename": "Plant_soil_microbial_stoichiometric_data.csv",
+        "archive": "Plant_soil_microbial_stoichiometric_data.csv",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".csv",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "ce428312937f07faec60f9209f5a4db5eab340d44451546d4205acf1e858c1de",
+        "bytes": 12823
+      }
+    ],
+    "scope": "按恢复阶段汇总土壤C、N、P指标。保留样地与样方结构，仅做描述性统计，不把同一样地内样方当作独立重复进行显著性推断。",
+    "inputRequirements": {
+      "supportedMode": "stoichiometry",
+      "scope": "按恢复阶段汇总土壤C、N、P指标。保留样地与样方结构，仅做描述性统计，不把同一样地内样方当作独立重复进行显著性推断。",
+      "format": [
+        ".csv"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256"
+    }
+  },
+  {
+    "serviceId": "svc-047",
+    "title": "草地斑块微生物丰富度与网络指标分析",
+    "mode": "patch",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [],
+    "sources": [
+      {
+        "id": "39a2e49785faa644dadf",
+        "key": "39a2e49785faa644dadf",
+        "title": "Habitat Fragmentation, Soil Microbial Biodiversity, and Co-occurrence Network Metrics for 23 Grassland Patches · Habitat Fragmentation and Soil Microbal Biodiversity and Networks.xlsx",
+        "datasetId": "d4ba4a0286574925aa94d233970fb391",
+        "metadataId": "6ae3078248567f8b3fe3ad49",
+        "nodeId": "scidb-test",
+        "filename": "Habitat Fragmentation and Soil Microbal Biodiversity and Networks.xlsx",
+        "archive": "Habitat Fragmentation and Soil Microbal Biodiversity and Networks.xlsx",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".xlsx",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "b474dd78c9624d41cb142fca83e3f19ad2ab4846a6d25fb3b0a5ff388088bc44",
+        "bytes": 14270
+      }
+    ],
+    "scope": "展示斑块面积、细菌/真菌丰富度及已发布网络指标。数据没有OTU/ASV丰度矩阵，因此不计算群落相对组成。",
+    "inputRequirements": {
+      "supportedMode": "patch",
+      "scope": "展示斑块面积、细菌/真菌丰富度及已发布网络指标。数据没有OTU/ASV丰度矩阵，因此不计算群落相对组成。",
+      "format": [
+        ".xlsx"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256"
+    }
+  },
+  {
+    "serviceId": "svc-060",
+    "title": "多通道测光时序分析",
+    "mode": "photometry",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "band",
+        "label": "测光通道",
+        "type": "select",
+        "default": "all",
+        "choices": [
+          "all",
+          "u",
+          "g",
+          "v",
+          "r",
+          "i",
+          "z"
+        ]
+      },
+      {
+        "key": "timeStart",
+        "label": "起始MJD（可留空）",
+        "type": "number",
+        "default": null
+      },
+      {
+        "key": "timeEnd",
+        "label": "结束MJD（可留空）",
+        "type": "number",
+        "default": null
+      }
+    ],
+    "sources": [
+      {
+        "id": "f5d01777542d1dddb1bc",
+        "key": "f5d01777542d1dddb1bc",
+        "title": "Simultaneous Real-color Time-Domain Survey of the Coma Field with the Multi-channel Photometric Survey Telescope (Mephisto) · SN2025abka.csv",
+        "datasetId": "aec75cdb22614676b5216d2cc4927a84",
+        "metadataId": "6ae2aba7935c6beaea1be7f5",
+        "nodeId": "scidb-test",
+        "filename": "SN2025abka.csv",
+        "archive": "SN2025abka.csv",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".csv",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "102a9db8e4b676aa8e08b9739cce97ffacc6598db5d7f957eefe3acb10da0fff",
+        "bytes": 4597
+      },
+      {
+        "id": "1ee421f8e7e5dac01f7c",
+        "key": "1ee421f8e7e5dac01f7c",
+        "title": "Simultaneous Real-color Time-Domain Survey of the Coma Field with the Multi-channel Photometric Survey Telescope (Mephisto) · SN2026exy.csv",
+        "datasetId": "aec75cdb22614676b5216d2cc4927a84",
+        "metadataId": "6ae2aba7935c6beaea1be7f5",
+        "nodeId": "scidb-test",
+        "filename": "SN2026exy.csv",
+        "archive": "SN2026exy.csv",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".csv",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "e013c5fdbbbfb33c1c24da8bc1e61399956e3e9c15d021dd7b23846ee9b9be20",
+        "bytes": 1407
+      },
+      {
+        "id": "b422e1f276bdd5e7cf20",
+        "key": "b422e1f276bdd5e7cf20",
+        "title": "Simultaneous Real-color Time-Domain Survey of the Coma Field with the Multi-channel Photometric Survey Telescope (Mephisto) · SN2026dyr.csv",
+        "datasetId": "aec75cdb22614676b5216d2cc4927a84",
+        "metadataId": "6ae2aba7935c6beaea1be7f5",
+        "nodeId": "scidb-test",
+        "filename": "SN2026dyr.csv",
+        "archive": "SN2026dyr.csv",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".csv",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "69503cedb466f1703872cba6a31f60c9d5d69cb0d33a1fe4f6ba902244859f85",
+        "bytes": 2070
+      },
+      {
+        "id": "259d8b39d0a85e4a7750",
+        "key": "259d8b39d0a85e4a7750",
+        "title": "Simultaneous Real-color Time-Domain Survey of the Coma Field with the Multi-channel Photometric Survey Telescope (Mephisto) · SN2026fmh.csv",
+        "datasetId": "aec75cdb22614676b5216d2cc4927a84",
+        "metadataId": "6ae2aba7935c6beaea1be7f5",
+        "nodeId": "scidb-test",
+        "filename": "SN2026fmh.csv",
+        "archive": "SN2026fmh.csv",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".csv",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "c5a7bb5b865656b219b5de2e891d845a14c537d1a7c58fc4598d9d4456253e5f",
+        "bytes": 1018
+      },
+      {
+        "id": "c89c56471714807784be",
+        "key": "c89c56471714807784be",
+        "title": "Simultaneous Real-color Time-Domain Survey of the Coma Field with the Multi-channel Photometric Survey Telescope (Mephisto) · SN2026dgb.csv",
+        "datasetId": "aec75cdb22614676b5216d2cc4927a84",
+        "metadataId": "6ae2aba7935c6beaea1be7f5",
+        "nodeId": "scidb-test",
+        "filename": "SN2026dgb.csv",
+        "archive": "SN2026dgb.csv",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".csv",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "d1f7bac293e3d182a2b8b20bc9a4c82b52c5f886b61a9781fbcb575a27adca78",
+        "bytes": 1764
+      },
+      {
+        "id": "1e1fabc8ffad586baefb",
+        "key": "1e1fabc8ffad586baefb",
+        "title": "Simultaneous Real-color Time-Domain Survey of the Coma Field with the Multi-channel Photometric Survey Telescope (Mephisto) · SN2025abwt.csv",
+        "datasetId": "aec75cdb22614676b5216d2cc4927a84",
+        "metadataId": "6ae2aba7935c6beaea1be7f5",
+        "nodeId": "scidb-test",
+        "filename": "SN2025abwt.csv",
+        "archive": "SN2025abwt.csv",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".csv",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "0aa86414fbcd9c344c9fc5dbc0b72427c9f76cab050231dd68891ba9e739c263",
+        "bytes": 3024
+      },
+      {
+        "id": "530c1f3da257134d119e",
+        "key": "530c1f3da257134d119e",
+        "title": "Simultaneous Real-color Time-Domain Survey of the Coma Field with the Multi-channel Photometric Survey Telescope (Mephisto) · SN2026jih.csv",
+        "datasetId": "aec75cdb22614676b5216d2cc4927a84",
+        "metadataId": "6ae2aba7935c6beaea1be7f5",
+        "nodeId": "scidb-test",
+        "filename": "SN2026jih.csv",
+        "archive": "SN2026jih.csv",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".csv",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "17da9ad796eb182f835c5e0382915a11126965753357841733e54521a598c073",
+        "bytes": 807
+      },
+      {
+        "id": "d4b8b2ff185da38d686f",
+        "key": "d4b8b2ff185da38d686f",
+        "title": "Simultaneous Real-color Time-Domain Survey of the Coma Field with the Multi-channel Photometric Survey Telescope (Mephisto) · SN2026hm.csv",
+        "datasetId": "aec75cdb22614676b5216d2cc4927a84",
+        "metadataId": "6ae2aba7935c6beaea1be7f5",
+        "nodeId": "scidb-test",
+        "filename": "SN2026hm.csv",
+        "archive": "SN2026hm.csv",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".csv",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "778e9a9b0825ad23976cb4c190e736ed3a6665a33a86e4c838f631b801034755",
+        "bytes": 2897
+      },
+      {
+        "id": "018559be42d009ec5ef4",
+        "key": "018559be42d009ec5ef4",
+        "title": "Simultaneous Real-color Time-Domain Survey of the Coma Field with the Multi-channel Photometric Survey Telescope (Mephisto) · SN2026hks.csv",
+        "datasetId": "aec75cdb22614676b5216d2cc4927a84",
+        "metadataId": "6ae2aba7935c6beaea1be7f5",
+        "nodeId": "scidb-test",
+        "filename": "SN2026hks.csv",
+        "archive": "SN2026hks.csv",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".csv",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "7481811fa8bd7a8f666d4a5ff5fe7a025395a580cd5dbb229c62309172705c67",
+        "bytes": 1427
+      }
+    ],
+    "scope": "按通道和MJD范围展示已发布星等及误差；缺测不补零，不推断不同通道同时观测。",
+    "inputRequirements": {
+      "supportedMode": "photometry",
+      "scope": "按通道和MJD范围展示已发布星等及误差；缺测不补零，不推断不同通道同时观测。",
+      "format": [
+        ".csv"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256"
+    }
+  },
+  {
+    "serviceId": "svc-004",
+    "title": "科学表格交互预览",
+    "mode": "table",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "groupValue",
+        "label": "生活型代码（空值表示全部）",
+        "type": "string",
+        "default": ""
+      }
+    ],
+    "sources": [
+      {
+        "id": "d23b6c394710b5f4c7d6",
+        "key": "d23b6c394710b5f4c7d6",
+        "title": "东北草原404种植物种子千粒重数据集 · 种子原始数据汇总2024.2.29.xlsx",
+        "datasetId": "3c3a2359d338459db7cb9179edfd3b07",
+        "metadataId": "6ae30138f850fdbd486a96f0",
+        "nodeId": "scidb-test",
+        "filename": "种子原始数据汇总2024.2.29.xlsx",
+        "archive": "种子原始数据汇总2024.2.29.xlsx",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".xlsx",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "99cfb13585513e3dfdad1fcd7d53a613c0bb2b9ad98a9bfeb60927da00f4f020",
+        "bytes": 42185
+      }
+    ],
+    "scope": "按实际生活型代码筛选并预览404个物种的千粒重均值，保留原始单位克。",
+    "inputRequirements": {
+      "supportedMode": "table",
+      "scope": "按实际生活型代码筛选并预览404个物种的千粒重均值，保留原始单位克。",
+      "format": [
+        ".xlsx"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256",
+      "decimalRule": "显式规范化数字内的小数逗号及小数点后的空白，逐格记录原值与映射值。标准差中的非数字文字（例如l.4776）不猜测修正，原文保留并标记，不参与物种均值间统计。"
+    },
+    "methodDefaults": {
+      "decimalComma": true,
+      "decimalSpaces": true
+    }
+  },
+  {
+    "serviceId": "svc-048",
+    "title": "种子千粒重分组比较",
+    "mode": "seed",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "groupValue",
+        "label": "生活型代码（空值表示全部）",
+        "type": "string",
+        "default": ""
+      }
+    ],
+    "sources": [
+      {
+        "id": "d23b6c394710b5f4c7d6",
+        "key": "d23b6c394710b5f4c7d6",
+        "title": "东北草原404种植物种子千粒重数据集 · 种子原始数据汇总2024.2.29.xlsx",
+        "datasetId": "3c3a2359d338459db7cb9179edfd3b07",
+        "metadataId": "6ae30138f850fdbd486a96f0",
+        "nodeId": "scidb-test",
+        "filename": "种子原始数据汇总2024.2.29.xlsx",
+        "archive": "种子原始数据汇总2024.2.29.xlsx",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".xlsx",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "99cfb13585513e3dfdad1fcd7d53a613c0bb2b9ad98a9bfeb60927da00f4f020",
+        "bytes": 42185
+      }
+    ],
+    "scope": "按生活型比较物种千粒重均值的分布。文件仅有物种均值与标准差，不推断逐次重复测量差异。",
+    "inputRequirements": {
+      "supportedMode": "seed",
+      "scope": "按生活型比较物种千粒重均值的分布。文件仅有物种均值与标准差，不推断逐次重复测量差异。",
+      "format": [
+        ".xlsx"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256",
+      "decimalRule": "显式规范化数字内的小数逗号及小数点后的空白，逐格记录原值与映射值。标准差中的非数字文字（例如l.4776）不猜测修正，原文保留并标记，不参与物种均值间统计。"
+    },
+    "methodDefaults": {
+      "decimalComma": true,
+      "decimalSpaces": true
+    }
+  },
+  {
+    "serviceId": "svc-029",
+    "title": "XRD衍射峰识别与拟合",
+    "mode": "unsupported",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [],
+    "sources": [
+      {
+        "id": "c0d873da1b6a4836915e",
+        "key": "c0d873da1b6a4836915e",
+        "title": "XRD patterns of the seed crystals and samples synthesized using only the seed crystals · Fig-1.opj",
+        "datasetId": "26ff0b9540504cdb95d98b8aa257835a",
+        "metadataId": "6ae30a4948567f8b3fe3ad7b",
+        "nodeId": "scidb-test",
+        "filename": "Fig-1.opj",
+        "archive": "Fig-1.opj",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".opj",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "3de397e857cd3a8ac3a6ca873311c2ca9c25fe44f924358a4ad4f40654035b9b",
+        "bytes": 211817
+      }
+    ],
+    "blockedReason": "实体为Origin OPJ原生工程文件；当前未部署并验证能够恢复角度、强度、样品和单位的解析器。峰识别、拟合和谱线对比均未运行，不能把文件识别当作分析通过。",
+    "scope": "Origin OPJ当前无法可靠解析，本轮验证不通过。",
+    "inputRequirements": {
+      "supportedMode": "unsupported",
+      "scope": "Origin OPJ当前无法可靠解析，本轮验证不通过。",
+      "format": [
+        ".opj"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256"
+    }
+  },
+  {
+    "serviceId": "svc-030",
+    "title": "晶种与样品衍射谱对比",
+    "mode": "unsupported",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [],
+    "sources": [
+      {
+        "id": "c0d873da1b6a4836915e",
+        "key": "c0d873da1b6a4836915e",
+        "title": "XRD patterns of the seed crystals and samples synthesized using only the seed crystals · Fig-1.opj",
+        "datasetId": "26ff0b9540504cdb95d98b8aa257835a",
+        "metadataId": "6ae30a4948567f8b3fe3ad7b",
+        "nodeId": "scidb-test",
+        "filename": "Fig-1.opj",
+        "archive": "Fig-1.opj",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".opj",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "3de397e857cd3a8ac3a6ca873311c2ca9c25fe44f924358a4ad4f40654035b9b",
+        "bytes": 211817
+      }
+    ],
+    "blockedReason": "实体为Origin OPJ原生工程文件；当前未部署并验证能够恢复角度、强度、样品和单位的解析器。峰识别、拟合和谱线对比均未运行，不能把文件识别当作分析通过。",
+    "scope": "Origin OPJ当前无法可靠解析，本轮验证不通过。",
+    "inputRequirements": {
+      "supportedMode": "unsupported",
+      "scope": "Origin OPJ当前无法可靠解析，本轮验证不通过。",
+      "format": [
+        ".opj"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256"
+    }
+  },
+  {
+    "serviceId": "svc-059",
+    "title": "分子云物理参数尺度关系",
+    "mode": "clouds",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "relation",
+        "label": "对数尺度关系",
+        "type": "select",
+        "default": "radius-velocity",
+        "choices": [
+          "radius-velocity",
+          "radius-mass"
+        ]
+      },
+      {
+        "key": "minimumRadiusPc",
+        "label": "最小有效半径（pc）",
+        "type": "number",
+        "default": 0,
+        "min": 0,
+        "max": 10000
+      }
+    ],
+    "sources": [
+      {
+        "id": "65410db4efb8d691ab91",
+        "key": "65410db4efb8d691ab91",
+        "title": "A study of the Physical Properties and Star Formation Activity of a Large Sample of Molecular Clouds: II Revisiting Scaling Relations across Cloud Hierarchies · Physical parameters of C18O cores_ScienceDB.txt",
+        "datasetId": "559c31bbc9474c329cfc7b08ea954866",
+        "metadataId": "6ae2e70591b355a428547fef",
+        "nodeId": "scidb-test",
+        "filename": "Physical parameters of C18O cores_ScienceDB.txt",
+        "archive": "Physical parameters of C18O cores_ScienceDB.txt",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".txt",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "e753478ea17dac654091dde9cc34bf3487ce3896b0f27979b96930756dea249f",
+        "bytes": 47621
+      },
+      {
+        "id": "717c1c9b6a5808c55e7d",
+        "key": "717c1c9b6a5808c55e7d",
+        "title": "A study of the Physical Properties and Star Formation Activity of a Large Sample of Molecular Clouds: II Revisiting Scaling Relations across Cloud Hierarchies · Physical parameters of 13CO clumps_ScienceDB.txt",
+        "datasetId": "559c31bbc9474c329cfc7b08ea954866",
+        "metadataId": "6ae2e70591b355a428547fef",
+        "nodeId": "scidb-test",
+        "filename": "Physical parameters of 13CO clumps_ScienceDB.txt",
+        "archive": "Physical parameters of 13CO clumps_ScienceDB.txt",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".txt",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "e9bfc65b6bd8560a935af3533682f56051fb9cf294a62387c3bbbf9252b648b0",
+        "bytes": 696838
+      },
+      {
+        "id": "e78ca0b0c7534c7cb5b9",
+        "key": "e78ca0b0c7534c7cb5b9",
+        "title": "A study of the Physical Properties and Star Formation Activity of a Large Sample of Molecular Clouds: II Revisiting Scaling Relations across Cloud Hierarchies · Physical parameters of 12CO clouds_ScienceDB.txt",
+        "datasetId": "559c31bbc9474c329cfc7b08ea954866",
+        "metadataId": "6ae2e70591b355a428547fef",
+        "nodeId": "scidb-test",
+        "filename": "Physical parameters of 12CO clouds_ScienceDB.txt",
+        "archive": "Physical parameters of 12CO clouds_ScienceDB.txt",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".txt",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "ed2cfcb7e4c2511d4e06ce070b070023db082f3130662465e87d744fa83228a4",
+        "bytes": 159740
+      }
+    ],
+    "scope": "在正数有效样本中拟合半径—速度弥散或半径—质量的log10线性关系；不作因果推断，不纠正距离误差与选择偏差。",
+    "inputRequirements": {
+      "supportedMode": "clouds",
+      "scope": "在正数有效样本中拟合半径—速度弥散或半径—质量的log10线性关系；不作因果推断，不纠正距离误差与选择偏差。",
+      "format": [
+        ".txt"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256"
+    }
+  },
+  {
+    "serviceId": "svc-039",
+    "title": "催化剂实验性能批次比较",
+    "mode": "catalyst",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "sheet",
+        "label": "已核对的性能表",
+        "type": "select",
+        "default": "Fig6",
+        "choices": [
+          "Fig6",
+          "Fig7"
+        ]
+      },
+      {
+        "key": "temperatureMin",
+        "label": "最低温度（℃）",
+        "type": "number",
+        "default": 200,
+        "min": -273,
+        "max": 1000
+      },
+      {
+        "key": "temperatureMax",
+        "label": "最高温度（℃）",
+        "type": "number",
+        "default": 400,
+        "min": -273,
+        "max": 1000
+      }
+    ],
+    "sources": [
+      {
+        "id": "bf9813c5e618c3c1ab3a",
+        "key": "bf9813c5e618c3c1ab3a",
+        "title": "The dataset from Investigation on catalysts of ternary Ni-Ru-Re active elements for CO selective methanation · catalyst.xlsx",
+        "datasetId": "83b784edc58c4815a20da6003e747215",
+        "metadataId": "6ae3077448567f8b3fe3ad45",
+        "nodeId": "scidb-test",
+        "filename": "catalyst.xlsx",
+        "archive": "catalyst.xlsx",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".xlsx",
+        "originalArchive": "The dataset from Investigation on catalysts of ternary Ni-Ru-Re active elements for CO selective methanation.rar",
+        "prepared": true,
+        "originalArchiveEvidence": {
+          "filename": "The dataset from Investigation on catalysts of ternary Ni-Ru-Re active elements for CO selective methanation.rar",
+          "sha256": "e04511fb65e1c41e549ebea0acd66c16804c4333f1cf2489e19dcb09bb9ed9f8",
+          "members": [
+            "The dataset from Investigation on catalysts of ternary Ni-Ru-Re active elements for CO selective methanation.xlsx"
+          ],
+          "transformation": "lossless container extraction; history ZIP contains unchanged archive members; no original file modified"
+        },
+        "sha256": "99bf9e4dd12a60ea15d834c7ff9069fc6c9be4bcb4f339a7a1e0ed443737494b",
+        "bytes": 6131622
+      }
+    ],
+    "scope": "分析已核对的Fig6转化率与Fig7选择性。温度、流量与组分分开保留，不外推最优工艺。",
+    "inputRequirements": {
+      "supportedMode": "catalyst",
+      "scope": "分析已核对的Fig6转化率与Fig7选择性。温度、流量与组分分开保留，不外推最优工艺。",
+      "format": [
+        ".xlsx"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256"
+    }
+  },
+  {
+    "serviceId": "svc-023",
+    "title": "历史火点记录时段统计",
+    "mode": "fire",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "yearStart",
+        "label": "起始年份",
+        "type": "integer",
+        "default": 2001,
+        "min": 2001,
+        "max": 2022
+      },
+      {
+        "key": "yearEnd",
+        "label": "结束年份",
+        "type": "integer",
+        "default": 2022,
+        "min": 2001,
+        "max": 2022
+      },
+      {
+        "key": "frequency",
+        "label": "统计周期",
+        "type": "select",
+        "default": "year",
+        "choices": [
+          "year",
+          "month"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "f37e11cec59e658cf883",
+        "key": "f37e11cec59e658cf883",
+        "title": "内蒙古大兴安岭森林火灾2001-2022年人工记录和MODIS遥感监测数据集 · history.zip",
+        "datasetId": "3f1e0c870db745c7b1ea25a96c639b6d",
+        "metadataId": "6ae05ce4bfd6babd913a6b7d",
+        "nodeId": "scidb-test",
+        "filename": "history.zip",
+        "archive": "history.zip",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".zip",
+        "originalArchive": "数据集.rar",
+        "prepared": true,
+        "originalArchiveEvidence": {
+          "filename": "数据集.rar",
+          "sha256": "252c28a4c5e6586c938ba3e70572bb3e52f8eddb797c96ce3e0daa53508b2b31",
+          "members": [
+            "数据集/遥感总数据.xls",
+            "数据集/LS（2816）.csv"
+          ],
+          "transformation": "lossless container extraction; history ZIP contains unchanged archive members; no original file modified"
+        },
+        "sha256": "a2bb1ffaf50db07c906ba06780f1ec5c6821952284d316a3bd7de6b438f5e3ad",
+        "bytes": 7295624
+      }
+    ],
+    "scope": "统计2001—2022年历史人工记录与遥感探测中fire=1的年月分布。排除非火样点和未来预测；两类来源分别统计，不能相加解释为独立火灾次数。重复日期位置键报告并保留。",
+    "inputRequirements": {
+      "supportedMode": "fire",
+      "scope": "统计2001—2022年历史人工记录与遥感探测中fire=1的年月分布。排除非火样点和未来预测；两类来源分别统计，不能相加解释为独立火灾次数。重复日期位置键报告并保留。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256",
+      "referenceCountWarning": "元数据介绍人工1126、遥感4078；实际文件筛选fire=1后人工1125、遥感4087，保留真实计数，不强行对齐介绍值。"
+    }
+  },
+  {
+    "serviceId": "svc-005",
+    "title": "多格式科学文件识别",
+    "mode": "formats",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [],
+    "sources": [
+      {
+        "id": "c6cab92435d907c631b2",
+        "key": "c6cab92435d907c631b2",
+        "title": "solid and solution state NMR data of Efavirenz · deposit_data.zip",
+        "datasetId": "76f429cc09a149fbaa7d1263ab114b95",
+        "metadataId": "6ae3032548567f8b3fe3ad31",
+        "nodeId": "scidb-test",
+        "filename": "deposit_data.zip",
+        "archive": "deposit_data.zip",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".zip",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "ca84ee1b452d6e38d151ded13e0a37d6ca9fafbc2bbe4828b89496f504dd9536",
+        "bytes": 18333115
+      }
+    ],
+    "scope": "识别真实NMR压缩包内的文件组织、仪器参数与预览格式，明确原生文件的解析边界。此应用的成果是格式清单，不是化合物鉴定。",
+    "inputRequirements": {
+      "supportedMode": "formats",
+      "scope": "识别真实NMR压缩包内的文件组织、仪器参数与预览格式，明确原生文件的解析边界。此应用的成果是格式清单，不是化合物鉴定。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256"
+    }
+  },
+  {
+    "serviceId": "svc-040",
+    "title": "实验光谱基线与峰形处理",
+    "mode": "nmr",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "smoothWindow",
+        "label": "平滑窗口（奇数）",
+        "type": "integer",
+        "default": 11,
+        "min": 5,
+        "max": 1001
+      },
+      {
+        "key": "prominenceFraction",
+        "label": "相对峰突出度",
+        "type": "number",
+        "default": 0.03,
+        "min": 1e-05,
+        "max": 0.99
+      }
+    ],
+    "sources": [
+      {
+        "id": "ed870e1094b38959a26a",
+        "key": "ed870e1094b38959a26a",
+        "title": "深绿木霉次生代谢产物核磁共振波谱数据 · 化合物数据.zip",
+        "datasetId": "b48aa4d1ad13485299a5b6a7310ead34",
+        "metadataId": "6ae30a3148567f8b3fe3ad71",
+        "nodeId": "scidb-test",
+        "filename": "化合物数据.zip",
+        "archive": "化合物数据.zip",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".zip",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "0d89ebf0388dd51b84ac48175cc052379e745b60da2924d5e8e5753f4a31ecd0",
+        "bytes": 29089839
+      }
+    ],
+    "scope": "读取Bruker已处理的一维1r及procs参数，按ppm坐标执行端点线性基线、Savitzky-Golay平滑及正峰摘要。原生MNOVA、FID重建、定量积分和结构鉴定未实现。",
+    "inputRequirements": {
+      "supportedMode": "nmr",
+      "scope": "读取Bruker已处理的一维1r及procs参数，按ppm坐标执行端点线性基线、Savitzky-Golay平滑及正峰摘要。原生MNOVA、FID重建、定量积分和结构鉴定未实现。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256"
+    }
+  },
+  {
+    "serviceId": "svc-049",
+    "title": "索道图像与掩膜数据概览",
+    "mode": "images",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "maxImages",
+        "label": "最多检查图像数（1600表示本数据全部图像及掩膜）",
+        "type": "integer",
+        "default": 1600,
+        "min": 1,
+        "max": 2000
+      },
+      {
+        "key": "maxSize",
+        "label": "缩略图最大边长（像素）",
+        "type": "integer",
+        "default": 256,
+        "min": 64,
+        "max": 1024
+      }
+    ],
+    "sources": [
+      {
+        "id": "2454a8d5c6e053df5af3",
+        "key": "2454a8d5c6e053df5af3",
+        "title": "Passenger-Ropeway Cable-Centering Measurement: An 800-Image RGB Image–Mask Dataset · MST_ropeway_dataset_800 .zip",
+        "datasetId": "9ac6b36924154f40abeb180e49098751",
+        "metadataId": "6ae2f5e7458b929f0df04e54",
+        "nodeId": "scidb-test",
+        "filename": "MST_ropeway_dataset_800 .zip",
+        "archive": "MST_ropeway_dataset_800 .zip",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".zip",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "cdafc5f0bc0dbe7d43a502729f2a3c0cdd2f0da6e762b4dc604d37760f069400",
+        "bytes": 531850905
+      }
+    ],
+    "scope": "检查所选图像及掩膜的实际解码、尺寸和名称配对，生成最多24幅联系表。完整数据为800图像加800掩膜，不推断分割精度。",
+    "inputRequirements": {
+      "supportedMode": "images",
+      "scope": "检查所选图像及掩膜的实际解码、尺寸和名称配对，生成最多24幅联系表。完整数据为800图像加800掩膜，不推断分割精度。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256"
+    }
+  },
+  {
+    "serviceId": "svc-052",
+    "title": "科研图像安全派生与预览",
+    "mode": "derive",
+    "operator": "conet_downloaded_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "maxImages",
+        "label": "最多派生图像数",
+        "type": "integer",
+        "default": 1600,
+        "min": 1,
+        "max": 2000
+      },
+      {
+        "key": "maxSize",
+        "label": "派生图最大边长（像素）",
+        "type": "integer",
+        "default": 256,
+        "min": 64,
+        "max": 1024
+      }
+    ],
+    "sources": [
+      {
+        "id": "2454a8d5c6e053df5af3",
+        "key": "2454a8d5c6e053df5af3",
+        "title": "Passenger-Ropeway Cable-Centering Measurement: An 800-Image RGB Image–Mask Dataset · MST_ropeway_dataset_800 .zip",
+        "datasetId": "9ac6b36924154f40abeb180e49098751",
+        "metadataId": "6ae2f5e7458b929f0df04e54",
+        "nodeId": "scidb-test",
+        "filename": "MST_ropeway_dataset_800 .zip",
+        "archive": "MST_ropeway_dataset_800 .zip",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".zip",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "cdafc5f0bc0dbe7d43a502729f2a3c0cdd2f0da6e762b4dc604d37760f069400",
+        "bytes": 531850905
+      }
+    ],
+    "scope": "为所选图像与掩膜生成限尺寸、清除元信息的PNG派生包。图像用Lanczos，掩膜用最近邻；保留原始文件。",
+    "inputRequirements": {
+      "supportedMode": "derive",
+      "scope": "为所选图像与掩膜生成限尺寸、清除元信息的PNG派生包。图像用Lanczos，掩膜用最近邻；保留原始文件。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256"
+    }
+  },
+  {
+    "serviceId": "svc-043",
+    "title": "基因组注释与参考序列统计",
+    "mode": "genome",
+    "operator": "conet_downloaded_analysis@1.1",
+    "version": "1.1",
+    "options": [
+      {
+        "key": "maxSpecies",
+        "label": "最多分析物种文件组（100覆盖本包全部）",
+        "type": "integer",
+        "default": 100,
+        "min": 1,
+        "max": 100
+      }
+    ],
+    "sources": [
+      {
+        "id": "4a8353d242fd83703ee3",
+        "key": "4a8353d242fd83703ee3",
+        "title": "Genome annotations (GFF3, longest-isoform CDS and protein sequences) of 65 bumblebee (Bombus) species and three outgroup bees · 69_gff_cds_pr.tar.gz",
+        "datasetId": "f1fb7370d9014b4d968b024e7465c989",
+        "metadataId": "6ae15e08d3e13f33bc64b98f",
+        "nodeId": "scidb-test",
+        "filename": "69_gff_cds_pr.tar.gz",
+        "archive": "69_gff_cds_pr.tar.gz",
+        "version": "downloaded-snapshot",
+        "synthetic": false,
+        "format": ".gz",
+        "originalArchive": null,
+        "prepared": false,
+        "sha256": "1a57ae9e91e71b1392873672eeb9d0c31fa0383f8b1713c8728463537eeae44e",
+        "bytes": 947607554
+      }
+    ],
+    "scope": "流式读取GFF3、CDS及蛋白FASTA，核对物种文件组、特征计数与序列长度。按压缩包实际内容报告物种数，不用标题数量代替读取结果。",
+    "inputRequirements": {
+      "supportedMode": "genome",
+      "scope": "流式读取GFF3、CDS及蛋白FASTA，核对物种文件组、特征计数与序列长度。按压缩包实际内容报告物种数，不用标题数量代替读取结果。",
+      "format": [
+        ".gz"
+      ],
+      "missingValueRule": "空值保留并按方法排除，不补零；无效字段或单位映射拒绝",
+      "sourceBinding": "每次任务选择已登记且实际可读取的兼容资源，冻结完整文件SHA256",
+      "directoryMapping": {
+        "gffDirectory": "69_gff",
+        "cdsDirectory": "69_longest_cds",
+        "proteinDirectory": "69_longest_pr"
+      }
+    },
+    "methodDefaults": {
+      "gffDirectory": "69_gff",
+      "cdsDirectory": "69_longest_cds",
+      "proteinDirectory": "69_longest_pr"
+    }
+  },
+  {
+    "serviceId": "svc-003",
+    "title": "实验表格统计画像",
+    "mode": "profile2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "groupId",
+        "label": "材料组编号（0表示全部）",
+        "default": 0,
+        "type": "integer",
+        "min": 0,
+        "max": 209
+      },
+      {
+        "key": "minLife",
+        "label": "最小疲劳寿命（循环次数）",
+        "default": 1,
+        "type": "number",
+        "min": 1,
+        "max": 1000000000000
+      }
+    ],
+    "sources": [
+      {
+        "id": "e034e50e2314cbabdc02",
+        "key": "e034e50e2314cbabdc02",
+        "title": "Fatigue S–N Curve Dataset for Carbon and Low-Alloy Steels · NIMSfatiguelife.xlsx",
+        "datasetId": "0343c1b8e4ea45619c906a48ed9d9ce1",
+        "metadataId": "6ae3022af850fdbd486a96f9",
+        "nodeId": "scidb-test",
+        "filename": "NIMSfatiguelife.xlsx",
+        "archive": "NIMSfatiguelife.xlsx",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".xlsx",
+        "prepared": false,
+        "sha256": "754246f6653bdd8a28dfb8155aa39f22ca29e79ca7e80d87cf59e1644944ceb5",
+        "bytes": 358904,
+        "mapping": {
+          "sheet": "Sheet1",
+          "groupColumn": "Material ID",
+          "lifeColumn": "Fatiguelife",
+          "stressColumn": "StressA"
+        },
+        "originalArchiveEvidence": {
+          "manifestSha256": "a86b92c7f1be4206b1df254f014e76a52599247edb24afc3ef92afd516675fb9",
+          "files": [
+            {
+              "path": "209_100.xlsx",
+              "bytes": 3921788,
+              "sha256": "b9678276d7eb093528e6aca42548ba4735164a92b8b7b5be628e8e61bf7fc5ac"
+            },
+            {
+              "path": "NIMSfatiguelife.xlsx",
+              "bytes": 358904,
+              "sha256": "754246f6653bdd8a28dfb8155aa39f22ca29e79ca7e80d87cf59e1644944ceb5"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {},
+    "scope": "逐列统计数值分布、缺失值及样本组，保留原始单位。",
+    "inputRequirements": {
+      "supportedMode": "profile2",
+      "scope": "逐列统计数值分布、缺失值及样本组，保留原始单位。",
+      "format": [
+        ".xlsx"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "sheet": "Sheet1",
+        "groupColumn": "Material ID",
+        "lifeColumn": "Fatiguelife",
+        "stressColumn": "StressA"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-006",
+    "title": "实验数据摘要与条件筛选",
+    "mode": "filter2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "groupId",
+        "label": "材料组编号（0表示全部）",
+        "default": 0,
+        "type": "integer",
+        "min": 0,
+        "max": 209
+      },
+      {
+        "key": "minLife",
+        "label": "最小疲劳寿命（循环次数）",
+        "default": 1,
+        "type": "number",
+        "min": 1,
+        "max": 1000000000000
+      }
+    ],
+    "sources": [
+      {
+        "id": "e034e50e2314cbabdc02",
+        "key": "e034e50e2314cbabdc02",
+        "title": "Fatigue S–N Curve Dataset for Carbon and Low-Alloy Steels · NIMSfatiguelife.xlsx",
+        "datasetId": "0343c1b8e4ea45619c906a48ed9d9ce1",
+        "metadataId": "6ae3022af850fdbd486a96f9",
+        "nodeId": "scidb-test",
+        "filename": "NIMSfatiguelife.xlsx",
+        "archive": "NIMSfatiguelife.xlsx",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".xlsx",
+        "prepared": false,
+        "sha256": "754246f6653bdd8a28dfb8155aa39f22ca29e79ca7e80d87cf59e1644944ceb5",
+        "bytes": 358904,
+        "mapping": {
+          "sheet": "Sheet1",
+          "groupColumn": "Material ID",
+          "lifeColumn": "Fatiguelife",
+          "stressColumn": "StressA"
+        },
+        "originalArchiveEvidence": {
+          "manifestSha256": "a86b92c7f1be4206b1df254f014e76a52599247edb24afc3ef92afd516675fb9",
+          "files": [
+            {
+              "path": "209_100.xlsx",
+              "bytes": 3921788,
+              "sha256": "b9678276d7eb093528e6aca42548ba4735164a92b8b7b5be628e8e61bf7fc5ac"
+            },
+            {
+              "path": "NIMSfatiguelife.xlsx",
+              "bytes": 358904,
+              "sha256": "754246f6653bdd8a28dfb8155aa39f22ca29e79ca7e80d87cf59e1644944ceb5"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {},
+    "scope": "按材料组和最小寿命筛选真实实验记录，输出摘要和筛选表。",
+    "inputRequirements": {
+      "supportedMode": "filter2",
+      "scope": "按材料组和最小寿命筛选真实实验记录，输出摘要和筛选表。",
+      "format": [
+        ".xlsx"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "sheet": "Sheet1",
+        "groupColumn": "Material ID",
+        "lifeColumn": "Fatiguelife",
+        "stressColumn": "StressA"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-010",
+    "title": "实验表格质量审计",
+    "mode": "quality2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "groupId",
+        "label": "材料组编号（0表示全部）",
+        "default": 0,
+        "type": "integer",
+        "min": 0,
+        "max": 209
+      },
+      {
+        "key": "minLife",
+        "label": "最小疲劳寿命（循环次数）",
+        "default": 1,
+        "type": "number",
+        "min": 1,
+        "max": 1000000000000
+      }
+    ],
+    "sources": [
+      {
+        "id": "e034e50e2314cbabdc02",
+        "key": "e034e50e2314cbabdc02",
+        "title": "Fatigue S–N Curve Dataset for Carbon and Low-Alloy Steels · NIMSfatiguelife.xlsx",
+        "datasetId": "0343c1b8e4ea45619c906a48ed9d9ce1",
+        "metadataId": "6ae3022af850fdbd486a96f9",
+        "nodeId": "scidb-test",
+        "filename": "NIMSfatiguelife.xlsx",
+        "archive": "NIMSfatiguelife.xlsx",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".xlsx",
+        "prepared": false,
+        "sha256": "754246f6653bdd8a28dfb8155aa39f22ca29e79ca7e80d87cf59e1644944ceb5",
+        "bytes": 358904,
+        "mapping": {
+          "sheet": "Sheet1",
+          "groupColumn": "Material ID",
+          "lifeColumn": "Fatiguelife",
+          "stressColumn": "StressA"
+        },
+        "originalArchiveEvidence": {
+          "manifestSha256": "a86b92c7f1be4206b1df254f014e76a52599247edb24afc3ef92afd516675fb9",
+          "files": [
+            {
+              "path": "209_100.xlsx",
+              "bytes": 3921788,
+              "sha256": "b9678276d7eb093528e6aca42548ba4735164a92b8b7b5be628e8e61bf7fc5ac"
+            },
+            {
+              "path": "NIMSfatiguelife.xlsx",
+              "bytes": 358904,
+              "sha256": "754246f6653bdd8a28dfb8155aa39f22ca29e79ca7e80d87cf59e1644944ceb5"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {},
+    "scope": "审计各列缺失、非有限值、唯一值和精确重复行，不自动修补。",
+    "inputRequirements": {
+      "supportedMode": "quality2",
+      "scope": "审计各列缺失、非有限值、唯一值和精确重复行，不自动修补。",
+      "format": [
+        ".xlsx"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "sheet": "Sheet1",
+        "groupColumn": "Material ID",
+        "lifeColumn": "Fatiguelife",
+        "stressColumn": "StressA"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-012",
+    "title": "实验批次分组汇总",
+    "mode": "pivot2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "groupId",
+        "label": "材料组编号（0表示全部）",
+        "default": 0,
+        "type": "integer",
+        "min": 0,
+        "max": 209
+      },
+      {
+        "key": "minLife",
+        "label": "最小疲劳寿命（循环次数）",
+        "default": 1,
+        "type": "number",
+        "min": 1,
+        "max": 1000000000000
+      }
+    ],
+    "sources": [
+      {
+        "id": "e034e50e2314cbabdc02",
+        "key": "e034e50e2314cbabdc02",
+        "title": "Fatigue S–N Curve Dataset for Carbon and Low-Alloy Steels · NIMSfatiguelife.xlsx",
+        "datasetId": "0343c1b8e4ea45619c906a48ed9d9ce1",
+        "metadataId": "6ae3022af850fdbd486a96f9",
+        "nodeId": "scidb-test",
+        "filename": "NIMSfatiguelife.xlsx",
+        "archive": "NIMSfatiguelife.xlsx",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".xlsx",
+        "prepared": false,
+        "sha256": "754246f6653bdd8a28dfb8155aa39f22ca29e79ca7e80d87cf59e1644944ceb5",
+        "bytes": 358904,
+        "mapping": {
+          "sheet": "Sheet1",
+          "groupColumn": "Material ID",
+          "lifeColumn": "Fatiguelife",
+          "stressColumn": "StressA"
+        },
+        "originalArchiveEvidence": {
+          "manifestSha256": "a86b92c7f1be4206b1df254f014e76a52599247edb24afc3ef92afd516675fb9",
+          "files": [
+            {
+              "path": "209_100.xlsx",
+              "bytes": 3921788,
+              "sha256": "b9678276d7eb093528e6aca42548ba4735164a92b8b7b5be628e8e61bf7fc5ac"
+            },
+            {
+              "path": "NIMSfatiguelife.xlsx",
+              "bytes": 358904,
+              "sha256": "754246f6653bdd8a28dfb8155aa39f22ca29e79ca7e80d87cf59e1644944ceb5"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {},
+    "scope": "按材料组汇总真实样本数、应力及寿命分布，不混合不同材料组拟合。",
+    "inputRequirements": {
+      "supportedMode": "pivot2",
+      "scope": "按材料组汇总真实样本数、应力及寿命分布，不混合不同材料组拟合。",
+      "format": [
+        ".xlsx"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "sheet": "Sheet1",
+        "groupColumn": "Material ID",
+        "lifeColumn": "Fatiguelife",
+        "stressColumn": "StressA"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-033",
+    "title": "碳钢与低合金钢疲劳曲线拟合",
+    "mode": "fatigue2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "groupId",
+        "label": "材料组编号（0表示全部）",
+        "default": 0,
+        "type": "integer",
+        "min": 0,
+        "max": 209
+      },
+      {
+        "key": "minLife",
+        "label": "最小疲劳寿命（循环次数）",
+        "default": 1,
+        "type": "number",
+        "min": 1,
+        "max": 1000000000000
+      }
+    ],
+    "sources": [
+      {
+        "id": "e034e50e2314cbabdc02",
+        "key": "e034e50e2314cbabdc02",
+        "title": "Fatigue S–N Curve Dataset for Carbon and Low-Alloy Steels · NIMSfatiguelife.xlsx",
+        "datasetId": "0343c1b8e4ea45619c906a48ed9d9ce1",
+        "metadataId": "6ae3022af850fdbd486a96f9",
+        "nodeId": "scidb-test",
+        "filename": "NIMSfatiguelife.xlsx",
+        "archive": "NIMSfatiguelife.xlsx",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".xlsx",
+        "prepared": false,
+        "sha256": "754246f6653bdd8a28dfb8155aa39f22ca29e79ca7e80d87cf59e1644944ceb5",
+        "bytes": 358904,
+        "mapping": {
+          "sheet": "Sheet1",
+          "groupColumn": "Material ID",
+          "lifeColumn": "Fatiguelife",
+          "stressColumn": "StressA"
+        },
+        "originalArchiveEvidence": {
+          "manifestSha256": "a86b92c7f1be4206b1df254f014e76a52599247edb24afc3ef92afd516675fb9",
+          "files": [
+            {
+              "path": "209_100.xlsx",
+              "bytes": 3921788,
+              "sha256": "b9678276d7eb093528e6aca42548ba4735164a92b8b7b5be628e8e61bf7fc5ac"
+            },
+            {
+              "path": "NIMSfatiguelife.xlsx",
+              "bytes": 358904,
+              "sha256": "754246f6653bdd8a28dfb8155aa39f22ca29e79ca7e80d87cf59e1644944ceb5"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {},
+    "scope": "按材料组拟合log10(应力幅)=a+b×log10(循环次数)，核验Basquin指数。无未提供的删失标记，不声称设计寿命或存活概率。",
+    "inputRequirements": {
+      "supportedMode": "fatigue2",
+      "scope": "按材料组拟合log10(应力幅)=a+b×log10(循环次数)，核验Basquin指数。无未提供的删失标记，不声称设计寿命或存活概率。",
+      "format": [
+        ".xlsx"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "sheet": "Sheet1",
+        "groupColumn": "Material ID",
+        "lifeColumn": "Fatiguelife",
+        "stressColumn": "StressA"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-016",
+    "title": "NPP与蒸散发年度协同统计",
+    "mode": "lpj2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "yearStart",
+        "label": "开始年份",
+        "default": 1981,
+        "type": "integer",
+        "min": 1981,
+        "max": 2020
+      },
+      {
+        "key": "yearEnd",
+        "label": "结束年份",
+        "default": 2020,
+        "type": "integer",
+        "min": 1981,
+        "max": 2020
+      },
+      {
+        "key": "region",
+        "label": "经度分区",
+        "default": "all",
+        "type": "select",
+        "choices": [
+          "all",
+          "east",
+          "west"
+        ]
+      },
+      {
+        "key": "longitudeSplit",
+        "label": "东西分区经度",
+        "default": 110,
+        "type": "number",
+        "min": 90,
+        "max": 123
+      }
+    ],
+    "sources": [
+      {
+        "id": "16550daa4ba8c1dfcea0",
+        "key": "16550daa4ba8c1dfcea0",
+        "title": "基于LPJ动态植被模型模拟的长江流域NPP和ET数据集（1981—2060年） · lpj-inputs.zip",
+        "datasetId": "233cac3d68f74935ae9f7f9a70dc3180",
+        "metadataId": "6ae2adfb935c6beaea1be7f9",
+        "nodeId": "scidb-test",
+        "filename": "lpj-inputs.zip",
+        "archive": "lpj-inputs.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "fa2bca2f33fe23341b3a8149badafb9b43c9bb929c2d5902f7f32d56fcc6fa49",
+        "bytes": 1328123,
+        "mapping": {
+          "nppFile": "长江流域1981-2020年LPJ模拟净初级生产力．mat",
+          "etFile": "长江流域1981-2020年LPJ模拟实际蒸散发．mat",
+          "nppVariable": "npp",
+          "etVariable": "et",
+          "firstYear": 1981,
+          "lastYear": 2020
+        },
+        "originalArchiveEvidence": {
+          "manifestSha256": "baf5517202a6e5864c9abc93e95530c9a8efd682e04bab89dcae0f1bb6166ac0",
+          "files": [
+            {
+              "path": "长江流域1981-2020年LPJ模拟净初级生产力．mat",
+              "bytes": 108715,
+              "sha256": "a4a5abfec6b410a894400a9b38d3d8051e2b503e49063fe23234af4ff29f42f6"
+            },
+            {
+              "path": "长江流域1981-2020年LPJ模拟实际蒸散发．mat",
+              "bytes": 110087,
+              "sha256": "abd95c7fb7027c043b1fdb0370ad4e55e2a5d98fd3aa4c99062e4ab0304c06b2"
+            },
+            {
+              "path": "长江流域1981-2020年气温．mat",
+              "bytes": 178393,
+              "sha256": "d4e5cbd2733a649dd70ab147cf5cec4d34997983623fb44e73bdb1d2c4dafc6b"
+            },
+            {
+              "path": "长江流域1981-2020年降水．mat",
+              "bytes": 183534,
+              "sha256": "dd17a57a716385cc1e9a0745b8ccbdc3f38acb8024dd68dc6fcdae37d644d34d"
+            },
+            {
+              "path": "长江流域SSP126情景下1981-2060年净初级生产力．mat",
+              "bytes": 123572,
+              "sha256": "2c3ff17ed990c7d4cbb5ce4fd7406a35aded794303ec311f44f77e86030d2f4f"
+            },
+            {
+              "path": "长江流域SSP126情景下1981-2060年实际蒸散发．mat",
+              "bytes": 126025,
+              "sha256": "4c94836a49ecb8ab4b5a212faeb750566f359f11bccd366834396875877dc8ea"
+            },
+            {
+              "path": "长江流域SSP245情景下1981-2060年净初级生产力．mat",
+              "bytes": 123338,
+              "sha256": "9c7fd1ea515c1927cff55c20b4e4804968e58ecdbb20ff10c9e99cf67e5dc323"
+            },
+            {
+              "path": "长江流域SSP245情景下1981-2060年实际蒸散发．mat",
+              "bytes": 126003,
+              "sha256": "37a7e508eed80463316333893ee7c4e4fa770a96332f9a708155d9e1a922cb2c"
+            },
+            {
+              "path": "长江流域SSP585情景下1981-2060年净初级生产力．mat",
+              "bytes": 123183,
+              "sha256": "d212dc215770126145148615bafb4ad777c7084116bb1352aa8e5822590abcb9"
+            },
+            {
+              "path": "长江流域SSP585情景下1981-2060年实际蒸散发．mat",
+              "bytes": 125883,
+              "sha256": "4cf42fb1ed6f320d977ded5ef4b5c80f9c6f56c9627cdfd4297960ae9e94b8c0"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {},
+    "scope": "匹配MAT中的经纬度网格，分析1981—2020年NPP与ET算术网格均值及年际相关；源文件未声明单位，不换算单位，不计算物理WUE；未来情景列数与年份不一致，暂不开放。",
+    "inputRequirements": {
+      "supportedMode": "lpj2",
+      "scope": "匹配MAT中的经纬度网格，分析1981—2020年NPP与ET算术网格均值及年际相关；源文件未声明单位，不换算单位，不计算物理WUE；未来情景列数与年份不一致，暂不开放。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "nppFile": "长江流域1981-2020年LPJ模拟净初级生产力．mat",
+        "etFile": "长江流域1981-2020年LPJ模拟实际蒸散发．mat",
+        "nppVariable": "npp",
+        "etVariable": "et",
+        "firstYear": 1981,
+        "lastYear": 2020
+      }
+    }
+  },
+  {
+    "serviceId": "svc-054",
+    "title": "CTD剖面质量检查与掩膜统计",
+    "mode": "ctd-qc2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "station",
+        "label": "站位文件名（不含扩展名；空值表示全部）",
+        "default": "",
+        "type": "string"
+      },
+      {
+        "key": "maxDepth",
+        "label": "最大深度（米）",
+        "default": 10000,
+        "type": "number",
+        "min": 5,
+        "max": 12000
+      },
+      {
+        "key": "binSize",
+        "label": "下放剖面分箱间隔（米）",
+        "default": 5,
+        "type": "number",
+        "min": 1,
+        "max": 100
+      },
+      {
+        "key": "gradientDepthMin",
+        "label": "温跃层搜索起点（米）",
+        "default": 5,
+        "type": "number",
+        "min": 0,
+        "max": 10000
+      },
+      {
+        "key": "gradientDepthMax",
+        "label": "温跃层搜索终点（米）",
+        "default": 500,
+        "type": "number",
+        "min": 5,
+        "max": 12000
+      }
+    ],
+    "sources": [
+      {
+        "id": "ee7366264333e7daa2ec",
+        "key": "ee7366264333e7daa2ec",
+        "title": "A Dataset of CTD Temperature and Salinity Profiles in the Eastern Gakkel Ridge (2026) · ctd-inputs.zip",
+        "datasetId": "3004b8fc9e484fc8a32296f3e0633384",
+        "metadataId": "6ae0210c1a59f1ac383e8a8d",
+        "nodeId": "scidb-test",
+        "filename": "ctd-inputs.zip",
+        "archive": "ctd-inputs.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "f875aadc918ad02245806c10e7b325ebefc271caed4dd1f4b4508ae66bf9a2da",
+        "bytes": 1809934,
+        "mapping": {},
+        "originalArchiveEvidence": {
+          "manifestSha256": "e7d2a35c6b6634f49ef104d2fa46ba060a3384bdce02c9ba658af486d08ec758",
+          "files": [
+            {
+              "path": "OBS06．cnv",
+              "bytes": 1688949,
+              "sha256": "250a06e9177292428d8073f20ec047ceb6526909d32e32de0c319246e88f16ee"
+            },
+            {
+              "path": "OBS08．cnv",
+              "bytes": 1696679,
+              "sha256": "c06fc5a7eeaac83fa7fbf9362f557bbbbcc11e235febe8bb16c8372e39d899b4"
+            },
+            {
+              "path": "OBS10．cnv",
+              "bytes": 1610379,
+              "sha256": "c6e1b80fe1a7cc7f17f6b047fe3ac020bc0ca64c2cbe0a0c4a4374d5560954b2"
+            },
+            {
+              "path": "OBS12．cnv",
+              "bytes": 1923462,
+              "sha256": "18f30f4fef050c6e9f74bb26a229b4fd4deaee3f4a1055ee5777b0f960de9ccc"
+            },
+            {
+              "path": "OBS14．cnv",
+              "bytes": 1834064,
+              "sha256": "07794b97c67912cce4298fa8f2571444f80ded0d4165e4aac6ed7b25691c486e"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      },
+      {
+        "id": "3a42884c6e7cdbe23100",
+        "key": "3a42884c6e7cdbe23100",
+        "title": "A Dataset of CTD Temperature and Salinity Profiles in the Chukchi Plateau–Canada Basin Region (2026) · ctd-inputs.zip",
+        "datasetId": "daba9411a5694faeab7fb3863cc6afff",
+        "metadataId": "6ae023781a59f1ac383e8a9b",
+        "nodeId": "scidb-test",
+        "filename": "ctd-inputs.zip",
+        "archive": "ctd-inputs.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "feaed8b0d26abfae902e08cabec0ce64b26e7d3dc83731c501cf53e79741e76c",
+        "bytes": 7711976,
+        "mapping": {},
+        "originalArchiveEvidence": {
+          "manifestSha256": "91323b1cda2f8fece18157ee64c7de4b59a7d07e152d3c6675b26115e35ee467",
+          "files": [
+            {
+              "path": "P1-01delderivebin．cnv",
+              "bytes": 463162,
+              "sha256": "b16f13a9e33715d240d856f47673a96d62407ac4a008c065f4d01c948eae4513"
+            },
+            {
+              "path": "P1-02delderivebin．cnv",
+              "bytes": 466646,
+              "sha256": "7a76f3ca2c91e57fa162f2acce36b488dd9b1149126cb4c40144675ea83bfba4"
+            },
+            {
+              "path": "P1-03delderivebin．cnv",
+              "bytes": 591260,
+              "sha256": "5685dd7098203ec266c6a7f1426de729e798cc58f75b2136c19c639a3ecf1de4"
+            },
+            {
+              "path": "P1-04delderivebin．cnv",
+              "bytes": 855580,
+              "sha256": "bb3e6685281c2d1be6f033a29edf1a95e37ef59a3382842a049d654bcabc7cca"
+            },
+            {
+              "path": "P1-05delderivebin．cnv",
+              "bytes": 720905,
+              "sha256": "8c2d1e03892ce206d4f44e9c6f37e6d195802475027c28f1ccd12fda4d6bdb07"
+            },
+            {
+              "path": "P1-06delderivebin．cnv",
+              "bytes": 161302,
+              "sha256": "d2092da13fabe00775587bb10e4a33165b672a2da3ca97344683a90b09a03176"
+            },
+            {
+              "path": "P1-07delderivebin．cnv",
+              "bytes": 245669,
+              "sha256": "b399d6db0d8a11b28d5b503cd1d2eebd1c9e079c78a95bce21cac997bb4a24a8"
+            },
+            {
+              "path": "P1-08delderivebin．cnv",
+              "bytes": 748768,
+              "sha256": "902e1a5e6d079a02054b153bfe6469704090ee1ef5875a26092626a22693ef48"
+            },
+            {
+              "path": "P2-01delderivebin．cnv",
+              "bytes": 660533,
+              "sha256": "3589b481ab4071126a45101f688b047863ae96253ee9652da066d9b547aea4c1"
+            },
+            {
+              "path": "P2-02delderivebin．cnv",
+              "bytes": 607901,
+              "sha256": "b6b73b8e54338ca2633e135c76c0ca6590da0ed3360a978b12715e680f12d321"
+            },
+            {
+              "path": "P2-03delderivebin．cnv",
+              "bytes": 834683,
+              "sha256": "d0eef9be2726d0a1f1fd4f2bd2148984dfc27b216f9f0c1db9a559f909ad8ed9"
+            },
+            {
+              "path": "P2-04delderivebin．cnv",
+              "bytes": 283208,
+              "sha256": "c664fa3de4b60e86fe7a4fe3ac93431175f2f5fb63453c19c5738d234691f91c"
+            },
+            {
+              "path": "P2-05delderivebin．cnv",
+              "bytes": 277014,
+              "sha256": "2df4cbf18f1b81ad084395880cb5ebf1eb31e36cc2bcb3ac421cb5db3e162306"
+            },
+            {
+              "path": "P2-06delderivebin．cnv",
+              "bytes": 590872,
+              "sha256": "cd8538447269296750cb6dd60133a1350185292e6c72ab0075a34a5433de15e3"
+            },
+            {
+              "path": "P2-07delderivebin．cnv",
+              "bytes": 813785,
+              "sha256": "6b2c8c8ac0fcb8265622b9fd8729b62c8f272741bdc331bfd6b0382bba5962f0"
+            },
+            {
+              "path": "P2-08delderivebin．cnv",
+              "bytes": 479417,
+              "sha256": "747b7b3d215e2d08ecf4e000c0ee06bc6f026ef6f8a8ffb79d2457fa71e9c0a3"
+            },
+            {
+              "path": "P2-09delderivebin．cnv",
+              "bytes": 1492968,
+              "sha256": "d736cbff0a174de8af212d2e8892775f81536284dc231547c9037e6619f113f3"
+            },
+            {
+              "path": "P2-10delderivebin．cnv",
+              "bytes": 1489874,
+              "sha256": "06c629440a0a9186793fcbea451efbdf8a9e1d89830dbf4af1f27d2702861353"
+            },
+            {
+              "path": "P4-06delderivebin．cnv",
+              "bytes": 173687,
+              "sha256": "61f277ffb43345d3d171c2da6566e936370e13dbe5f7dd2e84a8c5f0363c8194"
+            },
+            {
+              "path": "P4-07delderivebin．cnv",
+              "bytes": 128407,
+              "sha256": "c6bbbe699f0ed52fc27ddbf7c8f3c0c16df5d1471fc5b60bdcff607c8187b268"
+            },
+            {
+              "path": "P4-08delderivebin．cnv",
+              "bytes": 1014251,
+              "sha256": "fb4d4bda67e3bb6ae988fe25d723c4d1731c75129e51c24d7e24c21c1c4e192b"
+            },
+            {
+              "path": "P4-09delderivebin．cnv",
+              "bytes": 674465,
+              "sha256": "3cce8cf6b4d22f085476c1b5c3a14a6243cce4ba46a8bab660b6027831120ac2"
+            },
+            {
+              "path": "P4-10delderivebin．cnv",
+              "bytes": 207743,
+              "sha256": "d48e9a9a0bfaaece1387c11dcf6540e73417bde93a66f0fa51839c2f112b365c"
+            },
+            {
+              "path": "P4-11delderivebin．cnv",
+              "bytes": 437234,
+              "sha256": "1d6f1b280570ab243ea36cc2b2b0e19488b0a95c39b86466e5c8fcecddde4dbb"
+            },
+            {
+              "path": "P4-12delderivebin．cnv",
+              "bytes": 1491035,
+              "sha256": "66fd14080ab3cc322fa239ccc6c94a51f46ca06e3ae4aec16e465e6fd313d674"
+            },
+            {
+              "path": "P4-13delderivebin．cnv",
+              "bytes": 1488713,
+              "sha256": "336c3dbddb9c6b7839fe1a2cc4f42bc565aa8757df7c80182615e2ee66cb1089"
+            },
+            {
+              "path": "P4-14delderivebin．cnv",
+              "bytes": 1482134,
+              "sha256": "9fd0e88ee186620584d1bba669b3b05fae6fe3d8a52c1aad7f17e32671a71e1c"
+            },
+            {
+              "path": "P4-15delderivebin．cnv",
+              "bytes": 1468976,
+              "sha256": "28f33da8044f9db526fe2c2e1a37d504d0a61a43469109943d2ac35dac75d267"
+            },
+            {
+              "path": "P5-10delderivebin．cnv",
+              "bytes": 332744,
+              "sha256": "a96259bd67b45d78fcc3389e6a6d635c314f63db724101c92bed10b38e089cb5"
+            },
+            {
+              "path": "P5-11delderivebin．cnv",
+              "bytes": 1486778,
+              "sha256": "e07f16df6de72876b9f7b3aed49185d4b23548c4d8b47e5b3f88ab26b37daa01"
+            },
+            {
+              "path": "P5-12delderivebin．cnv",
+              "bytes": 1487552,
+              "sha256": "196703786d7ea03b7a24114a2e7ad2eec5aad43cbae73dca703ccc0178bffe4e"
+            },
+            {
+              "path": "P5-13delderivebin．cnv",
+              "bytes": 1482908,
+              "sha256": "3760fe9be571e8182f38db3332467c9f5effbba752a7f70afa2d01597a4092c7"
+            },
+            {
+              "path": "P5-14delderivebin．cnv",
+              "bytes": 1472846,
+              "sha256": "637482690c487528772c6a5d4d1fc19c478318f76ea4c1b467dd22e65e582ffa"
+            },
+            {
+              "path": "P5-15delderivebin．cnv",
+              "bytes": 1461236,
+              "sha256": "013cd0b2e785cc87ab295c3e23f2ebad6d6bb4c6d8e5df971d130e2ffae38572"
+            },
+            {
+              "path": "P5-16delderivebin．cnv",
+              "bytes": 1439177,
+              "sha256": "fd88aef1c8c71c653912cb606fda190b6595a047f3ffd0f7c9978c63ff295a01"
+            },
+            {
+              "path": "R11delderivebin．cnv",
+              "bytes": 78859,
+              "sha256": "cc2ac53ffbee03c31440e3af1175e243e58d8d6b6877d3e62334b030de2025fd"
+            },
+            {
+              "path": "R12delderivebin．cnv",
+              "bytes": 79630,
+              "sha256": "3fd1b3123c6ff4fde4a913cf72f3246e18c6980e7bdcee916378149dea5bbb24"
+            },
+            {
+              "path": "R13delderivebin．cnv",
+              "bytes": 78855,
+              "sha256": "60dbdaddb9cf9d94102ae18f3bac931b32c69b8ad23263b6cb609d8f2ecc5933"
+            },
+            {
+              "path": "R14delderivebin．cnv",
+              "bytes": 702707,
+              "sha256": "07a66405bf28fab312bd16f67e3e57038bf3eae9152984c53fd86d03e996217a"
+            },
+            {
+              "path": "R15delderivebin．cnv",
+              "bytes": 662839,
+              "sha256": "1aef858aa0cb9a1a300a446e4b249855cc2cdfd77b34cd6ef465ec4800c5a947"
+            },
+            {
+              "path": "R16delderivebin．cnv",
+              "bytes": 244878,
+              "sha256": "4a82ba2450bda0c3d0186bbd1f5400fbe818c420fa078ee8e937530f523b55ff"
+            },
+            {
+              "path": "R17delderivebin．cnv",
+              "bytes": 439153,
+              "sha256": "5c2370d04c9653520f0f87cf504065e3006c10e64864893a8df71e8cf651d638"
+            },
+            {
+              "path": "R18delderivebin．cnv",
+              "bytes": 1197673,
+              "sha256": "2ceac00ec7a58512701e6147fd9073429cc104c0796b29ee4ac77d885515fa56"
+            },
+            {
+              "path": "R19delderivebin．cnv",
+              "bytes": 1273138,
+              "sha256": "ffe2aa0f10410d5f2093f7d830f810b75b3dac3cd6f1505bd8da8a9000ac8c57"
+            },
+            {
+              "path": "R20delderivebin．cnv",
+              "bytes": 1290939,
+              "sha256": "bdc7fa9930cff69a093c57d12a27645ef600070e57db62c26a4ae26ae8508136"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {
+      "temperatureMin": -3,
+      "temperatureMax": 45,
+      "salinityMin": 0,
+      "salinityMax": 50
+    },
+    "scope": "读取Sea-Bird CNV声明的ITS-90温度、实用盐度和米制深度，严格处理bad_flag及仪器标记；提取下放段分箱剖面及配置深度区间的最大绝对温度梯度，不推断水团类型或混合层深度。",
+    "inputRequirements": {
+      "supportedMode": "ctd-qc2",
+      "scope": "读取Sea-Bird CNV声明的ITS-90温度、实用盐度和米制深度，严格处理bad_flag及仪器标记；提取下放段分箱剖面及配置深度区间的最大绝对温度梯度，不推断水团类型或混合层深度。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "depth": "depSM [m]",
+        "temperature": "t090C [deg C]",
+        "salinity": "sal00 [PSU]",
+        "sourceFlag": "flag==0",
+        "pump": "pumps>0",
+        "badFlag": "CNV header, exact equality"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-055",
+    "title": "温盐深下放剖面提取",
+    "mode": "ctd-profile2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "station",
+        "label": "站位文件名（不含扩展名；空值表示全部）",
+        "default": "",
+        "type": "string"
+      },
+      {
+        "key": "maxDepth",
+        "label": "最大深度（米）",
+        "default": 10000,
+        "type": "number",
+        "min": 5,
+        "max": 12000
+      },
+      {
+        "key": "binSize",
+        "label": "下放剖面分箱间隔（米）",
+        "default": 5,
+        "type": "number",
+        "min": 1,
+        "max": 100
+      },
+      {
+        "key": "gradientDepthMin",
+        "label": "温跃层搜索起点（米）",
+        "default": 5,
+        "type": "number",
+        "min": 0,
+        "max": 10000
+      },
+      {
+        "key": "gradientDepthMax",
+        "label": "温跃层搜索终点（米）",
+        "default": 500,
+        "type": "number",
+        "min": 5,
+        "max": 12000
+      }
+    ],
+    "sources": [
+      {
+        "id": "3a42884c6e7cdbe23100",
+        "key": "3a42884c6e7cdbe23100",
+        "title": "A Dataset of CTD Temperature and Salinity Profiles in the Chukchi Plateau–Canada Basin Region (2026) · ctd-inputs.zip",
+        "datasetId": "daba9411a5694faeab7fb3863cc6afff",
+        "metadataId": "6ae023781a59f1ac383e8a9b",
+        "nodeId": "scidb-test",
+        "filename": "ctd-inputs.zip",
+        "archive": "ctd-inputs.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "feaed8b0d26abfae902e08cabec0ce64b26e7d3dc83731c501cf53e79741e76c",
+        "bytes": 7711976,
+        "mapping": {},
+        "originalArchiveEvidence": {
+          "manifestSha256": "91323b1cda2f8fece18157ee64c7de4b59a7d07e152d3c6675b26115e35ee467",
+          "files": [
+            {
+              "path": "P1-01delderivebin．cnv",
+              "bytes": 463162,
+              "sha256": "b16f13a9e33715d240d856f47673a96d62407ac4a008c065f4d01c948eae4513"
+            },
+            {
+              "path": "P1-02delderivebin．cnv",
+              "bytes": 466646,
+              "sha256": "7a76f3ca2c91e57fa162f2acce36b488dd9b1149126cb4c40144675ea83bfba4"
+            },
+            {
+              "path": "P1-03delderivebin．cnv",
+              "bytes": 591260,
+              "sha256": "5685dd7098203ec266c6a7f1426de729e798cc58f75b2136c19c639a3ecf1de4"
+            },
+            {
+              "path": "P1-04delderivebin．cnv",
+              "bytes": 855580,
+              "sha256": "bb3e6685281c2d1be6f033a29edf1a95e37ef59a3382842a049d654bcabc7cca"
+            },
+            {
+              "path": "P1-05delderivebin．cnv",
+              "bytes": 720905,
+              "sha256": "8c2d1e03892ce206d4f44e9c6f37e6d195802475027c28f1ccd12fda4d6bdb07"
+            },
+            {
+              "path": "P1-06delderivebin．cnv",
+              "bytes": 161302,
+              "sha256": "d2092da13fabe00775587bb10e4a33165b672a2da3ca97344683a90b09a03176"
+            },
+            {
+              "path": "P1-07delderivebin．cnv",
+              "bytes": 245669,
+              "sha256": "b399d6db0d8a11b28d5b503cd1d2eebd1c9e079c78a95bce21cac997bb4a24a8"
+            },
+            {
+              "path": "P1-08delderivebin．cnv",
+              "bytes": 748768,
+              "sha256": "902e1a5e6d079a02054b153bfe6469704090ee1ef5875a26092626a22693ef48"
+            },
+            {
+              "path": "P2-01delderivebin．cnv",
+              "bytes": 660533,
+              "sha256": "3589b481ab4071126a45101f688b047863ae96253ee9652da066d9b547aea4c1"
+            },
+            {
+              "path": "P2-02delderivebin．cnv",
+              "bytes": 607901,
+              "sha256": "b6b73b8e54338ca2633e135c76c0ca6590da0ed3360a978b12715e680f12d321"
+            },
+            {
+              "path": "P2-03delderivebin．cnv",
+              "bytes": 834683,
+              "sha256": "d0eef9be2726d0a1f1fd4f2bd2148984dfc27b216f9f0c1db9a559f909ad8ed9"
+            },
+            {
+              "path": "P2-04delderivebin．cnv",
+              "bytes": 283208,
+              "sha256": "c664fa3de4b60e86fe7a4fe3ac93431175f2f5fb63453c19c5738d234691f91c"
+            },
+            {
+              "path": "P2-05delderivebin．cnv",
+              "bytes": 277014,
+              "sha256": "2df4cbf18f1b81ad084395880cb5ebf1eb31e36cc2bcb3ac421cb5db3e162306"
+            },
+            {
+              "path": "P2-06delderivebin．cnv",
+              "bytes": 590872,
+              "sha256": "cd8538447269296750cb6dd60133a1350185292e6c72ab0075a34a5433de15e3"
+            },
+            {
+              "path": "P2-07delderivebin．cnv",
+              "bytes": 813785,
+              "sha256": "6b2c8c8ac0fcb8265622b9fd8729b62c8f272741bdc331bfd6b0382bba5962f0"
+            },
+            {
+              "path": "P2-08delderivebin．cnv",
+              "bytes": 479417,
+              "sha256": "747b7b3d215e2d08ecf4e000c0ee06bc6f026ef6f8a8ffb79d2457fa71e9c0a3"
+            },
+            {
+              "path": "P2-09delderivebin．cnv",
+              "bytes": 1492968,
+              "sha256": "d736cbff0a174de8af212d2e8892775f81536284dc231547c9037e6619f113f3"
+            },
+            {
+              "path": "P2-10delderivebin．cnv",
+              "bytes": 1489874,
+              "sha256": "06c629440a0a9186793fcbea451efbdf8a9e1d89830dbf4af1f27d2702861353"
+            },
+            {
+              "path": "P4-06delderivebin．cnv",
+              "bytes": 173687,
+              "sha256": "61f277ffb43345d3d171c2da6566e936370e13dbe5f7dd2e84a8c5f0363c8194"
+            },
+            {
+              "path": "P4-07delderivebin．cnv",
+              "bytes": 128407,
+              "sha256": "c6bbbe699f0ed52fc27ddbf7c8f3c0c16df5d1471fc5b60bdcff607c8187b268"
+            },
+            {
+              "path": "P4-08delderivebin．cnv",
+              "bytes": 1014251,
+              "sha256": "fb4d4bda67e3bb6ae988fe25d723c4d1731c75129e51c24d7e24c21c1c4e192b"
+            },
+            {
+              "path": "P4-09delderivebin．cnv",
+              "bytes": 674465,
+              "sha256": "3cce8cf6b4d22f085476c1b5c3a14a6243cce4ba46a8bab660b6027831120ac2"
+            },
+            {
+              "path": "P4-10delderivebin．cnv",
+              "bytes": 207743,
+              "sha256": "d48e9a9a0bfaaece1387c11dcf6540e73417bde93a66f0fa51839c2f112b365c"
+            },
+            {
+              "path": "P4-11delderivebin．cnv",
+              "bytes": 437234,
+              "sha256": "1d6f1b280570ab243ea36cc2b2b0e19488b0a95c39b86466e5c8fcecddde4dbb"
+            },
+            {
+              "path": "P4-12delderivebin．cnv",
+              "bytes": 1491035,
+              "sha256": "66fd14080ab3cc322fa239ccc6c94a51f46ca06e3ae4aec16e465e6fd313d674"
+            },
+            {
+              "path": "P4-13delderivebin．cnv",
+              "bytes": 1488713,
+              "sha256": "336c3dbddb9c6b7839fe1a2cc4f42bc565aa8757df7c80182615e2ee66cb1089"
+            },
+            {
+              "path": "P4-14delderivebin．cnv",
+              "bytes": 1482134,
+              "sha256": "9fd0e88ee186620584d1bba669b3b05fae6fe3d8a52c1aad7f17e32671a71e1c"
+            },
+            {
+              "path": "P4-15delderivebin．cnv",
+              "bytes": 1468976,
+              "sha256": "28f33da8044f9db526fe2c2e1a37d504d0a61a43469109943d2ac35dac75d267"
+            },
+            {
+              "path": "P5-10delderivebin．cnv",
+              "bytes": 332744,
+              "sha256": "a96259bd67b45d78fcc3389e6a6d635c314f63db724101c92bed10b38e089cb5"
+            },
+            {
+              "path": "P5-11delderivebin．cnv",
+              "bytes": 1486778,
+              "sha256": "e07f16df6de72876b9f7b3aed49185d4b23548c4d8b47e5b3f88ab26b37daa01"
+            },
+            {
+              "path": "P5-12delderivebin．cnv",
+              "bytes": 1487552,
+              "sha256": "196703786d7ea03b7a24114a2e7ad2eec5aad43cbae73dca703ccc0178bffe4e"
+            },
+            {
+              "path": "P5-13delderivebin．cnv",
+              "bytes": 1482908,
+              "sha256": "3760fe9be571e8182f38db3332467c9f5effbba752a7f70afa2d01597a4092c7"
+            },
+            {
+              "path": "P5-14delderivebin．cnv",
+              "bytes": 1472846,
+              "sha256": "637482690c487528772c6a5d4d1fc19c478318f76ea4c1b467dd22e65e582ffa"
+            },
+            {
+              "path": "P5-15delderivebin．cnv",
+              "bytes": 1461236,
+              "sha256": "013cd0b2e785cc87ab295c3e23f2ebad6d6bb4c6d8e5df971d130e2ffae38572"
+            },
+            {
+              "path": "P5-16delderivebin．cnv",
+              "bytes": 1439177,
+              "sha256": "fd88aef1c8c71c653912cb606fda190b6595a047f3ffd0f7c9978c63ff295a01"
+            },
+            {
+              "path": "R11delderivebin．cnv",
+              "bytes": 78859,
+              "sha256": "cc2ac53ffbee03c31440e3af1175e243e58d8d6b6877d3e62334b030de2025fd"
+            },
+            {
+              "path": "R12delderivebin．cnv",
+              "bytes": 79630,
+              "sha256": "3fd1b3123c6ff4fde4a913cf72f3246e18c6980e7bdcee916378149dea5bbb24"
+            },
+            {
+              "path": "R13delderivebin．cnv",
+              "bytes": 78855,
+              "sha256": "60dbdaddb9cf9d94102ae18f3bac931b32c69b8ad23263b6cb609d8f2ecc5933"
+            },
+            {
+              "path": "R14delderivebin．cnv",
+              "bytes": 702707,
+              "sha256": "07a66405bf28fab312bd16f67e3e57038bf3eae9152984c53fd86d03e996217a"
+            },
+            {
+              "path": "R15delderivebin．cnv",
+              "bytes": 662839,
+              "sha256": "1aef858aa0cb9a1a300a446e4b249855cc2cdfd77b34cd6ef465ec4800c5a947"
+            },
+            {
+              "path": "R16delderivebin．cnv",
+              "bytes": 244878,
+              "sha256": "4a82ba2450bda0c3d0186bbd1f5400fbe818c420fa078ee8e937530f523b55ff"
+            },
+            {
+              "path": "R17delderivebin．cnv",
+              "bytes": 439153,
+              "sha256": "5c2370d04c9653520f0f87cf504065e3006c10e64864893a8df71e8cf651d638"
+            },
+            {
+              "path": "R18delderivebin．cnv",
+              "bytes": 1197673,
+              "sha256": "2ceac00ec7a58512701e6147fd9073429cc104c0796b29ee4ac77d885515fa56"
+            },
+            {
+              "path": "R19delderivebin．cnv",
+              "bytes": 1273138,
+              "sha256": "ffe2aa0f10410d5f2093f7d830f810b75b3dac3cd6f1505bd8da8a9000ac8c57"
+            },
+            {
+              "path": "R20delderivebin．cnv",
+              "bytes": 1290939,
+              "sha256": "bdc7fa9930cff69a093c57d12a27645ef600070e57db62c26a4ae26ae8508136"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      },
+      {
+        "id": "ee7366264333e7daa2ec",
+        "key": "ee7366264333e7daa2ec",
+        "title": "A Dataset of CTD Temperature and Salinity Profiles in the Eastern Gakkel Ridge (2026) · ctd-inputs.zip",
+        "datasetId": "3004b8fc9e484fc8a32296f3e0633384",
+        "metadataId": "6ae0210c1a59f1ac383e8a8d",
+        "nodeId": "scidb-test",
+        "filename": "ctd-inputs.zip",
+        "archive": "ctd-inputs.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "f875aadc918ad02245806c10e7b325ebefc271caed4dd1f4b4508ae66bf9a2da",
+        "bytes": 1809934,
+        "mapping": {},
+        "originalArchiveEvidence": {
+          "manifestSha256": "e7d2a35c6b6634f49ef104d2fa46ba060a3384bdce02c9ba658af486d08ec758",
+          "files": [
+            {
+              "path": "OBS06．cnv",
+              "bytes": 1688949,
+              "sha256": "250a06e9177292428d8073f20ec047ceb6526909d32e32de0c319246e88f16ee"
+            },
+            {
+              "path": "OBS08．cnv",
+              "bytes": 1696679,
+              "sha256": "c06fc5a7eeaac83fa7fbf9362f557bbbbcc11e235febe8bb16c8372e39d899b4"
+            },
+            {
+              "path": "OBS10．cnv",
+              "bytes": 1610379,
+              "sha256": "c6e1b80fe1a7cc7f17f6b047fe3ac020bc0ca64c2cbe0a0c4a4374d5560954b2"
+            },
+            {
+              "path": "OBS12．cnv",
+              "bytes": 1923462,
+              "sha256": "18f30f4fef050c6e9f74bb26a229b4fd4deaee3f4a1055ee5777b0f960de9ccc"
+            },
+            {
+              "path": "OBS14．cnv",
+              "bytes": 1834064,
+              "sha256": "07794b97c67912cce4298fa8f2571444f80ded0d4165e4aac6ed7b25691c486e"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {
+      "temperatureMin": -3,
+      "temperatureMax": 45,
+      "salinityMin": 0,
+      "salinityMax": 50
+    },
+    "scope": "读取Sea-Bird CNV声明的ITS-90温度、实用盐度和米制深度，严格处理bad_flag及仪器标记；提取下放段分箱剖面及配置深度区间的最大绝对温度梯度，不推断水团类型或混合层深度。",
+    "inputRequirements": {
+      "supportedMode": "ctd-profile2",
+      "scope": "读取Sea-Bird CNV声明的ITS-90温度、实用盐度和米制深度，严格处理bad_flag及仪器标记；提取下放段分箱剖面及配置深度区间的最大绝对温度梯度，不推断水团类型或混合层深度。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "depth": "depSM [m]",
+        "temperature": "t090C [deg C]",
+        "salinity": "sal00 [PSU]",
+        "sourceFlag": "flag==0",
+        "pump": "pumps>0",
+        "badFlag": "CNV header, exact equality"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-056",
+    "title": "CTD温盐关系分析",
+    "mode": "ctd-ts2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "station",
+        "label": "站位文件名（不含扩展名；空值表示全部）",
+        "default": "",
+        "type": "string"
+      },
+      {
+        "key": "maxDepth",
+        "label": "最大深度（米）",
+        "default": 10000,
+        "type": "number",
+        "min": 5,
+        "max": 12000
+      },
+      {
+        "key": "binSize",
+        "label": "下放剖面分箱间隔（米）",
+        "default": 5,
+        "type": "number",
+        "min": 1,
+        "max": 100
+      },
+      {
+        "key": "gradientDepthMin",
+        "label": "温跃层搜索起点（米）",
+        "default": 5,
+        "type": "number",
+        "min": 0,
+        "max": 10000
+      },
+      {
+        "key": "gradientDepthMax",
+        "label": "温跃层搜索终点（米）",
+        "default": 500,
+        "type": "number",
+        "min": 5,
+        "max": 12000
+      }
+    ],
+    "sources": [
+      {
+        "id": "ee7366264333e7daa2ec",
+        "key": "ee7366264333e7daa2ec",
+        "title": "A Dataset of CTD Temperature and Salinity Profiles in the Eastern Gakkel Ridge (2026) · ctd-inputs.zip",
+        "datasetId": "3004b8fc9e484fc8a32296f3e0633384",
+        "metadataId": "6ae0210c1a59f1ac383e8a8d",
+        "nodeId": "scidb-test",
+        "filename": "ctd-inputs.zip",
+        "archive": "ctd-inputs.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "f875aadc918ad02245806c10e7b325ebefc271caed4dd1f4b4508ae66bf9a2da",
+        "bytes": 1809934,
+        "mapping": {},
+        "originalArchiveEvidence": {
+          "manifestSha256": "e7d2a35c6b6634f49ef104d2fa46ba060a3384bdce02c9ba658af486d08ec758",
+          "files": [
+            {
+              "path": "OBS06．cnv",
+              "bytes": 1688949,
+              "sha256": "250a06e9177292428d8073f20ec047ceb6526909d32e32de0c319246e88f16ee"
+            },
+            {
+              "path": "OBS08．cnv",
+              "bytes": 1696679,
+              "sha256": "c06fc5a7eeaac83fa7fbf9362f557bbbbcc11e235febe8bb16c8372e39d899b4"
+            },
+            {
+              "path": "OBS10．cnv",
+              "bytes": 1610379,
+              "sha256": "c6e1b80fe1a7cc7f17f6b047fe3ac020bc0ca64c2cbe0a0c4a4374d5560954b2"
+            },
+            {
+              "path": "OBS12．cnv",
+              "bytes": 1923462,
+              "sha256": "18f30f4fef050c6e9f74bb26a229b4fd4deaee3f4a1055ee5777b0f960de9ccc"
+            },
+            {
+              "path": "OBS14．cnv",
+              "bytes": 1834064,
+              "sha256": "07794b97c67912cce4298fa8f2571444f80ded0d4165e4aac6ed7b25691c486e"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      },
+      {
+        "id": "3a42884c6e7cdbe23100",
+        "key": "3a42884c6e7cdbe23100",
+        "title": "A Dataset of CTD Temperature and Salinity Profiles in the Chukchi Plateau–Canada Basin Region (2026) · ctd-inputs.zip",
+        "datasetId": "daba9411a5694faeab7fb3863cc6afff",
+        "metadataId": "6ae023781a59f1ac383e8a9b",
+        "nodeId": "scidb-test",
+        "filename": "ctd-inputs.zip",
+        "archive": "ctd-inputs.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "feaed8b0d26abfae902e08cabec0ce64b26e7d3dc83731c501cf53e79741e76c",
+        "bytes": 7711976,
+        "mapping": {},
+        "originalArchiveEvidence": {
+          "manifestSha256": "91323b1cda2f8fece18157ee64c7de4b59a7d07e152d3c6675b26115e35ee467",
+          "files": [
+            {
+              "path": "P1-01delderivebin．cnv",
+              "bytes": 463162,
+              "sha256": "b16f13a9e33715d240d856f47673a96d62407ac4a008c065f4d01c948eae4513"
+            },
+            {
+              "path": "P1-02delderivebin．cnv",
+              "bytes": 466646,
+              "sha256": "7a76f3ca2c91e57fa162f2acce36b488dd9b1149126cb4c40144675ea83bfba4"
+            },
+            {
+              "path": "P1-03delderivebin．cnv",
+              "bytes": 591260,
+              "sha256": "5685dd7098203ec266c6a7f1426de729e798cc58f75b2136c19c639a3ecf1de4"
+            },
+            {
+              "path": "P1-04delderivebin．cnv",
+              "bytes": 855580,
+              "sha256": "bb3e6685281c2d1be6f033a29edf1a95e37ef59a3382842a049d654bcabc7cca"
+            },
+            {
+              "path": "P1-05delderivebin．cnv",
+              "bytes": 720905,
+              "sha256": "8c2d1e03892ce206d4f44e9c6f37e6d195802475027c28f1ccd12fda4d6bdb07"
+            },
+            {
+              "path": "P1-06delderivebin．cnv",
+              "bytes": 161302,
+              "sha256": "d2092da13fabe00775587bb10e4a33165b672a2da3ca97344683a90b09a03176"
+            },
+            {
+              "path": "P1-07delderivebin．cnv",
+              "bytes": 245669,
+              "sha256": "b399d6db0d8a11b28d5b503cd1d2eebd1c9e079c78a95bce21cac997bb4a24a8"
+            },
+            {
+              "path": "P1-08delderivebin．cnv",
+              "bytes": 748768,
+              "sha256": "902e1a5e6d079a02054b153bfe6469704090ee1ef5875a26092626a22693ef48"
+            },
+            {
+              "path": "P2-01delderivebin．cnv",
+              "bytes": 660533,
+              "sha256": "3589b481ab4071126a45101f688b047863ae96253ee9652da066d9b547aea4c1"
+            },
+            {
+              "path": "P2-02delderivebin．cnv",
+              "bytes": 607901,
+              "sha256": "b6b73b8e54338ca2633e135c76c0ca6590da0ed3360a978b12715e680f12d321"
+            },
+            {
+              "path": "P2-03delderivebin．cnv",
+              "bytes": 834683,
+              "sha256": "d0eef9be2726d0a1f1fd4f2bd2148984dfc27b216f9f0c1db9a559f909ad8ed9"
+            },
+            {
+              "path": "P2-04delderivebin．cnv",
+              "bytes": 283208,
+              "sha256": "c664fa3de4b60e86fe7a4fe3ac93431175f2f5fb63453c19c5738d234691f91c"
+            },
+            {
+              "path": "P2-05delderivebin．cnv",
+              "bytes": 277014,
+              "sha256": "2df4cbf18f1b81ad084395880cb5ebf1eb31e36cc2bcb3ac421cb5db3e162306"
+            },
+            {
+              "path": "P2-06delderivebin．cnv",
+              "bytes": 590872,
+              "sha256": "cd8538447269296750cb6dd60133a1350185292e6c72ab0075a34a5433de15e3"
+            },
+            {
+              "path": "P2-07delderivebin．cnv",
+              "bytes": 813785,
+              "sha256": "6b2c8c8ac0fcb8265622b9fd8729b62c8f272741bdc331bfd6b0382bba5962f0"
+            },
+            {
+              "path": "P2-08delderivebin．cnv",
+              "bytes": 479417,
+              "sha256": "747b7b3d215e2d08ecf4e000c0ee06bc6f026ef6f8a8ffb79d2457fa71e9c0a3"
+            },
+            {
+              "path": "P2-09delderivebin．cnv",
+              "bytes": 1492968,
+              "sha256": "d736cbff0a174de8af212d2e8892775f81536284dc231547c9037e6619f113f3"
+            },
+            {
+              "path": "P2-10delderivebin．cnv",
+              "bytes": 1489874,
+              "sha256": "06c629440a0a9186793fcbea451efbdf8a9e1d89830dbf4af1f27d2702861353"
+            },
+            {
+              "path": "P4-06delderivebin．cnv",
+              "bytes": 173687,
+              "sha256": "61f277ffb43345d3d171c2da6566e936370e13dbe5f7dd2e84a8c5f0363c8194"
+            },
+            {
+              "path": "P4-07delderivebin．cnv",
+              "bytes": 128407,
+              "sha256": "c6bbbe699f0ed52fc27ddbf7c8f3c0c16df5d1471fc5b60bdcff607c8187b268"
+            },
+            {
+              "path": "P4-08delderivebin．cnv",
+              "bytes": 1014251,
+              "sha256": "fb4d4bda67e3bb6ae988fe25d723c4d1731c75129e51c24d7e24c21c1c4e192b"
+            },
+            {
+              "path": "P4-09delderivebin．cnv",
+              "bytes": 674465,
+              "sha256": "3cce8cf6b4d22f085476c1b5c3a14a6243cce4ba46a8bab660b6027831120ac2"
+            },
+            {
+              "path": "P4-10delderivebin．cnv",
+              "bytes": 207743,
+              "sha256": "d48e9a9a0bfaaece1387c11dcf6540e73417bde93a66f0fa51839c2f112b365c"
+            },
+            {
+              "path": "P4-11delderivebin．cnv",
+              "bytes": 437234,
+              "sha256": "1d6f1b280570ab243ea36cc2b2b0e19488b0a95c39b86466e5c8fcecddde4dbb"
+            },
+            {
+              "path": "P4-12delderivebin．cnv",
+              "bytes": 1491035,
+              "sha256": "66fd14080ab3cc322fa239ccc6c94a51f46ca06e3ae4aec16e465e6fd313d674"
+            },
+            {
+              "path": "P4-13delderivebin．cnv",
+              "bytes": 1488713,
+              "sha256": "336c3dbddb9c6b7839fe1a2cc4f42bc565aa8757df7c80182615e2ee66cb1089"
+            },
+            {
+              "path": "P4-14delderivebin．cnv",
+              "bytes": 1482134,
+              "sha256": "9fd0e88ee186620584d1bba669b3b05fae6fe3d8a52c1aad7f17e32671a71e1c"
+            },
+            {
+              "path": "P4-15delderivebin．cnv",
+              "bytes": 1468976,
+              "sha256": "28f33da8044f9db526fe2c2e1a37d504d0a61a43469109943d2ac35dac75d267"
+            },
+            {
+              "path": "P5-10delderivebin．cnv",
+              "bytes": 332744,
+              "sha256": "a96259bd67b45d78fcc3389e6a6d635c314f63db724101c92bed10b38e089cb5"
+            },
+            {
+              "path": "P5-11delderivebin．cnv",
+              "bytes": 1486778,
+              "sha256": "e07f16df6de72876b9f7b3aed49185d4b23548c4d8b47e5b3f88ab26b37daa01"
+            },
+            {
+              "path": "P5-12delderivebin．cnv",
+              "bytes": 1487552,
+              "sha256": "196703786d7ea03b7a24114a2e7ad2eec5aad43cbae73dca703ccc0178bffe4e"
+            },
+            {
+              "path": "P5-13delderivebin．cnv",
+              "bytes": 1482908,
+              "sha256": "3760fe9be571e8182f38db3332467c9f5effbba752a7f70afa2d01597a4092c7"
+            },
+            {
+              "path": "P5-14delderivebin．cnv",
+              "bytes": 1472846,
+              "sha256": "637482690c487528772c6a5d4d1fc19c478318f76ea4c1b467dd22e65e582ffa"
+            },
+            {
+              "path": "P5-15delderivebin．cnv",
+              "bytes": 1461236,
+              "sha256": "013cd0b2e785cc87ab295c3e23f2ebad6d6bb4c6d8e5df971d130e2ffae38572"
+            },
+            {
+              "path": "P5-16delderivebin．cnv",
+              "bytes": 1439177,
+              "sha256": "fd88aef1c8c71c653912cb606fda190b6595a047f3ffd0f7c9978c63ff295a01"
+            },
+            {
+              "path": "R11delderivebin．cnv",
+              "bytes": 78859,
+              "sha256": "cc2ac53ffbee03c31440e3af1175e243e58d8d6b6877d3e62334b030de2025fd"
+            },
+            {
+              "path": "R12delderivebin．cnv",
+              "bytes": 79630,
+              "sha256": "3fd1b3123c6ff4fde4a913cf72f3246e18c6980e7bdcee916378149dea5bbb24"
+            },
+            {
+              "path": "R13delderivebin．cnv",
+              "bytes": 78855,
+              "sha256": "60dbdaddb9cf9d94102ae18f3bac931b32c69b8ad23263b6cb609d8f2ecc5933"
+            },
+            {
+              "path": "R14delderivebin．cnv",
+              "bytes": 702707,
+              "sha256": "07a66405bf28fab312bd16f67e3e57038bf3eae9152984c53fd86d03e996217a"
+            },
+            {
+              "path": "R15delderivebin．cnv",
+              "bytes": 662839,
+              "sha256": "1aef858aa0cb9a1a300a446e4b249855cc2cdfd77b34cd6ef465ec4800c5a947"
+            },
+            {
+              "path": "R16delderivebin．cnv",
+              "bytes": 244878,
+              "sha256": "4a82ba2450bda0c3d0186bbd1f5400fbe818c420fa078ee8e937530f523b55ff"
+            },
+            {
+              "path": "R17delderivebin．cnv",
+              "bytes": 439153,
+              "sha256": "5c2370d04c9653520f0f87cf504065e3006c10e64864893a8df71e8cf651d638"
+            },
+            {
+              "path": "R18delderivebin．cnv",
+              "bytes": 1197673,
+              "sha256": "2ceac00ec7a58512701e6147fd9073429cc104c0796b29ee4ac77d885515fa56"
+            },
+            {
+              "path": "R19delderivebin．cnv",
+              "bytes": 1273138,
+              "sha256": "ffe2aa0f10410d5f2093f7d830f810b75b3dac3cd6f1505bd8da8a9000ac8c57"
+            },
+            {
+              "path": "R20delderivebin．cnv",
+              "bytes": 1290939,
+              "sha256": "bdc7fa9930cff69a093c57d12a27645ef600070e57db62c26a4ae26ae8508136"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {
+      "temperatureMin": -3,
+      "temperatureMax": 45,
+      "salinityMin": 0,
+      "salinityMax": 50
+    },
+    "scope": "读取Sea-Bird CNV声明的ITS-90温度、实用盐度和米制深度，严格处理bad_flag及仪器标记；提取下放段分箱剖面及配置深度区间的最大绝对温度梯度，不推断水团类型或混合层深度。",
+    "inputRequirements": {
+      "supportedMode": "ctd-ts2",
+      "scope": "读取Sea-Bird CNV声明的ITS-90温度、实用盐度和米制深度，严格处理bad_flag及仪器标记；提取下放段分箱剖面及配置深度区间的最大绝对温度梯度，不推断水团类型或混合层深度。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "depth": "depSM [m]",
+        "temperature": "t090C [deg C]",
+        "salinity": "sal00 [PSU]",
+        "sourceFlag": "flag==0",
+        "pump": "pumps>0",
+        "badFlag": "CNV header, exact equality"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-057",
+    "title": "CTD温跃层深度诊断",
+    "mode": "ctd-thermocline2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "station",
+        "label": "站位文件名（不含扩展名；空值表示全部）",
+        "default": "",
+        "type": "string"
+      },
+      {
+        "key": "maxDepth",
+        "label": "最大深度（米）",
+        "default": 10000,
+        "type": "number",
+        "min": 5,
+        "max": 12000
+      },
+      {
+        "key": "binSize",
+        "label": "下放剖面分箱间隔（米）",
+        "default": 5,
+        "type": "number",
+        "min": 1,
+        "max": 100
+      },
+      {
+        "key": "gradientDepthMin",
+        "label": "温跃层搜索起点（米）",
+        "default": 5,
+        "type": "number",
+        "min": 0,
+        "max": 10000
+      },
+      {
+        "key": "gradientDepthMax",
+        "label": "温跃层搜索终点（米）",
+        "default": 500,
+        "type": "number",
+        "min": 5,
+        "max": 12000
+      }
+    ],
+    "sources": [
+      {
+        "id": "ee7366264333e7daa2ec",
+        "key": "ee7366264333e7daa2ec",
+        "title": "A Dataset of CTD Temperature and Salinity Profiles in the Eastern Gakkel Ridge (2026) · ctd-inputs.zip",
+        "datasetId": "3004b8fc9e484fc8a32296f3e0633384",
+        "metadataId": "6ae0210c1a59f1ac383e8a8d",
+        "nodeId": "scidb-test",
+        "filename": "ctd-inputs.zip",
+        "archive": "ctd-inputs.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "f875aadc918ad02245806c10e7b325ebefc271caed4dd1f4b4508ae66bf9a2da",
+        "bytes": 1809934,
+        "mapping": {},
+        "originalArchiveEvidence": {
+          "manifestSha256": "e7d2a35c6b6634f49ef104d2fa46ba060a3384bdce02c9ba658af486d08ec758",
+          "files": [
+            {
+              "path": "OBS06．cnv",
+              "bytes": 1688949,
+              "sha256": "250a06e9177292428d8073f20ec047ceb6526909d32e32de0c319246e88f16ee"
+            },
+            {
+              "path": "OBS08．cnv",
+              "bytes": 1696679,
+              "sha256": "c06fc5a7eeaac83fa7fbf9362f557bbbbcc11e235febe8bb16c8372e39d899b4"
+            },
+            {
+              "path": "OBS10．cnv",
+              "bytes": 1610379,
+              "sha256": "c6e1b80fe1a7cc7f17f6b047fe3ac020bc0ca64c2cbe0a0c4a4374d5560954b2"
+            },
+            {
+              "path": "OBS12．cnv",
+              "bytes": 1923462,
+              "sha256": "18f30f4fef050c6e9f74bb26a229b4fd4deaee3f4a1055ee5777b0f960de9ccc"
+            },
+            {
+              "path": "OBS14．cnv",
+              "bytes": 1834064,
+              "sha256": "07794b97c67912cce4298fa8f2571444f80ded0d4165e4aac6ed7b25691c486e"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      },
+      {
+        "id": "3a42884c6e7cdbe23100",
+        "key": "3a42884c6e7cdbe23100",
+        "title": "A Dataset of CTD Temperature and Salinity Profiles in the Chukchi Plateau–Canada Basin Region (2026) · ctd-inputs.zip",
+        "datasetId": "daba9411a5694faeab7fb3863cc6afff",
+        "metadataId": "6ae023781a59f1ac383e8a9b",
+        "nodeId": "scidb-test",
+        "filename": "ctd-inputs.zip",
+        "archive": "ctd-inputs.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "feaed8b0d26abfae902e08cabec0ce64b26e7d3dc83731c501cf53e79741e76c",
+        "bytes": 7711976,
+        "mapping": {},
+        "originalArchiveEvidence": {
+          "manifestSha256": "91323b1cda2f8fece18157ee64c7de4b59a7d07e152d3c6675b26115e35ee467",
+          "files": [
+            {
+              "path": "P1-01delderivebin．cnv",
+              "bytes": 463162,
+              "sha256": "b16f13a9e33715d240d856f47673a96d62407ac4a008c065f4d01c948eae4513"
+            },
+            {
+              "path": "P1-02delderivebin．cnv",
+              "bytes": 466646,
+              "sha256": "7a76f3ca2c91e57fa162f2acce36b488dd9b1149126cb4c40144675ea83bfba4"
+            },
+            {
+              "path": "P1-03delderivebin．cnv",
+              "bytes": 591260,
+              "sha256": "5685dd7098203ec266c6a7f1426de729e798cc58f75b2136c19c639a3ecf1de4"
+            },
+            {
+              "path": "P1-04delderivebin．cnv",
+              "bytes": 855580,
+              "sha256": "bb3e6685281c2d1be6f033a29edf1a95e37ef59a3382842a049d654bcabc7cca"
+            },
+            {
+              "path": "P1-05delderivebin．cnv",
+              "bytes": 720905,
+              "sha256": "8c2d1e03892ce206d4f44e9c6f37e6d195802475027c28f1ccd12fda4d6bdb07"
+            },
+            {
+              "path": "P1-06delderivebin．cnv",
+              "bytes": 161302,
+              "sha256": "d2092da13fabe00775587bb10e4a33165b672a2da3ca97344683a90b09a03176"
+            },
+            {
+              "path": "P1-07delderivebin．cnv",
+              "bytes": 245669,
+              "sha256": "b399d6db0d8a11b28d5b503cd1d2eebd1c9e079c78a95bce21cac997bb4a24a8"
+            },
+            {
+              "path": "P1-08delderivebin．cnv",
+              "bytes": 748768,
+              "sha256": "902e1a5e6d079a02054b153bfe6469704090ee1ef5875a26092626a22693ef48"
+            },
+            {
+              "path": "P2-01delderivebin．cnv",
+              "bytes": 660533,
+              "sha256": "3589b481ab4071126a45101f688b047863ae96253ee9652da066d9b547aea4c1"
+            },
+            {
+              "path": "P2-02delderivebin．cnv",
+              "bytes": 607901,
+              "sha256": "b6b73b8e54338ca2633e135c76c0ca6590da0ed3360a978b12715e680f12d321"
+            },
+            {
+              "path": "P2-03delderivebin．cnv",
+              "bytes": 834683,
+              "sha256": "d0eef9be2726d0a1f1fd4f2bd2148984dfc27b216f9f0c1db9a559f909ad8ed9"
+            },
+            {
+              "path": "P2-04delderivebin．cnv",
+              "bytes": 283208,
+              "sha256": "c664fa3de4b60e86fe7a4fe3ac93431175f2f5fb63453c19c5738d234691f91c"
+            },
+            {
+              "path": "P2-05delderivebin．cnv",
+              "bytes": 277014,
+              "sha256": "2df4cbf18f1b81ad084395880cb5ebf1eb31e36cc2bcb3ac421cb5db3e162306"
+            },
+            {
+              "path": "P2-06delderivebin．cnv",
+              "bytes": 590872,
+              "sha256": "cd8538447269296750cb6dd60133a1350185292e6c72ab0075a34a5433de15e3"
+            },
+            {
+              "path": "P2-07delderivebin．cnv",
+              "bytes": 813785,
+              "sha256": "6b2c8c8ac0fcb8265622b9fd8729b62c8f272741bdc331bfd6b0382bba5962f0"
+            },
+            {
+              "path": "P2-08delderivebin．cnv",
+              "bytes": 479417,
+              "sha256": "747b7b3d215e2d08ecf4e000c0ee06bc6f026ef6f8a8ffb79d2457fa71e9c0a3"
+            },
+            {
+              "path": "P2-09delderivebin．cnv",
+              "bytes": 1492968,
+              "sha256": "d736cbff0a174de8af212d2e8892775f81536284dc231547c9037e6619f113f3"
+            },
+            {
+              "path": "P2-10delderivebin．cnv",
+              "bytes": 1489874,
+              "sha256": "06c629440a0a9186793fcbea451efbdf8a9e1d89830dbf4af1f27d2702861353"
+            },
+            {
+              "path": "P4-06delderivebin．cnv",
+              "bytes": 173687,
+              "sha256": "61f277ffb43345d3d171c2da6566e936370e13dbe5f7dd2e84a8c5f0363c8194"
+            },
+            {
+              "path": "P4-07delderivebin．cnv",
+              "bytes": 128407,
+              "sha256": "c6bbbe699f0ed52fc27ddbf7c8f3c0c16df5d1471fc5b60bdcff607c8187b268"
+            },
+            {
+              "path": "P4-08delderivebin．cnv",
+              "bytes": 1014251,
+              "sha256": "fb4d4bda67e3bb6ae988fe25d723c4d1731c75129e51c24d7e24c21c1c4e192b"
+            },
+            {
+              "path": "P4-09delderivebin．cnv",
+              "bytes": 674465,
+              "sha256": "3cce8cf6b4d22f085476c1b5c3a14a6243cce4ba46a8bab660b6027831120ac2"
+            },
+            {
+              "path": "P4-10delderivebin．cnv",
+              "bytes": 207743,
+              "sha256": "d48e9a9a0bfaaece1387c11dcf6540e73417bde93a66f0fa51839c2f112b365c"
+            },
+            {
+              "path": "P4-11delderivebin．cnv",
+              "bytes": 437234,
+              "sha256": "1d6f1b280570ab243ea36cc2b2b0e19488b0a95c39b86466e5c8fcecddde4dbb"
+            },
+            {
+              "path": "P4-12delderivebin．cnv",
+              "bytes": 1491035,
+              "sha256": "66fd14080ab3cc322fa239ccc6c94a51f46ca06e3ae4aec16e465e6fd313d674"
+            },
+            {
+              "path": "P4-13delderivebin．cnv",
+              "bytes": 1488713,
+              "sha256": "336c3dbddb9c6b7839fe1a2cc4f42bc565aa8757df7c80182615e2ee66cb1089"
+            },
+            {
+              "path": "P4-14delderivebin．cnv",
+              "bytes": 1482134,
+              "sha256": "9fd0e88ee186620584d1bba669b3b05fae6fe3d8a52c1aad7f17e32671a71e1c"
+            },
+            {
+              "path": "P4-15delderivebin．cnv",
+              "bytes": 1468976,
+              "sha256": "28f33da8044f9db526fe2c2e1a37d504d0a61a43469109943d2ac35dac75d267"
+            },
+            {
+              "path": "P5-10delderivebin．cnv",
+              "bytes": 332744,
+              "sha256": "a96259bd67b45d78fcc3389e6a6d635c314f63db724101c92bed10b38e089cb5"
+            },
+            {
+              "path": "P5-11delderivebin．cnv",
+              "bytes": 1486778,
+              "sha256": "e07f16df6de72876b9f7b3aed49185d4b23548c4d8b47e5b3f88ab26b37daa01"
+            },
+            {
+              "path": "P5-12delderivebin．cnv",
+              "bytes": 1487552,
+              "sha256": "196703786d7ea03b7a24114a2e7ad2eec5aad43cbae73dca703ccc0178bffe4e"
+            },
+            {
+              "path": "P5-13delderivebin．cnv",
+              "bytes": 1482908,
+              "sha256": "3760fe9be571e8182f38db3332467c9f5effbba752a7f70afa2d01597a4092c7"
+            },
+            {
+              "path": "P5-14delderivebin．cnv",
+              "bytes": 1472846,
+              "sha256": "637482690c487528772c6a5d4d1fc19c478318f76ea4c1b467dd22e65e582ffa"
+            },
+            {
+              "path": "P5-15delderivebin．cnv",
+              "bytes": 1461236,
+              "sha256": "013cd0b2e785cc87ab295c3e23f2ebad6d6bb4c6d8e5df971d130e2ffae38572"
+            },
+            {
+              "path": "P5-16delderivebin．cnv",
+              "bytes": 1439177,
+              "sha256": "fd88aef1c8c71c653912cb606fda190b6595a047f3ffd0f7c9978c63ff295a01"
+            },
+            {
+              "path": "R11delderivebin．cnv",
+              "bytes": 78859,
+              "sha256": "cc2ac53ffbee03c31440e3af1175e243e58d8d6b6877d3e62334b030de2025fd"
+            },
+            {
+              "path": "R12delderivebin．cnv",
+              "bytes": 79630,
+              "sha256": "3fd1b3123c6ff4fde4a913cf72f3246e18c6980e7bdcee916378149dea5bbb24"
+            },
+            {
+              "path": "R13delderivebin．cnv",
+              "bytes": 78855,
+              "sha256": "60dbdaddb9cf9d94102ae18f3bac931b32c69b8ad23263b6cb609d8f2ecc5933"
+            },
+            {
+              "path": "R14delderivebin．cnv",
+              "bytes": 702707,
+              "sha256": "07a66405bf28fab312bd16f67e3e57038bf3eae9152984c53fd86d03e996217a"
+            },
+            {
+              "path": "R15delderivebin．cnv",
+              "bytes": 662839,
+              "sha256": "1aef858aa0cb9a1a300a446e4b249855cc2cdfd77b34cd6ef465ec4800c5a947"
+            },
+            {
+              "path": "R16delderivebin．cnv",
+              "bytes": 244878,
+              "sha256": "4a82ba2450bda0c3d0186bbd1f5400fbe818c420fa078ee8e937530f523b55ff"
+            },
+            {
+              "path": "R17delderivebin．cnv",
+              "bytes": 439153,
+              "sha256": "5c2370d04c9653520f0f87cf504065e3006c10e64864893a8df71e8cf651d638"
+            },
+            {
+              "path": "R18delderivebin．cnv",
+              "bytes": 1197673,
+              "sha256": "2ceac00ec7a58512701e6147fd9073429cc104c0796b29ee4ac77d885515fa56"
+            },
+            {
+              "path": "R19delderivebin．cnv",
+              "bytes": 1273138,
+              "sha256": "ffe2aa0f10410d5f2093f7d830f810b75b3dac3cd6f1505bd8da8a9000ac8c57"
+            },
+            {
+              "path": "R20delderivebin．cnv",
+              "bytes": 1290939,
+              "sha256": "bdc7fa9930cff69a093c57d12a27645ef600070e57db62c26a4ae26ae8508136"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {
+      "temperatureMin": -3,
+      "temperatureMax": 45,
+      "salinityMin": 0,
+      "salinityMax": 50
+    },
+    "scope": "读取Sea-Bird CNV声明的ITS-90温度、实用盐度和米制深度，严格处理bad_flag及仪器标记；提取下放段分箱剖面及配置深度区间的最大绝对温度梯度，不推断水团类型或混合层深度。",
+    "inputRequirements": {
+      "supportedMode": "ctd-thermocline2",
+      "scope": "读取Sea-Bird CNV声明的ITS-90温度、实用盐度和米制深度，严格处理bad_flag及仪器标记；提取下放段分箱剖面及配置深度区间的最大绝对温度梯度，不推断水团类型或混合层深度。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "depth": "depSM [m]",
+        "temperature": "t090C [deg C]",
+        "salinity": "sal00 [PSU]",
+        "sourceFlag": "flag==0",
+        "pump": "pumps>0",
+        "badFlag": "CNV header, exact equality"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-044",
+    "title": "DNA条形码序列画像",
+    "mode": "barcode2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "gene",
+        "label": "分子标记",
+        "default": "COI",
+        "type": "select",
+        "choices": [
+          "all",
+          "COI",
+          "Cytb",
+          "Other"
+        ]
+      }
+    ],
+    "sources": [
+      {
+        "id": "e55302763d40b71bf17a",
+        "key": "e55302763d40b71bf17a",
+        "title": "雅鲁藏布江流域鱼类DNA条形码数据集 · barcode-v2.zip",
+        "datasetId": "abb51b4c0e144ca8b68d395df40b215f",
+        "metadataId": "6ae3013bf850fdbd486a96f2",
+        "nodeId": "scidb-test",
+        "filename": "barcode-v2.zip",
+        "archive": "barcode-v2.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "d2fd6d2d7cb3324ac6025761bfb0bb4f15101184a989e5b3a1ec94c406b00c90",
+        "bytes": 81753,
+        "mapping": {},
+        "originalArchiveEvidence": {
+          "manifestSha256": "9e41f875a1a03948cea1aeb0a3229f015ee308414a83c3725aae9365f55ef83b",
+          "files": [
+            {
+              "path": "V1/雅鲁藏布江流域鱼类DNA条形码元数据表_V2．xlsx",
+              "bytes": 264979,
+              "sha256": "e19ef7c4fe909c392eec1c1ee3a62aab815005c7d705a9ed0c49e760ce8951c9"
+            },
+            {
+              "path": "V1/雅鲁藏布江流域鱼类其他分子标记数据_YJ_Othermarkers_raw_V2．txt",
+              "bytes": 74141,
+              "sha256": "51997e7d777c43f7eddd1d5c5b1b3e2a71c2ba67366cc156305da02a1d2d5654"
+            },
+            {
+              "path": "V1/雅鲁藏布江流域鱼类测序物种照片_V2．pdf",
+              "bytes": 3280611,
+              "sha256": "3986711a8088ab75f61393961643ccbb070a77e7d647fa70a82aa295997615e5"
+            },
+            {
+              "path": "V1/雅鲁藏布江流域鱼类线粒体COI基因序列数据_YJ_COI_raw_V2．txt",
+              "bytes": 986053,
+              "sha256": "8649220898e071018989f1284a6e8bd4d7f8e2c67df3c5139ff9acc10dcc0dd1"
+            },
+            {
+              "path": "V1/雅鲁藏布江流域鱼类线粒体Cyt b基因序列数据_YJ_Cytb_raw_V2．txt",
+              "bytes": 1590977,
+              "sha256": "6611aac525f155f67cb8180c684e2451176b4db625f0ab8f7876710f729aded8"
+            },
+            {
+              "path": "V2/本地BLAST流程示例文件．zip",
+              "bytes": 3823702,
+              "sha256": "8ac4037688ee1e7e1624bda183679978b5db409c4173abdd462b98be0b474cce"
+            },
+            {
+              "path": "V2/雅鲁藏布江流域鱼类DNA条形码元数据表_V3．xlsx",
+              "bytes": 265423,
+              "sha256": "593118562a24c80aec11edc07421565625bbf1128df69d8122d94b2d3aeb0aa9"
+            },
+            {
+              "path": "V2/雅鲁藏布江流域鱼类其他分子标记数据_YJ_Othermarkers_raw_V2．txt (1)",
+              "bytes": 74141,
+              "sha256": "51997e7d777c43f7eddd1d5c5b1b3e2a71c2ba67366cc156305da02a1d2d5654"
+            },
+            {
+              "path": "V2/雅鲁藏布江流域鱼类测序物种照片_V3．pdf",
+              "bytes": 3283186,
+              "sha256": "b1e998e0f31991f3dc211ff45b4938e0a92810b5cac1003de346128b403f560a"
+            },
+            {
+              "path": "V2/雅鲁藏布江流域鱼类线粒体COI基因序列数据_YJ_COI_raw_V2．txt (1)",
+              "bytes": 986053,
+              "sha256": "8649220898e071018989f1284a6e8bd4d7f8e2c67df3c5139ff9acc10dcc0dd1"
+            },
+            {
+              "path": "V2/雅鲁藏布江流域鱼类线粒体Cyt b基因序列数据_YJ_Cytb_raw_V2．txt (1)",
+              "bytes": 1590977,
+              "sha256": "6611aac525f155f67cb8180c684e2451176b4db625f0ab8f7876710f729aded8"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {},
+    "scope": "逐条统计V2 FASTA序列长度、GC比例与歧义字符；不重复计算V1，不推断物种鉴定或系统发育。",
+    "inputRequirements": {
+      "supportedMode": "barcode2",
+      "scope": "逐条统计V2 FASTA序列长度、GC比例与歧义字符；不重复计算V1，不推断物种鉴定或系统发育。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "version": "V2",
+        "files": [
+          "COI.fasta",
+          "Cytb.fasta",
+          "Other.fasta"
+        ],
+        "gcDenominator": "A+C+G+T"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-022",
+    "title": "遥感生态指数年度空间对比",
+    "mode": "rsei2",
+    "operator": "conet_batch_analysis@1.0",
+    "version": "1.0",
+    "options": [
+      {
+        "key": "yearStart",
+        "label": "开始年份",
+        "default": 2019,
+        "type": "integer",
+        "min": 2013,
+        "max": 2023
+      },
+      {
+        "key": "yearEnd",
+        "label": "结束年份",
+        "default": 2023,
+        "type": "integer",
+        "min": 2013,
+        "max": 2023
+      }
+    ],
+    "sources": [
+      {
+        "id": "4e54964ad973c0cd19e7",
+        "key": "4e54964ad973c0cd19e7",
+        "title": "2013-2023深圳市遥感生态指数及绿地面数据集 · rsei-final-inputs.zip",
+        "datasetId": "71b4ae2bf06e4309a6b76010f8a6162e",
+        "metadataId": "6ae052479cc80a7829743e07",
+        "nodeId": "scidb-test",
+        "filename": "rsei-final-inputs.zip",
+        "archive": "rsei-final-inputs.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "1567f50da0e6555957f87fbd2586e762aba56e0be0bd83c3ea2e94189625be52",
+        "bytes": 97574512,
+        "mapping": {},
+        "originalArchiveEvidence": {
+          "manifestSha256": "f17dcd078981e4cf6a455f5428bba9f17ce2e3abd90f0fd8e0c3c8a6949360e3",
+          "files": [
+            {
+              "path": "RSEI原始数据及主成分分析结果.zip",
+              "bytes": 856372506,
+              "sha256": "d45379e6839c0970d7c2e993733b3094195fba166eee3cfd3aca7b1393046697"
+            },
+            {
+              "path": "深圳RSEI及WETNESS、NDBSI、LST、GREENESS.zip",
+              "bytes": 984251405,
+              "sha256": "a485c7ad1e0a2fbab795630db309bcb94dba7f444a6f2393bcb8f220cfdc63e7"
+            },
+            {
+              "path": "论文数据集合.zip",
+              "bytes": 356356,
+              "sha256": "7fd4a9e89ec08b5c9782a36980ebb02a42c18e3c477e798ce714ff927e432445"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {},
+    "scope": "对已发布RSEI_final栅格进行逐年有效像元统计、首末年地图和共同有效像元变化分析；校验坐标系与网格，不将已有指数冒充重新计算PCA。",
+    "inputRequirements": {
+      "supportedMode": "rsei2",
+      "scope": "对已发布RSEI_final栅格进行逐年有效像元统计、首末年地图和共同有效像元变化分析；校验坐标系与网格，不将已有指数冒充重新计算PCA。",
+      "format": [
+        ".zip"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "pattern": "YYYY/RSEI_final*.tif",
+        "availableYears": [
+          2013,
+          2014,
+          2015,
+          2016,
+          2017,
+          2019,
+          2020,
+          2021,
+          2022,
+          2023
+        ],
+        "units": "dimensionless, 0–1",
+        "missing": "GeoTIFF mask/nodata"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-051",
+    "title": "科研图像精确重复样本筛查",
+    "mode": "duplicates2",
+    "operator": "conet_batch_analysis@1.1",
+    "version": "1.1",
+    "options": [
+      {
+        "key": "blurThreshold",
+        "label": "清晰度分组阈值（拉普拉斯方差）",
+        "default": 100,
+        "type": "number",
+        "min": 0,
+        "max": 1000000
+      }
+    ],
+    "sources": [
+      {
+        "id": "51f1382a8fc701cf40fd",
+        "key": "51f1382a8fc701cf40fd",
+        "title": "柑橘花朵与幼果模糊图像及人工测量数据集 · images-inputs.tar",
+        "datasetId": "35e53e3cd1b04b2786d9749de2f90046",
+        "metadataId": "6ae2f1ff458b929f0df04e3e",
+        "nodeId": "scidb-test",
+        "filename": "images-inputs.tar",
+        "archive": "images-inputs.tar",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".tar",
+        "prepared": true,
+        "sha256": "9fff495871d1dbfd41ff49620747c6323c0b1ba22961a37e212d972c1aa6f631",
+        "bytes": 2771722240,
+        "mapping": {
+          "container": "tar"
+        },
+        "originalArchiveEvidence": {
+          "manifestSha256": "54c3490ebead05e1d3fe3527145cc930033dbc8b37d8a1f8fffdafe6b6a98c98",
+          "files": [
+            {
+              "path": "image.zip",
+              "bytes": 2770566732,
+              "sha256": "061359151fbb69ced0bd458bc8ec0591b5c898b7bf06e1f5c016ac1f1b4a20c6"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {},
+    "scope": "完整解码图像集合，以RGB像素哈希识别精确重复，计算灰度拉普拉斯方差并按可调阈值分组；不声称感知近重复或真实模糊标签。",
+    "inputRequirements": {
+      "supportedMode": "duplicates2",
+      "scope": "完整解码图像集合，以RGB像素哈希识别精确重复，计算灰度拉普拉斯方差并按可调阈值分组；不声称感知近重复或真实模糊标签。",
+      "format": [
+        ".tar"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "exactDuplicates": "decoded RGB dimensions+SHA256",
+        "sharpness": "interior 4-neighbour grayscale Laplacian variance",
+        "threshold": "parameter, not ground truth"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-053",
+    "title": "科研图像清晰度指标与分组",
+    "mode": "blur2",
+    "operator": "conet_batch_analysis@1.1",
+    "version": "1.1",
+    "options": [
+      {
+        "key": "blurThreshold",
+        "label": "清晰度分组阈值（拉普拉斯方差）",
+        "default": 100,
+        "type": "number",
+        "min": 0,
+        "max": 1000000
+      }
+    ],
+    "sources": [
+      {
+        "id": "51f1382a8fc701cf40fd",
+        "key": "51f1382a8fc701cf40fd",
+        "title": "柑橘花朵与幼果模糊图像及人工测量数据集 · images-inputs.tar",
+        "datasetId": "35e53e3cd1b04b2786d9749de2f90046",
+        "metadataId": "6ae2f1ff458b929f0df04e3e",
+        "nodeId": "scidb-test",
+        "filename": "images-inputs.tar",
+        "archive": "images-inputs.tar",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".tar",
+        "prepared": true,
+        "sha256": "9fff495871d1dbfd41ff49620747c6323c0b1ba22961a37e212d972c1aa6f631",
+        "bytes": 2771722240,
+        "mapping": {
+          "container": "tar"
+        },
+        "originalArchiveEvidence": {
+          "manifestSha256": "54c3490ebead05e1d3fe3527145cc930033dbc8b37d8a1f8fffdafe6b6a98c98",
+          "files": [
+            {
+              "path": "image.zip",
+              "bytes": 2770566732,
+              "sha256": "061359151fbb69ced0bd458bc8ec0591b5c898b7bf06e1f5c016ac1f1b4a20c6"
+            }
+          ],
+          "transformation": "Unchanged source files; optional lossless input container with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {},
+    "scope": "完整解码图像集合，以RGB像素哈希识别精确重复，计算灰度拉普拉斯方差并按可调阈值分组；不声称感知近重复或真实模糊标签。",
+    "inputRequirements": {
+      "supportedMode": "blur2",
+      "scope": "完整解码图像集合，以RGB像素哈希识别精确重复，计算灰度拉普拉斯方差并按可调阈值分组；不声称感知近重复或真实模糊标签。",
+      "format": [
+        ".tar"
+      ],
+      "missingValueRule": "声明的缺失值和非有限值按方法排除并计数，绝不补零",
+      "sourceBinding": "运行时选择已接入且结构兼容的数据，冻结输入文件SHA256和算子版本",
+      "mapping": {
+        "exactDuplicates": "decoded RGB dimensions+SHA256",
+        "sharpness": "interior 4-neighbour grayscale Laplacian variance",
+        "threshold": "parameter, not ground truth"
+      }
+    }
+  },
+  {
+    "serviceId": "svc-008",
+    "title": "科研文档结构与要素提取",
+    "mode": "documents2",
+    "operator": "conet_batch_analysis@1.2",
+    "version": "1.2",
+    "options": [
+      {
+        "key": "documentIndex",
+        "label": "文档序号（0为全部，1—4为指定文档）",
+        "type": "integer",
+        "default": 0,
+        "min": 0,
+        "max": 4
+      }
+    ],
+    "sources": [
+      {
+        "id": "3012c4d020083c2dd9c6",
+        "key": "3012c4d020083c2dd9c6",
+        "title": "脂肪醇催化剂论文支持信息 · DOCX原生文档",
+        "datasetId": "568bd93a1f0444d79a37d4a10fd0e3ab",
+        "metadataId": "6ae1607ad3e13f33bc64b99f",
+        "nodeId": "scidb-test",
+        "filename": "documents-inputs.zip",
+        "archive": "documents-inputs.zip",
+        "version": "downloaded-20261118",
+        "synthetic": false,
+        "format": ".zip",
+        "prepared": true,
+        "sha256": "5f700a728a67d59bdec6099ef700ff44e81c91e1f6191d6387ebab501215398b",
+        "bytes": 125441,
+        "mapping": {},
+        "originalArchiveEvidence": {
+          "filename": "Supporting information for H2-Excess Synthesis of Fatty Alcohol on the Fused Iron Catalyst A Sustainable Route of Biomass Refining．zip",
+          "sha256": "4b5828856eb27e32c5c2b7d024cdadb55450fda507ce76a2ce5d7f87ee255f53",
+          "members": [
+            {
+              "member": "Ivantsov Kuz'min Dement'eva Shved Kulikova - supporting info inventory.xlsx",
+              "sha256": "41500070be9fa87da6be75cb4e75b1d2ba4c350dafcd99ce6756c1e946c94f5a",
+              "bytes": 9771
+            },
+            {
+              "member": "Ivantsov Kuz'min Dement'eva Shved Kulikova - supporting info. 1.docx",
+              "sha256": "11e4ac8c6198272352ea1ae8a3267a83af0fe2986f09ec0a0a8212dcf4295cad",
+              "bytes": 21688
+            },
+            {
+              "member": "Ivantsov Kuz'min Dement'eva Shved Kulikova - supporting info. 2.docx",
+              "sha256": "1d27816108f0e1c96039f57ff2b2899d30f3e12987c252234ea8750a7356ebb9",
+              "bytes": 14272
+            },
+            {
+              "member": "Ivantsov Kuz'min Dement'eva Shved Kulikova - supporting info. 3.docx",
+              "sha256": "d28f16da00d871d98db9abc9127217a84ec814bd0ab6fa8152fdb56137944555",
+              "bytes": 17676
+            },
+            {
+              "member": "Ivantsov Kuz'min Dement'eva Shved Kulikova - supporting info. 4.docx",
+              "sha256": "179be7bc3df84ff4a882e01143ee4bc2258ac5e175955b5bdf247d84d91669df",
+              "bytes": 76741
+            }
+          ],
+          "transformation": "Unchanged original DOCX and workbook members; portable ZIP with member hashes"
+        }
+      }
+    ],
+    "methodDefaults": {},
+    "scope": "从实际DOCX提取段落、行内公式文本和表格单元格，保留源文档、结构块与行列位置；不推断页码，不对图像执行OCR，不推断化学结论。首阶段仅支持结构兼容的DOCX附件包。",
+    "inputRequirements": {
+      "supportedMode": "documents2",
+      "format": [
+        ".zip containing .docx"
+      ],
+      "sourceBinding": "运行时选择兼容附件容器并冻结完整SHA256",
+      "missingValueRule": "不补造空段落、表格值或页码",
+      "mapping": {
+        "documentIndex": "字典序排列的DOCX文件编号",
+        "pageNumbers": "not inferred",
+        "OCR": false
+      }
+    }
+  }
+]

@@ -1,0 +1,159 @@
+name: ai-dataseek
+
+services:
+  frontend:
+    image: ${FRONTEND_IMAGE:-ai-dataseek-frontend:${IMAGE_TAG:-latest}}
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+      target: production-stage
+    ports:
+      - "${FRONTEND_PORT:-7000}:80"
+    environment:
+      BACKEND_URL: http://backend:8000
+    depends_on:
+      backend:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - ai-dataseek-network
+
+  backend:
+    image: ${BACKEND_IMAGE:-ai-dataseek-backend:${IMAGE_TAG:-latest}}
+    build:
+      context: .
+      dockerfile: backend/Dockerfile
+    env_file:
+      - .env
+    environment:
+      AUTH_PROVIDER: none
+      MONGODB_URI: mongodb://localhost:27017/example
+      MONGODB_DATABASE: ai_dataseek
+      REDIS_HOST: redis
+      MINIO_ENDPOINT: minio:9000
+      MINIO_BUCKET: ai-dataseek-files
+      SANDBOX_ISOLATION: session
+      SANDBOX_IMAGE: ${SANDBOX_IMAGE:-ai-dataseek-sandbox:${IMAGE_TAG:-latest}}
+      SANDBOX_NAME_PREFIX: ai-dataseek-sandbox
+      SANDBOX_NETWORK: ai-dataseek-network
+      JUPYTER_IMAGE: ${JUPYTER_IMAGE:-ai-dataseek-jupyter:${IMAGE_TAG:-latest}}
+      DATASET_STORAGE_ROOT: /data/datasets
+      DATASET_MANAGED_VOLUME: ai-dataseek-dataset-data
+      SKILLS_DIR: /app/skills
+      USER_SKILLS_DIR: /data/skills/users
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - dataset-data:/data/datasets
+      - skills-data:/data/skills
+    depends_on:
+      sandbox-image:
+        condition: service_completed_successfully
+      jupyter-image:
+        condition: service_completed_successfully
+      mongodb:
+        condition: service_started
+      redis:
+        condition: service_started
+      minio:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - ai-dataseek-network
+
+  # Optional independent service. Enable with ./run.sh --profile s3 ...
+  # Its complete build context can be copied and deployed without DataSeek.
+  filesystem-s3:
+    profiles: [s3]
+    image: ${S3_GATEWAY_IMAGE:-filesystem-s3:0.1.0}
+    build:
+      context: ./filesystem-s3
+      args:
+        PYTHON_IMAGE: ${S3_GATEWAY_PYTHON_IMAGE:-python:3.12-slim}
+    environment:
+      FS3_PUBLIC_URL: ${S3_GATEWAY_PUBLIC_URL:-${SERVER_HOST:-http://localhost:7000}/api/v1/s3}
+      FS3_ADMIN_KEY: ${S3_GATEWAY_ADMIN_KEY:-}
+      FS3_ROOTS: '{"managed":"/roots/managed","local":"/roots/local"}'
+      FS3_STATE_PATH: /state/gateway.sqlite3
+    volumes:
+      - dataset-data:/roots/managed:ro
+      - type: bind
+        source: ${S3_GATEWAY_HOST_DIRECTORY:-/data}
+        target: /roots/local
+        read_only: true
+        bind:
+          create_host_path: false
+      - s3-gateway-state:/state
+    read_only: true
+    cap_drop: [ALL]
+    security_opt: [no-new-privileges:true]
+    tmpfs: [/tmp]
+    restart: unless-stopped
+    networks:
+      - ai-dataseek-network
+
+  # This one-shot service makes the sandbox image available to the backend.
+  # Analysis sandboxes themselves are created dynamically per session.
+  sandbox-image:
+    image: ${SANDBOX_IMAGE:-ai-dataseek-sandbox:${IMAGE_TAG:-latest}}
+    build:
+      context: .
+      dockerfile: sandbox/Dockerfile
+    command: ["/bin/true"]
+    restart: "no"
+    networks:
+      - ai-dataseek-network
+
+  # One-shot image build. The backend creates one private JupyterLab container
+  # per task, so this service itself never exposes a notebook port.
+  jupyter-image:
+    image: ${JUPYTER_IMAGE:-ai-dataseek-jupyter:${IMAGE_TAG:-latest}}
+    build:
+      context: ./jupyter
+      dockerfile: Dockerfile
+    entrypoint: ["/bin/true"]
+    restart: "no"
+    networks:
+      - ai-dataseek-network
+
+  mongodb:
+    image: ${MONGODB_IMAGE:-mongo:7.0}
+    volumes:
+      - mongodb-data:/data/db
+    restart: unless-stopped
+    networks:
+      - ai-dataseek-network
+
+  redis:
+    image: ${REDIS_IMAGE:-redis:7.0}
+    restart: unless-stopped
+    networks:
+      - ai-dataseek-network
+
+  minio:
+    image: ${MINIO_IMAGE:-minio/minio:RELEASE.2025-04-22T22-12-26Z}
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: ${MINIO_ACCESS_KEY:-minioadmin}
+      MINIO_ROOT_PASSWORD: ${MINIO_SECRET_KEY:-minioadmin}
+    volumes:
+      - minio-data:/data
+    restart: unless-stopped
+    networks:
+      - ai-dataseek-network
+
+volumes:
+  s3-gateway-state:
+    name: ai-dataseek-s3-gateway-state
+  mongodb-data:
+    name: ai-dataseek-mongodb-data
+  minio-data:
+    name: ai-dataseek-minio-data
+  dataset-data:
+    name: ai-dataseek-dataset-data
+  skills-data:
+    name: ai-dataseek-skills-data
+
+networks:
+  ai-dataseek-network:
+    name: ai-dataseek-network
+    driver: bridge

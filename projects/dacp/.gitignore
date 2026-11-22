@@ -1,0 +1,53 @@
+target/
+.bsp/
+.metals/
+.venv/
+__pycache__/
+*.egg-info/
+.pytest_cache/
+examples/certs/
+examples/output/
+
+.operator-cache/
+/.dacp-plugins/
+.operator-catalog/
+.operator-backups/
+
+examples/sql/*.mv.db
+examples/sql/*.trace.db
+
+# Local credentials and machine-specific settings
+.env
+.env.*
+!.env.example
+*.key
+*.p12
+*.pfx
+.DS_Store
+
+.operator-sources/
+
+.union-demo/
+
+.dacp-executions/
+
+# Private repository administration state
+**/.admin/
+
+.dacp-access/
+
+**/.dacp-security/
+
+.designer-operator-cache/
+
+node_modules/
+
+# Standalone XStream runtime state
+.xstream-executions/
+.xstream-operators/
+
+# Python distribution build output
+dacp-client/build/
+
+# Isolated benchmark data, credentials and logs
+.benchmark-runs/

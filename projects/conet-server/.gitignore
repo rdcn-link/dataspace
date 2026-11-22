@@ -1,0 +1,15 @@
+.state/
+.venv/
+__pycache__/
+*.pyc
+cases/*/runtime/wheels/
+cases/*/runtime/sdk/
+cases/*/runtime/model/
+target/
+project/target/
+project/project/
+.bsp/
+.metals/
+
+.dacp-*/
+.operator-cache/

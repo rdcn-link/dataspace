@@ -1,0 +1,7 @@
+# Copy to an external application.yml and supply environment variables.
+server:
+  port: ${SERVER_PORT:8080}
+spring:
+  data:
+    mongodb:
+      uri: ${MONGO_URI}
