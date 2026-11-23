@@ -1,3 +1,0 @@
-INPUT_URI: context:/weather/weather-observations.jsonl
-CONDITION: CAST(temperature_c AS REAL) >= 25
-INCLUDE_HEADER: true

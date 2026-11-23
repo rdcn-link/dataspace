@@ -10,8 +10,6 @@
 |---|---|
 | projects/conet-web | 当前网站前端、会话/API 网关、用户中心 |
 | projects/conet-server | Scala 应用托管和 Node.js 元数据/业务接口 |
-| projects/dacp | 分布式数据访问、节点服务和 Union 协同调度 |
-| projects/xstream | 执行引擎、流程设计器、算子 SDK 和示例 |
 | projects/oidc-server | Java 身份服务、微信登录后端 |
 | projects/tds-trading | Java 数据申请、审批、元数据业务接口 |
 | projects/4fair-web | 关联参考前端，不是当前公开门户 |

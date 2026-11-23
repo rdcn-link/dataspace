@@ -10,8 +10,6 @@ Source snapshot of the scientific trusted data space: discover datasets, run reu
 |---|---|
 | projects/conet-web | Current frontend, session/API gateway and user center |
 | projects/conet-server | Scala application hosting and Node.js metadata/business adapter |
-| projects/dacp | Distributed data access, node services and Union coordination |
-| projects/xstream | Execution engine, workflow Designer, operator SDKs and examples |
 | projects/oidc-server | Java identity/WeChat login backend |
 | projects/tds-trading | Java dataset requests, approval and metadata business interfaces |
 | projects/4fair-web | Related reference frontend; not the current public portal |
@@ -19,6 +17,8 @@ Source snapshot of the scientific trusted data space: discover datasets, run reu
 | projects/dataset-vfs, projects/s3-gateway | Related file-access services |
 | projects/data-robots | Data robot management service |
 | services | Scientific analysis operators, runners and source manifests |
+
+DACP and XStream are external dependencies maintained separately; their source code is not included in this repository.
 
 ## Start here
 

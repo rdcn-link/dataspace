@@ -44,3 +44,7 @@ access.json
 connection.json
 computation-approval.json
 catalog.env
+
+# External runtime sources are maintained outside this repository
+/projects/dacp/
+/projects/xstream/

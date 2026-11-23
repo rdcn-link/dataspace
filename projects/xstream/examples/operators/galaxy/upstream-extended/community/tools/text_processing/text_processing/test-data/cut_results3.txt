@@ -1,4 +1,0 @@
-fru
-app
-ora
-ban

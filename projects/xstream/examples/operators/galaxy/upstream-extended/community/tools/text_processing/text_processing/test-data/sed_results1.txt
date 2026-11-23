@@ -1,3 +1,0 @@
-Lorem ipsum dolor bar sit amet foo,
-consectetur adipiscing elit.
-Nam bar ut nulla non neque faucibus commodo

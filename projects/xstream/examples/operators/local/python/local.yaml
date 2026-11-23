@@ -1,4 +1,0 @@
-image: xstream/operator-python:1.0
-executor: python
-build:
-  provider: python

@@ -13,7 +13,7 @@
 1. 准备 Node.js 22+、Scala 工程所需 JDK 17/sbt 1.10.x、Java 身份/业务工程所需 JDK 21/Maven，以及分析使用的 Python/Docker。各工程按自己的依赖版本构建；关联工程是可选组件，不是所有组件都必须同时部署。
 2. 在 projects/conet-web 执行 npm run build、npm run check。生成的 dist 放到前端发布目录，例如 /var/www/html/conet/releases/<release>；不能把后端源码和配置放进静态网站根目录。
 3. 在 projects/conet-server/catalog-adapter 执行 npm ci，外部配置 MONGO_URI、CONET_REGISTRY_MONGO_URI、TDS_TRADING_URL，然后以 node server.mjs 启动。运行全套历史测试前先阅读检查记录。
-4. 按各工程 README 构建 Scala 核心、DACP 和 XStream。DACP 含多个独立构建子项目，不能假定根目录有统一 build.sbt；XStream 的引导流程先发布本地构件，再构建依赖项目。对核心和 Designer 执行 stage，网站 server.mjs 作为身份网关运行。
+4. 向维护方单独获取 DACP 和 XStream，本仓库不包含它们的源码；按各工程 README 构建 Scala 核心、DACP 和 XStream。DACP 含多个独立构建子项目，不能假定根目录有统一 build.sbt；XStream 的引导流程先发布本地构件，再构建依赖项目。对核心和 Designer 执行 stage，网站 server.mjs 作为身份网关运行。
 5. OIDC/TDS 通过 mvn package 构建；需从原维护分发渠道提供 odc-common-jdk21 依赖。本次目录中没有该共享库源码。已有兼容身份/业务服务可以继续复用；不要提交私有 Maven 配置或认证信息。
 6. 在仓库外生成网关、归属、角色、计算审批配置。中心管理员以核实后的身份记录指定，不能把首个登录用户自动设为管理员；模拟审批不能当作正式决定。
 7. 按运行程序预期路径部署科学源码，例如将 services/scientific-analysis 放到 /mnt/data/conet/downloaded-validation。算子注册、运行镜像和已授权的数据绑定单独配置。源码不附带历史任务库和成果包。
