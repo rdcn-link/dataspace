@@ -18,6 +18,8 @@
 | projects/data-robots | 数据机器人管理服务 |
 | services | 科学分析算子、运行程序及源码配置清单 |
 
+DACP 和 XStream 作为外部依赖单独维护，本仓库不收录这两个工程的源码。
+
 先阅读[部署说明](docs/deployment_zh.md)、[配置说明](docs/configuration_zh.md)、[发布范围](docs/source-scope_zh.md)和[检查记录](docs/validation_zh.md)。各工程 README 提供构建、协议和开发说明。本仓库是源码，不是数据库导出或可直接恢复的生产备份。
 
 不包含生产数据库连接、大模型 API Key、微信密钥、私钥、账号放行名单、数据库备份、算子 ZIP 包、实体科学数据或历史成果存储。代码依赖的公开界面资源和明确的合成开发样例予以保留。运行时的受保护配置需独立提供。
