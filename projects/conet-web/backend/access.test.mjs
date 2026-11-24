@@ -7,7 +7,7 @@ test('public reusable applications separate running from management and isolate 
 test('creator control is distinct from authentication and explicit case publication',()=>{const r={apps:{a:{owner:'u1',cases:{yes:{published:true},no:{published:false}}},demo:{owner:'platform',cases:{}}}};assert(mayManage(r,'a',{uid:'u1'}));assert(!mayManage(r,'a',{uid:'u2'}));assert(!mayManage(r,'demo',{uid:'u1'}));assert(mayManage(r,'demo',{uid:'admin',role:'administrator'},['admin']));assert(mayViewRun(r,'a','yes',null));assert(!mayViewRun(r,'a','no',null));assert(!mayViewRun(r,'a','no',{uid:'u2'}))});
 test('OIDC QR proof, creator isolation, public preview and download boundaries',async()=>{
  const dir=await fs.mkdtemp(path.join(os.tmpdir(),'conet-auth-'));let now=10000000,uid='u1',scan=false,lookupMismatch=false,accountStatus=9;const profileRoles={u1:null,u2:null,admin:'管理员'};const calls=[];
- const config={enabled:true,publicOrigin:'http://conet.test',oidcURL:'http://oidc',backendURL:'http://core',catalogURL:'http://catalog',platformAdminUids:['admin'],temporaryLoginUids:['u1','u2','admin'],accountRoles:{u1:null,u2:null,admin:'管理员'},keyFile:path.join(dir,'key'),registryFile:path.join(dir,'registry.json')};await fs.writeFile(config.keyFile,randomBytes(32).toString('hex'));await fs.writeFile(config.registryFile,JSON.stringify({apps:{'svc-015':{owner:'platform',runPolicy:'authenticated',cases:{published:{published:true},private:{published:false}}}},dataApprovals:[]}));const configFile=path.join(dir,'config.json');await fs.writeFile(configFile,JSON.stringify(config));
+ const config={enabled:true,publicOrigin:'http://conet.test',oidcURL:'http://oidc',backendURL:'http://core',catalogURL:'http://catalog',platformAdminUids:['admin'],temporaryLoginUids:['u1','u2','admin'],accountRoles:{u1:null,u2:null,admin:'管理员'},keyFile:path.join(dir,'key'),registryFile:path.join(dir,'registry.json')};await fs.writeFile(config.keyFile,randomBytes(32).toString('hex'));await fs.writeFile(config.registryFile,JSON.stringify({apps:{'my-app':{owner:'u1',cases:{}},'svc-015':{owner:'platform',runPolicy:'authenticated',cases:{published:{published:true},private:{published:false}}}},dataApprovals:[]}));const configFile=path.join(dir,'config.json');await fs.writeFile(configFile,JSON.stringify(config));
  const fetcher=async(url,options={})=>{calls.push({url,method:options.method});let d;
   if(url.endsWith('/wechat/wxLogin'))d={qrCodeUrl:'https://mp.weixin.qq.com/qr/test',loginToken:'a'.repeat(32)};
   else if(url.includes('/wechat/status/'))d=scan?{status:2,openId:'openid-from-server'}:{status:0};
@@ -15,6 +15,8 @@ test('OIDC QR proof, creator isolation, public preview and download boundaries',
   else if(url.includes('/user/user.findbyuid'))d={code:200,data:{uid:new URL(url).searchParams.get('uid'),status:accountStatus,role:profileRoles[new URL(url).searchParams.get('uid')]}};
   else if(url.includes('/sso/token'))d={code:200,data:{accessToken:'oidc-signed-token-'+uid,expiresIn:3600}};
   else if(url.endsWith('/sso/uid')){const fromToken=options.headers.Authorization.split('token-')[1];d={code:200,data:{uid:lookupMismatch?'wrong':fromToken,name:'From OIDC'}};}
+  else if(url==='http://catalog/api/metadata/datasets/6b001a837ada270dc98e7f1d')d={dataset:{source:'科学数据银行',isAiExploration:1,datasetId:'dataset-1',titleZh:'data'}};
+  else if(url==='https://scidb.fairspace.cn/api/v1/datasets/submissions')d={dataset_id:'seek-1'};
   else if(url.includes('/api/appbuilder/apps/'))return new Response('{}',{status:404});
   else if(url.endsWith('/api/appbuilder/validate'))d={id:'my-app'};
   else if(url.includes('/api/jobs/'))d={state:'succeeded',synthetic:false};
@@ -27,10 +29,13 @@ test('OIDC QR proof, creator isolation, public preview and download boundaries',
  const cookieOf=(r,name)=>r.headers['set-cookie']?.find(s=>s.startsWith(name+'='))?.split(';')[0];
  async function login(){const r=res();await g.auth(req('POST'),r,'/api/auth/wechat/start');assert.equal(r.status,200);assert(!('loginToken' in r.value));const c=cookieOf(r,'conet_wechat');let s=res();scan=false;await g.auth(req('POST',c),s,'/api/auth/wechat/status');assert.equal(s.value.status,'waiting');assert(!cookieOf(s,'conet_identity'));scan=true;s=res();await g.auth(req('POST',c),s,'/api/auth/wechat/status');assert.equal(s.value.status,'confirmed');assert(!('accessToken' in s.value));return cookieOf(s,'conet_identity')}
  try{
+  const viewPath='/api/metadata/platform/datasets/6b001a837ada270dc98e7f1d/views';assert.deepEqual(await g.before(req('POST','',{}),viewPath),{});const crossView=req('POST','',{});crossView.headers.origin='https://other.test';await assert.rejects(g.before(crossView,viewPath),{status:403});await assert.rejects(g.before(req('POST','',{}),viewPath.replace('/views','/downloads')),{status:401});
   const none=res();await g.auth(req('POST','',{openId:'attacker-supplied'}),none,'/api/auth/wechat/status');assert.equal(none.value.status,'expired');
   accountStatus=0;const user1=await login();uid='u2';const user2=await login();assert(calls.some(c=>c.url.endsWith('/sso/uid')));
-  let ctx=await g.before(req('POST',user1,{application_yaml:'id: my-app'}),'/api/appbuilder/apps');await g.after(ctx,'/api/appbuilder/apps',201,{application:{id:'my-app'}});
-  await assert.rejects(g.before(req('POST',user2,{application_yaml:'id: my-app'}),'/api/appbuilder/apps'),{status:403});
+  const seekRes=res();await g.auth(req('POST',user1,{metadataId:'6b001a837ada270dc98e7f1d'}),seekRes,'/api/auth/dataset-seek');assert.equal(seekRes.status,200);assert.equal(new URL(seekRes.value.url).pathname,'/dataset/seek/seek-1');
+  let ctx=await g.before(req('POST',user1,{application_yaml:'id: my-app'}),'/api/appbuilder/apps');assert.equal(ctx.registryPath,'/api/metadata/platform/applications');assert.equal(ctx.user.uid,'u1');
+  ctx=await g.before(req('POST',user2,{application_yaml:'id: my-app'}),'/api/appbuilder/apps');assert.equal(ctx.registryPath,'/api/metadata/platform/applications');assert.equal(ctx.user.uid,'u2'); // Registry enforces ownership and publication immutability.
+  await assert.rejects(g.before(req('GET'),'/api/appbuilder/designer/api/config'),{status:401});assert.equal((await g.before(req('GET',user1),'/api/appbuilder/designer/api/config')).authoringDesigner,true);
   await assert.rejects(g.before(req('POST','',{application_yaml:'id: other'}),'/api/appbuilder/apps'),{status:401});
   await assert.rejects(g.before(req('POST',user2),'/apps/my-app/api/jobs'),{status:403});
   await assert.rejects(g.before(req('POST',user1),'/apps/my-app/api/jobs'),/数据中心授权/);

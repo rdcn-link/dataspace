@@ -1,3 +1,6 @@
+import {createNewsRelations} from './news-relations.mjs';
+import {createReportedSeekRanking} from './dataset-seek-ranking.mjs';
+import {resolveSeekMapping} from './dataset-seek-mapping.mjs';
 import {catalogList,catalogCounts} from './catalog-list.mjs';
 import {hubShowcase,HUB_SHOWCASE_PROJECTION} from './hub-showcase.mjs';
 import {createPlatformRegistry} from './platform-registry.mjs';
@@ -13,6 +16,7 @@ const uri=process.env.MONGO_URI;if(!uri)throw Error('MONGO_URI must be configure
 const client=new MongoClient(uri,{maxPoolSize:6,serverSelectionTimeoutMS:10000});await client.connect();
 const db=client.db('tds'),trading=process.env.TDS_TRADING_URL||'http://127.0.0.1:10013';
 const definitions=JSON.parse(await fs.readFile(new URL('./services.json',import.meta.url),'utf8')).services;const platform=await createPlatformRegistry({metadataDB:db,plugins:applicationPlugins(),definitions});
+const seekRanking=createReportedSeekRanking({db});const newsRelations=createNewsRelations(db);
 const published={status:9};let facetCache=null,facetUntil=0,facetPending=null;
 const projection=Object.fromEntries(DATASET_FIELDS.map(k=>[k,1]));
 async function tds(path,query={}){
@@ -47,6 +51,7 @@ async function stats(){
 }
 async function route(url){
  const path=url.pathname.replace(/\/$/,'');
+ if(path==='/api/metadata/internal/dataset-seek-config'){const id=url.searchParams.get('metadataId');if(!/^[a-f0-9]{24}$/i.test(id||''))throw Error('Invalid metadata ID');const d=await db.collection('tds-dataset').findOne({...idQuery(id),status:9},{projection:{...projection,path:1,external_id:1}});if(!d)return null;try{return {dataset:await resolveSeekMapping({...publicDataset(d),path:d.path,external_id:d.external_id},name=>tds('dataCenter.json',{dataCenterName:name}))}}catch(e){return {dataset:null,error:e.message==='该数据集尚未配置可用的智能探查资源'?e.message:'数据中心探查配置暂不可用，请稍后重试'}};}
  const run=path.match(/^\/api\/metadata\/simulation-runs\/([0-9a-f-]{36})$/);if(run)return readRun(run[1]);
  const validated=path.match(/^\/api\/metadata\/application-validation\/(svc-\d{3})$/);if(validated){const plugin=applicationPlugin(validated[1]);if(plugin?.validation)return plugin.validation();}
  if(path==='/api/metadata/service-jobs')return listJobs();
@@ -65,17 +70,9 @@ async function route(url){
  if(path==='/api/metadata/stats')return stats();
  if(path==='/api/metadata/facets')return facets();
  if(path==='/api/metadata/catalog-counts')return catalogCounts({countSources:filter=>db.collection('tds-dataset').countDocuments(filter,{maxTimeMS:20000}),readProducts:()=>platform.listProducts()});
- if(path==='/api/metadata/catalog')return catalogList(url.searchParams,{readProducts:()=>platform.listProducts(),countSources:filter=>db.collection('tds-dataset').countDocuments(filter,{maxTimeMS:20000}),readSources:async(filter,offset,limit,sort)=>Promise.all((await db.collection('tds-dataset').find(filter,{projection,maxTimeMS:20000}).sort({isAiExploration:-1,[sort]:-1,_id:-1}).skip(offset).limit(limit).toArray()).map(d=>platform.enrichDataset(publicDataset(d,{summary:true}))))});
+ if(path==='/api/metadata/catalog')return catalogList(url.searchParams,{readProducts:()=>platform.listProducts(),countSources:filter=>db.collection('tds-dataset').countDocuments(filter,{maxTimeMS:20000}),readSources:async(filter,offset,limit,sort)=>Promise.all((await seekRanking.list(filter,offset,limit,sort,projection)).map(d=>platform.enrichDataset(publicDataset(d,{summary:true}))))});
  if(path==='/api/metadata/datasets'){
-  const q=pageQuery(url.searchParams),query={page:q.page,pageSize:q.pageSize,titleZh:q.q?regexLiteral(q.q):'',source:q.source,dataCenterName:q.dataCenterName,subject:q.subject?regexLiteral(q.subject):'',shareMode:q.shareMode,sort:q.sort};
-  if(q.q||q.source){
-   const expression={$regex:regexLiteral(q.q),$options:'i'},filter={...published};if(q.q)filter.$or=['titleZh','titleEn','cstr','doi'].map(field=>({[field]:expression}));
-   for(const [key,value]of Object.entries({source:q.source,dataCenterName:q.dataCenterName,shareMode:q.shareMode}))if(value)filter[key]=value;
-   if(q.subject)filter.subject={$regex:regexLiteral(q.subject),$options:'i'};
-   const [total,rows]=await Promise.all([db.collection('tds-dataset').countDocuments(filter,{maxTimeMS:20000}),db.collection('tds-dataset').find(filter,{projection,maxTimeMS:20000}).sort({isAiExploration:-1,[q.sort]:-1,_id:-1}).skip((q.page-1)*q.pageSize).limit(q.pageSize).toArray()]);
-   return {total,page:q.page,pageSize:q.pageSize,totalPages:Math.ceil(total/q.pageSize),rows:await Promise.all(rows.map(d=>platform.enrichDataset(publicDataset(d,{summary:true}))))};
-  }
-  const data=await tds('dataset.page',query);return {total:data.total,page:q.page,pageSize:q.pageSize,totalPages:Math.ceil(data.total/q.pageSize),rows:await Promise.all(data.rows.map(d=>platform.enrichDataset(publicDataset(d,{summary:true}))))};
+  const q=pageQuery(url.searchParams),filter={status:9};if(q.q)filter.$or=['titleZh','titleEn','cstr','doi'].map(k=>({[k]:{$regex:regexLiteral(q.q),$options:'i'}}));for(const [key,value]of Object.entries({source:q.source,dataCenterName:q.dataCenterName,shareMode:q.shareMode}))if(value)filter[key]=value;if(q.subject)filter.subject={$regex:regexLiteral(q.subject),$options:'i'};const [total,rows]=await Promise.all([db.collection('tds-dataset').countDocuments(filter,{maxTimeMS:20000}),seekRanking.list(filter,(q.page-1)*q.pageSize,q.pageSize,q.sort,projection)]);return {total,page:q.page,pageSize:q.pageSize,totalPages:Math.ceil(total/q.pageSize),rows:await Promise.all(rows.map(d=>platform.enrichDataset(publicDataset(d,{summary:true}))))};
  }
  const datasetMatch=path.match(/^\/api\/metadata\/datasets\/([a-fA-F0-9]{24})$/);
  if(datasetMatch){
@@ -87,15 +84,15 @@ async function route(url){
    cstr?db.collection('tds-evaluation').countDocuments({cstr}):Promise.resolve(0),cstr?db.collection('tds-dataset-file').countDocuments({cstr}):Promise.resolve(0),
    datasetKey?db.collection('scidb_dataseek_filePath').countDocuments({datasetId:datasetKey}):Promise.resolve(0)
   ]);
-  const dataset=await platform.enrichDataset(publicDataset(value));return {dataset,comments,commentTotal:total,fileMappings:{records:fileRecords+treeRecords,connected:dataset.capabilities.filesConnected},notice:dataset.resourceBindings.length?'已关联实体资源；目录登记、DACP连接、抽样读取和方法验证分别显示，本机验证不代表正式跨中心接入。':'只有目录元数据，尚无可执行实体资源绑定。'};
+  const dataset=await platform.enrichDataset(publicDataset({...value,seekCount:await seekRanking.count(value)}));return {dataset,comments,commentTotal:total,fileMappings:{records:fileRecords+treeRecords,connected:dataset.capabilities.filesConnected},notice:dataset.resourceBindings.length?'已关联实体资源；目录登记、DACP连接、抽样读取和方法验证分别显示，本机验证不代表正式跨中心接入。':'只有目录元数据，尚无可执行实体资源绑定。'};
  }
  if(path==='/api/metadata/news'){
   const q=pageQuery(url.searchParams),filter={};if(q.q)filter.name={$regex:regexLiteral(q.q),$options:'i'};if(q.source)filter.source=q.source;
   const [total,rows]=await Promise.all([db.collection('tds-information').countDocuments(filter),db.collection('tds-information').find(filter).sort({updateAt:-1,_id:-1}).skip((q.page-1)*q.pageSize).limit(q.pageSize).toArray()]);
-  return {total,page:q.page,pageSize:q.pageSize,totalPages:Math.ceil(total/q.pageSize),rows:rows.map(d=>publicNews(d,{summary:true}))};
+  return {total,page:q.page,pageSize:q.pageSize,totalPages:Math.ceil(total/q.pageSize),rows:await newsRelations.enrichMany(rows.map(d=>publicNews(d,{summary:true})))};
  }
  const news=path.match(/^\/api\/metadata\/news\/([a-fA-F0-9]{24})$/);
- if(news){const value=await db.collection('tds-information').findOne(idQuery(news[1]));return value?{article:publicNews(value)}:null;}
+ if(news){const value=await db.collection('tds-information').findOne(idQuery(news[1]));return value?{article:(await newsRelations.enrichMany([publicNews(value)]))[0]}:null;}
  return null;
 }
 const server=http.createServer(async(req,res)=>{

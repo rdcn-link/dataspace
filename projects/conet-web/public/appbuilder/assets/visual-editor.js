@@ -22,7 +22,7 @@ function attach({onError}){
   const popup=window.open('about:blank','_blank');if(!popup){onError('请允许打开 Job Designer 窗口，或先下载 Job YAML 后手动加载。');return}
   try{
    await flush();const settings=await A.request('/api/appbuilder/settings');if(!settings.designer_url)throw Error('尚未配置 Job Designer 地址，请在 conet.yaml 设置 appbuilder.designer_url。');
-   const url=new URL(settings.designer_url,location.href);designerUrl=url.href;
+   const url=new URL('/api/appbuilder/designer/',location.href);designerUrl=url.href;
    const channel=Array.from(crypto.getRandomValues(new Uint8Array(16)),b=>b.toString(16).padStart(2,'0')).join('');
    handoff={popup,origin:url.origin,channel,generation:applicationGeneration,yaml:$('job').value};url.searchParams.set('integration','window');url.searchParams.set('parent_origin',location.origin);url.searchParams.set('channel',channel);url.searchParams.set('return_label','应用此 Job 并返回');popup.location.replace(url.href);onError('已打开 Job Designer，完成设计后点击“应用此 Job 并返回”。');
   }catch(e){popup.close();onError(e.message)}
@@ -32,9 +32,10 @@ function attach({onError}){
   if(h.generation!==applicationGeneration){onError('当前应用已切换，请为当前应用重新打开 Job Designer。');return}
   try{
    if(e.data.type==='xstream-designer:ready')h.popup.postMessage({type:'xstream-designer:load',channel:h.channel,job_yaml:h.yaml,variables_yaml:'{}'},h.origin);
+   else if(e.data.type==='xstream-designer:loaded')onError('XStream 已加载当前流程。编辑完成后点击“应用此 Job 并返回”，再保存草稿。');
    else if(e.data.type==='xstream-designer:job'){
     if(typeof e.data.job_yaml!=='string'||e.data.job_yaml.length>262144)throw Error('Job 定义无效或过大');
-    await flush();const d=await convert({application,job:e.data.job_yaml});if(h.generation!==applicationGeneration)return;job=d.job;putSources(d);renderJob();renderApplication();onError('已接收 Job Designer 的流程，请检查变量绑定并校验、发布。');window.focus();
+    await flush();const d=await convert({application,job:e.data.job_yaml});if(h.generation!==applicationGeneration)return;job=d.job;putSources(d);renderJob();renderApplication();onError('已接收 XStream 流程。请保存草稿，并核对新增步骤的变量绑定和结果配置。');window.focus();
    }else if(e.data.type==='xstream-designer:error')onError('Job Designer：'+String(e.data.error||'无法加载流程'));
   }catch(error){onError(error.message)}
  });

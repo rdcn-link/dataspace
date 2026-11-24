@@ -7,6 +7,10 @@
     "dev": "node server.mjs",
     "start": "node server.mjs",
     "build": "node build.mjs",
-    "check": "node check.mjs"
+    "check": "node check.mjs",
+    "build:news": "node tools/build-news-pages.mjs"
+  },
+  "devDependencies": {
+    "cheerio": "1.0.0"
   }
 }

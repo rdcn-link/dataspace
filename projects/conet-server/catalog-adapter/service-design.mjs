@@ -1,3 +1,4 @@
+import {includedInLibrary} from './application-curation.mjs';
 import {applicationPlugin} from './application-plugins.mjs';
 import fs from 'node:fs/promises';
 import path from 'node:path';
@@ -7,7 +8,7 @@ const home=path.dirname(fileURLToPath(import.meta.url));
 const catalog=JSON.parse(await fs.readFile(path.join(home,'services.json'),'utf8'));
 const index=new Map(catalog.services.map(s=>[s.id,s]));
 export const jobRoot=process.env.SERVICE_JOB_DIRECTORY||'/mnt/data/conet/catalog-integration/service-jobs';
-export function serviceList(){return {evidence:catalog.evidence,total:index.size,categories:[...new Set(catalog.services.map(s=>s.category))],rows:[...catalog.services].sort((a,b)=>(b.displayPriority||0)-(a.displayPriority||0)).map(s=>({id:s.id,title:s.title,category:s.category,displayPriority:s.displayPriority||0,realDataVerified:s.runtimeValidation?.realDataAnalyticalWorkflowVerified===true,resultPreviewURL:s.resultPreviewURL||null,validationLabel:s.runtimeValidation?.validationLabel||null,question:s.question,outputSummary:s.outputSummary,sourceNodes:s.sourceNodes,datasetCount:s.datasets.length,operatorCount:s.operators.length,planningIds:s.planningIds,designStatus:s.designStatus,executionEnabled:false}))};}
+export function serviceList(){return {evidence:catalog.evidence,total:catalog.services.filter(s=>includedInLibrary(s.id)).length,categories:[...new Set(catalog.services.filter(s=>includedInLibrary(s.id)).map(s=>s.category))],rows:catalog.services.filter(s=>includedInLibrary(s.id)).sort((a,b)=>(b.displayPriority||0)-(a.displayPriority||0)).map(s=>({id:s.id,title:s.title,category:s.category,displayPriority:s.displayPriority||0,realDataVerified:s.runtimeValidation?.realDataAnalyticalWorkflowVerified===true,resultPreviewURL:s.resultPreviewURL||null,validationLabel:s.runtimeValidation?.validationLabel||null,question:s.question,outputSummary:s.outputSummary,sourceNodes:s.sourceNodes,datasetCount:s.datasets.length,operatorCount:s.operators.length,planningIds:s.planningIds,designStatus:s.designStatus,executionEnabled:false}))};}
 export function serviceDetail(id){return index.get(id)||null;}
 function invalid(message){const e=Error(message);e.statusCode=400;throw e;}
 export function makeJob(input){

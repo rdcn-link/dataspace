@@ -2,7 +2,7 @@ import test from 'node:test';import assert from 'node:assert/strict';
 import {publicDataset,publicNews,pageQuery,regexLiteral,safeURL} from './contracts.mjs';
 test('public metadata does not leak file paths, identities or authorization',()=>{
  const value=publicDataset({_id:'abc',titleZh:'Test',path:'/mnt/private/file',uid:'private-user',auditor:'admin',accessToken:'secret',dacpUrl:'dacp://unverified'},{});
- assert.deepEqual(Object.keys(value).sort(),['capabilities','downloadCount','favoriteCount','id','titleZh','viewCount']);assert.equal(value.capabilities.computeConnected,false);
+ assert.deepEqual(Object.keys(value).sort(),['capabilities','downloadCount','favoriteCount','id','seekCount','titleZh','viewCount']);assert.equal(value.capabilities.computeConnected,false);
 });
 test('query text remains literal and pagination is bounded',()=>{
  assert.equal(regexLiteral('a.*[b]'),'a\\.\\*\\[b\\]');

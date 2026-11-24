@@ -1,4 +1,5 @@
 import {proxyRobot} from './backend/robot-proxy.mjs';
+import {proxyAuthoringDesigner} from './backend/designer-authoring-proxy.mjs';
 import {createAccessGateway} from './backend/access-gateway.mjs';
 import http from 'node:http';
 import fs from 'node:fs';
@@ -30,7 +31,13 @@ export function createServer(backend=upstream,catalogBackend=metadataUpstream,ac
  // Preserve Host and Origin together so the backend's same-origin validation
  // remains effective; forwarding does not grant authorization.
  const ctx=access?await access.before(req,p):{};
+ if(ctx.authoringDesigner){await proxyAuthoringDesigner(req,res,backend,ctx.designerBackendURL);return}
  if(ctx.robotProxy){await proxyRobot(req,res,ctx);return}
+ // Compiled files may outlive withdrawal. Mongo remains the publication authority.
+ if(access&&/^\/apps\/[A-Za-z0-9_-]+\/(?:api|results)\//.test(p)){
+  const id=p.split('/')[2],r=await fetch(new URL('/api/metadata/platform/applications/'+id,catalogBackend),{signal:AbortSignal.timeout(10000)});
+  if(!r.ok||(await r.json()).status!=='online'){access.json(res,404,{error:'应用尚未发布或已下线'});return}
+ }
  const runtimeTask=p.match(/^\/apps\/([A-Za-z0-9_-]+)\/api\/jobs(?:\/([A-Za-z0-9_-]+)(?:\/(cancel|plan))?)?$/),runtimeArtifact=p.match(/^\/apps\/([A-Za-z0-9_-]+)\/results\/([A-Za-z0-9_-]+)\/([a-zA-Z0-9_.-]+)$/);
  const registryPath=ctx.registryPath||(p==='/api/ratings/app'?'/api/metadata/platform/application-ratings':null)|| (runtimeTask?'/api/metadata/platform/applications/'+runtimeTask[1]+'/tasks'+(runtimeTask[2]?'/'+runtimeTask[2]:'')+(runtimeTask[3]?'/'+runtimeTask[3]:''):runtimeArtifact?'/api/metadata/platform/applications/'+runtimeArtifact[1]+'/tasks/'+runtimeArtifact[2]+'/'+runtimeArtifact[3]:null);
  const target=registryPath||pathname==='/api/metadata'||pathname.startsWith('/api/metadata/')?catalogBackend:backend;

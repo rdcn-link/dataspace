@@ -1,4 +1,4 @@
-import {openDatasetSeek} from './dataset-seek.mjs';
+import {seekConfiguration,openDatasetSeek} from './dataset-seek.mjs';
 import {publicProfile,profileUpdate} from './user-profile.mjs';
 import fs from 'node:fs/promises';
 import {randomUUID} from 'node:crypto';
@@ -29,7 +29,7 @@ export async function createAccessGateway(configPath,{fetcher=fetch,clock=Date.n
   if(!p.startsWith('/api/auth/'))return false;
   try{
    if(req.method!=='GET'&&req.method!=='HEAD')sameOrigin(req);
-   if(p==='/api/auth/dataset-seek'&&req.method==='POST'){const user=await principal(req);requireUser(user);const input=(await body(req,2048)).value;if(Object.keys(input).some(k=>k!=='metadataId')||!/^[a-f0-9]{24}$/i.test(input.metadataId||''))throw fail(400,'数据集标识无效');const r=await fetcher(config.catalogURL+'/api/metadata/datasets/'+input.metadataId,{signal:AbortSignal.timeout(20000)});if(!r.ok)throw fail(404,'数据集不存在或暂不可访问');const d=await r.json();json(res,200,await openDatasetSeek({dataset:d.dataset,uid:user.uid,oidc,fetcher}));return true}
+   if(p==='/api/auth/dataset-seek'&&req.method==='POST'){const user=await principal(req);requireUser(user);const input=(await body(req,2048)).value;if(Object.keys(input).some(k=>k!=='metadataId')||!/^[a-f0-9]{24}$/i.test(input.metadataId||''))throw fail(400,'数据集标识无效');const r=await fetcher(config.catalogURL+'/api/metadata/datasets/'+input.metadataId,{signal:AbortSignal.timeout(20000)});if(!r.ok)throw fail(404,'数据集不存在或暂不可访问');const d=await r.json();if(['tpdc','chem'].includes(seekConfiguration({...d.dataset,datasetId:'pending',dataSetId:undefined}).center)){const mapped=await read(config.catalogURL+'/api/metadata/internal/dataset-seek-config?metadataId='+input.metadataId);if(!mapped.dataset)throw fail(409,mapped.error||'该数据集尚未配置可用的智能探查资源');d.dataset=mapped.dataset;}const result=await openDatasetSeek({dataset:d.dataset,uid:user.uid,oidc,fetcher});json(res,200,result);return true}
    if(p==='/api/auth/profile'&&['GET','POST'].includes(req.method)){const u=await principal(req);requireUser(u);let profile=data(await read(oidc+'/user/user.findbyuid?uid='+encodeURIComponent(u.uid)));if(profile.uid!==u.uid)throw fail(401,'账号身份不匹配');if(req.method==='POST'){const b=(await body(req,8192)).value,payload=profileUpdate(profile,b);const target=data(await read(oidc+'/user/user.findbyopenid?type=0&openId='+encodeURIComponent(payload.serviceOpenId)));if(target?.uid!==u.uid)throw fail(409,'账号绑定与当前身份不一致，请联系统一账号管理员');const session=unseal(cookie(req,'conet_identity'),key,'identity',clock());data(await read(oidc+'/user/user.updateUser',{method:'POST',headers:{'Content-Type':'application/json',Authorization:'Bearer '+session.token},body:JSON.stringify(payload)}));profile=data(await read(oidc+'/user/user.findbyuid?uid='+encodeURIComponent(u.uid)));try{await read(config.catalogURL+'/api/metadata/platform/user-center/profile-audit',{method:'POST',headers:{'Content-Type':'application/json','x-conet-actor':u.uid},body:JSON.stringify({fields:Object.keys(b)})})}catch{}}json(res,200,{profile:publicProfile(profile,u)});return true}
    if(p==='/api/auth/designer-access'&&req.method==='GET'){const user=await principal(req);requireUser(user);json(res,200,{allowed:true});return true}
    if(p==='/api/auth/me'&&req.method==='GET'){const user=await principal(req);json(res,200,{authenticated:!!user,user:publicUser(user),canCreateApplication:!!user});return true}
@@ -64,6 +64,8 @@ export async function createAccessGateway(configPath,{fetcher=fetch,clock=Date.n
  }
  async function before(req,p){
   const write=!['GET','HEAD'].includes(req.method);if(write)sameOrigin(req);
+  if(/^\/api\/metadata\/platform\/datasets\/[a-f0-9]{24}\/views$/i.test(p)&&req.method==='POST')return {};
+  if(p.startsWith('/api/metadata/internal/'))throw fail(404,'接口不存在');
   if(p==='/api/products'||/^\/products\/[A-Za-z0-9_-]+\/(?:api|permissions|revoke|files\/[A-Za-z0-9_.-]+|preview\/[A-Za-z0-9_.-]+)$/.test(p)){const user=await principal(req);if(write||p.includes('/files/'))requireUser(user);return {user,isPlatformAdmin:isPlatformAdmin(user),registryPath:p==='/api/products'?'/api/metadata/platform/products':'/api/metadata/platform'+p}}
   if(p==='/api/metadata/platform/website-style'){if(req.method==='GET')return {};const user=await principal(req);requireUser(user);if(!isPlatformAdmin(user))throw fail(403,'仅管理员可修改网站风格');return {user,isPlatformAdmin:true}}
   if(p==='/api/metadata/platform/public-nodes'&&req.method==='GET')return {};
@@ -72,7 +74,14 @@ export async function createAccessGateway(configPath,{fetcher=fetch,clock=Date.n
   if(p.startsWith('/user-center/robots')){const user=await principal(req);requireUser(user);if(!isPlatformAdmin(user))throw fail(403,'仅管理员可管理数据智能机器人');return {user,isPlatformAdmin:true,robotProxy:true}}
   if(p.startsWith('/api/metadata/platform/user-center/')||/^\/api\/metadata\/platform\/applications\/[A-Za-z0-9_-]+\/favorite$/.test(p)){const user=await principal(req);requireUser(user);return {user,isPlatformAdmin:isPlatformAdmin(user)}}
   if(/^\/api\/metadata\/platform\/applications\/[A-Za-z0-9_-]+\/rating$/.test(p)){const user=await principal(req);if(write)requireUser(user);return {user,isPlatformAdmin:isPlatformAdmin(user)}}
-  if(config.computationApprovalsEnabled===true&&p.startsWith('/api/metadata/platform/')){const user=await principal(req);if(write)requireUser(user);if(write&&/\/(bindings|refresh)$/.test(p)&&!isPlatformAdmin(user))throw fail(403,'仅管理员可以维护应用与资源登记');return {user,isPlatformAdmin:isPlatformAdmin(user)}}
+  if(p==='/api/appbuilder/designer'||p.startsWith('/api/appbuilder/designer/')){const user=await principal(req);requireUser(user);return {user,authoringDesigner:true,designerBackendURL:config.designerBackendURL}}
+  // All authoring entry points share the Mongo-backed publication/ownership policy.
+  if(p==='/api/appbuilder/apps'&&write){const user=await principal(req);requireUser(user);return {user,isPlatformAdmin:isPlatformAdmin(user),registryPath:'/api/metadata/platform/applications'}}
+  if(p==='/api/appbuilder/apps'&&!write){const user=await principal(req);return {user,isPlatformAdmin:isPlatformAdmin(user),registryPath:'/api/metadata/platform/applications',registryArray:true}}
+  if(/^\/api\/appbuilder\/(?:apps|packages)\/[^/]+\//.test(p))throw fail(404,'应用管理接口不存在');
+  if(p==='/api/appbuilder/packages/import'&&write){const user=await principal(req);requireUser(user);return {user,isPlatformAdmin:isPlatformAdmin(user),registryPath:'/api/metadata/platform/application-packages/import'}}
+  const authoring=p.match(/^\/api\/appbuilder\/(apps|packages)\/([A-Za-z0-9_-]+)$/);if(authoring){const user=await principal(req);requireUser(user);if(write)throw fail(405,'请通过草稿接口保存应用');return {user,isPlatformAdmin:isPlatformAdmin(user),registryPath:'/api/metadata/platform/applications/'+authoring[2]+'/'+(authoring[1]==='packages'?'package':'authoring')}}
+  if(p.startsWith('/api/metadata/platform/')){const user=await principal(req);if(write)requireUser(user);if(write&&/\/(bindings|refresh)$/.test(p)&&!isPlatformAdmin(user))throw fail(403,'仅管理员可以维护应用与资源登记');return {user,isPlatformAdmin:isPlatformAdmin(user)}}
   if(config.applicationValidationMode===true&&config.computationApprovalsEnabled!==true&&/^\/api\/metadata\/(?:platform(?:\/|$)|applications\/svc-\d{3}(?:\/|$)|application-validation\/svc-\d{3}(?:\/|$)|service-jobs(?:\/|$)|simulation-runs(?:\/|$))/.test(p))return {user:{uid:'platform-engineering-validation'},validationMode:true};
   if(config.applicationValidationMode===true&&config.computationApprovalsEnabled!==true&&/^\/api\/appbuilder\/(?:validate|convert|pages\/generate|media|settings|packages)(?:\/|$)/.test(p))return {validationMode:true};
   if(config.applicationValidationMode===true&&config.computationApprovalsEnabled!==true&&/^\/apps\/[A-Za-z0-9_-]+\/(?:api\/(?:config|preview|jobs(?:\/[A-Za-z0-9_-]+(?:\/(?:cancel|plan))?)?)|results\/[A-Za-z0-9_-]+\/[a-zA-Z0-9_.-]+)$/.test(p))return {user:{uid:'platform-engineering-validation'},validationMode:true,appConfig:p.endsWith('/api/config')};
@@ -97,8 +106,6 @@ export async function createAccessGateway(configPath,{fetcher=fetch,clock=Date.n
    else if(run){if(run[1])view(id,run[1],user);else ctx.filterRunArray=id}else if(artifact){requireUser(user);manage(id,user)}
    if(suffix==='api/config')ctx.appConfig=true;return ctx
   }
-  if(p==='/api/appbuilder/apps'&&write){requireUser(user);const b=await body(req);const validation=await read(config.backendURL+'/api/appbuilder/validate',{method:'POST',headers:{'Content-Type':'application/json'},body:b.bytes});if(!safeId(validation.id))throw fail(400,'应用标识无效');ctx.app=validation.id;ctx.body=b.bytes;if(!registry.apps[ctx.app]){const existing=await fetcher(config.backendURL+'/api/appbuilder/apps/'+encodeURIComponent(ctx.app),{signal:AbortSignal.timeout(10000)});if(existing.ok)await persist(r=>{if(!r.apps[ctx.app])r.apps[ctx.app]={owner:'platform',cases:{}}});else if(existing.status!==404)throw fail(503,'无法核对应用归属，请稍后重试')}if(registry.apps[ctx.app])manage(ctx.app,user);ctx.saveApp=true;return ctx}
-  const edit=p.match(/^\/api\/appbuilder\/(?:apps|packages)\/([A-Za-z0-9_-]+)(?:\/(.*))?$/);if(edit){if(write||p.includes('/packages/'))manage(edit[1],user);else ctx.appDocument=edit[1];return ctx}
   if(p==='/api/analyses'){ctx.filterAnalyses=true;return ctx}
   if(p==='/api/products'){ctx.products=true;return ctx}
   const product=p.match(/^\/products\/([A-Za-z0-9_-]+)(?:\/(.*))?$/);if(product){const d=await read(config.backendURL+'/products/'+product[1]+'/api');const id=d.application?.id;ctx.app=id;if(write){manage(id,user);return ctx}if(product[2]==='permissions'){ctx.productPermissions=true;return ctx}ctx.productDocument=product[2]==='api';if(product[2]?.startsWith('files/')){requireUser(user);manage(id,user)}return ctx}
@@ -112,9 +119,9 @@ export async function createAccessGateway(configPath,{fetcher=fetch,clock=Date.n
  }
  async function after(ctx,p,status,b){
   if(status>=400)return b;
+  if(ctx.registryArray)return b.rows||[];
   if(ctx.newInspection&&b.id)await persist(r=>{r.inspections??={};r.inspections[b.id]={owner:ctx.user.uid,app:ctx.app,sourceKey:ctx.input.sourceKey,createdAt:new Date(clock()).toISOString()}});
   if(ctx.filterCases&&Array.isArray(b.rows))b.rows=b.rows.filter(c=>mayViewRun(registry,ctx.filterCases,c.id,ctx.user,admins));
-  if(ctx.saveApp){await persist(r=>{if(!r.apps[ctx.app])r.apps[ctx.app]={owner:ctx.user.uid,createdAt:new Date(clock()).toISOString(),cases:{}}});b.can_edit=true}
   if(ctx.newRun&&b.id)await persist(r=>{r.apps[ctx.app].cases[b.id]={published:false,kind:b.synthetic?'synthetic-demo':b.caseKind||'user-case',createdBy:ctx.user.uid,createdAt:new Date(clock()).toISOString()}});
   if(ctx.publishRun)await persist(r=>{r.apps[ctx.app].cases[ctx.publishRun]={published:true,kind:r.apps[ctx.app].cases[ctx.publishRun]?.kind||'user-case',consentedBy:ctx.user.uid,updatedAt:new Date(clock()).toISOString()}});
   const allowed=(app,id)=>mayViewRun(registry,app,id,ctx.user,admins);
@@ -125,7 +132,6 @@ export async function createAccessGateway(configPath,{fetcher=fetch,clock=Date.n
   else if(ctx.appConfig)b.access={canRun:mayManage(registry,ctx.app,ctx.user,admins),canManage:mayManage(registry,ctx.app,ctx.user,admins),canDownload:mayManage(registry,ctx.app,ctx.user,admins)};
   if(ctx.productDocument)b.can_download=mayManage(registry,ctx.app,ctx.user,admins);
   if(ctx.productPermissions)b={manage:mayManage(registry,ctx.app,ctx.user,admins)};
-  if(ctx.appDocument)b.can_edit=mayManage(registry,ctx.appDocument,ctx.user,admins);
   if(ctx.hideDrafts)b={rows:[],total:0};
   if(ctx.snapshot&&Array.isArray(b.cases))for(const c of b.cases)c.jobs=(c.jobs||[]).filter(r=>allowed(c.id,r.id));
   return b

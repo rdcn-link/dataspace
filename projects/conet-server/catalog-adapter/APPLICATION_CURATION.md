@@ -1,0 +1,13 @@
+# Scientific application library scope
+
+The 2026-11-24 review covers all 60 original platform designs. Scope is determined by scientific purpose, not by file extension. Scientific experiments stored in Excel/CSV remain included: thousand-seed mass, fatigue fitting, group summaries and quality checks are scientific data processing.
+
+`application-curation.mjs` records the reviewed exceptions. `svc-008` (research-document structure extraction) processes DOCX documents and is excluded from the scientific application library. The remaining 59 platform applications stay included; 29 of them have real-data verification. This count does not assert that the other designs are executable.
+
+On startup, curation sets the excluded platform application's MongoDB `catalogIncluded:false`, `status:offline`, and `executable:false`, with a reason and review date. Both ordinary discovery and the App Builder offline-inclusive list exclude it. The legacy design list and summary use the same scope. Normal status controls cannot republish an excluded application. Historical definitions, versions, tasks, results, published product permissions and scientific figures are preserved. Curation is applied separately from immutable scientific definitions, so it does not rewrite a released content hash.
+
+All retained verified applications are tested through independent draft copies: operator availability, real XStream document loading/export, renamed-flow return, Mongo-backed save/reload and package export. Tests remove their own drafts and never submit scientific jobs. Representative browser checks cover precipitation, fatigue analysis and CTD; NPP has the existing full browser proof.
+
+Production deployment backs up the original `svc-008` registration and hashes its task/result identifiers and scientific content hashes in `/mnt/data/conet-refinement-backups/curation-before-20261124.json` (mode600). A rollback must restore the reviewed status/curation fields from that backup after removing the exclusion policy; reverting source code alone does not undo a persistent withdrawal. Never replace historical business documents wholesale.
+
+The compact catalog presentation remains 12 records per page, with the existing 24/48 options and paging. Cards show title, a two-line summary, provider, size/date, favorite/view/download counts and usual actions. CSTR, DOI and version remain in the detail page. Only the catalog receives compact spacing: regular desktop three columns, wide desktop four, tablet two and mobile one. News cards and detail-page spacing are unchanged. Static deployment injects the login script once; the dynamic gateway performs its existing injection.

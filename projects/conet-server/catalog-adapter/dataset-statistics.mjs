@@ -1,0 +1,3 @@
+const count=v=>Number.isFinite(Number(v))&&Number(v)>=0?Math.floor(Number(v)):0;
+export async function datasetViewCount(collection,dataset){const stored=await collection.findOne({_id:String(dataset.id??dataset._id)});return count(dataset.viewCount??dataset.visitNum)+count(stored?.viewCount)}
+export async function recordDatasetView(collection,dataset){const id=String(dataset.id??dataset._id);await collection.updateOne({_id:id},{$inc:{viewCount:1},$set:{updatedAt:new Date().toISOString()}},{upsert:true});return {viewCount:await datasetViewCount(collection,dataset),downloadCount:count(dataset.downloadCount)}}

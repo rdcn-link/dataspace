@@ -1,0 +1,6 @@
+const fail=(status,message)=>Object.assign(Error(message),{status});
+export function favoriteCstr(raw){if(typeof raw!=='string'||!raw.trim()||raw.length>200)throw fail(400,'数据集标识无效');let value=raw.trim();try{value=decodeURIComponent(value)}catch{}if(!value||value.length>200||/[\u0000-\u001f\u007f]/.test(value))throw fail(400,'数据集标识无效');return value}
+export async function datasetFavoriteSnapshot(metadataDB,actor,raw){const cstr=favoriteCstr(raw),collection=metadataDB.collection('tds-favorite');const [stored,count]=await Promise.all([collection.findOne({uid:actor,cstr},{projection:{_id:1}}),collection.countDocuments({cstr})]);return {favorite:!!stored,favoriteCount:count}}
+export async function confirmedDatasetFavorite({metadataDB,tds,actor,cstr,enabled}){const id=favoriteCstr(cstr);await tds(enabled?'favorite.save':'favorite.remove',{method:enabled?'POST':'DELETE',query:{uid:actor,cstr:id}});const actual=await datasetFavoriteSnapshot(metadataDB,actor,id);if(actual.favorite!==enabled)throw fail(503,'收藏状态未能确认保存，请刷新后重试');return actual}
+
+export async function datasetFavoriteCount(metadataDB,raw){if(!raw)return 0;let cstr;try{cstr=favoriteCstr(raw)}catch(e){if(e.status===400)return 0;throw e}return metadataDB.collection('tds-favorite').countDocuments({cstr})}
